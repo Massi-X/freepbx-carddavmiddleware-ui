@@ -15,7 +15,7 @@ Do you have a carddav phone book and phones compatible only with LDAP? Well that
 None for now
 
 ## USAGE:
-1. Connext to your FreePBX server via SSH
+1. Connect to your FreePBX server via SSH
 2. cd into /var/www/html/
 3. Copy the folder 'phoneMiddleware' here
 4. Open the file config.ini and set your desired values
