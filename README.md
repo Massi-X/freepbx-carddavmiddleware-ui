@@ -1,5 +1,5 @@
 # freepbx-phonemiddleware
-Simple library to read a carddav server and return inbound CNAM, Outbound CNAM and XML phonebook.
+Simple library to read a carddav server and return inbound CNAM, Outbound CNAM and XML phonebook.<br>
 Module for FreePBX sistems, tested with 15+ with the default distro.
 
 ## PURPOSE:
@@ -49,7 +49,11 @@ _**Enabling outbound CNAM:**_
 - It always return a number in CID superfecta, so it's not compatible with other schemes (for now)
 
 ## LICENSE:
-- The module is licensed under GNUv2 and makes use of other open-source modules. See below for more details
+This work is licensed under Apache 2.0, MIT, GPL 3.0 (or any later version) and The Prosperity Public License 3.0.0.<br>
+You have to agree to all of them if you use this work.<br>
+In short this means: You can't use this lib for commercial use without clear agreements with the author, you only can use it for personal use.<br>
+`SPDX-License-Identifier: Apache-2.0 AND MIT AND GPL-2.0-or-later AND The Prosperity Public License 3.0.0`<br>
+Licenses for the included modules are available below.<br>
 - [Carddav-PHP](https://github.com/christian-putzke/CardDAV-PHP/blob/master/LICENSE)
 - [vCard-parser](https://github.com/nuovo/vCard-parser/blob/master/LICENSE)
 - [libphonenumber for PHP](https://github.com/giggsey/libphonenumber-for-php/blob/master/LICENSE)
