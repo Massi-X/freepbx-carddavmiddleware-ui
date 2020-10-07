@@ -21,8 +21,10 @@ None for now
 4. Open the file config.ini and set your desired values
 5. Done!
 
+_**Reading the phonebook:**_
 - You can connect from http://IP_OF_YOUR_SERVER:PORT/phoneMiddleware/carddavtoXML.php from your phones to read the the entire phonebook
 
+_**Enabling inbound CNAM:**_
 - To enable inbound CNAM create a Caller ID Lookup source and set the parameters like below, then match it with your inbound route(s) (Inbound route->your_route->Other->CID Lookup Source):
   - Source Description: As you want
   - Source type: http(s)
@@ -30,12 +32,13 @@ None for now
   - port: if you have a port, set it up here
   - path: phoneMiddleware/numberToCNAM.php
   - query: number=\[NUMBER]
-  
+
+_**Enabling outbound CNAM:**_
  - To enable outbound CNAM follow this steps:
-  - Go into CID Superfecta, delete all the existing entries and create a new one with this settings:
-    - Scheme Name: As you want
-    - Lookup timeout: 5 (it's usually enough)
-    - Superfecta Processor: SINGLE
+    - Go into CID Superfecta, delete all the existing entries and create a new one with this settings:
+      - Scheme Name: As you want
+      - Lookup timeout: 5 (it's usually enough)
+      - Superfecta Processor: SINGLE
   - Save and enter the configuration by clicking on the scheme name, then turn OFF all the schemes but Regular Expressions 1, click the gear icon and set:
     - url: http://localhost:PORT/phoneMiddleware/numberToCNAM.php?number=$thenumber
     - reg exp: (.*)
@@ -46,8 +49,8 @@ None for now
 - It always return a number in CID superfecta, so it's not compatible with other schemes (for now)
 
 ## LICENSE:
-- The module is licensed under GNUv2 and makes use of other open-source modules. See below
-- [Carddav-PHP](https://github.com/christian-putzke/CardDAV-PHP)
-- [vCard-parser](https://github.com/nuovo/vCard-parser)
-- [libphonenumber for PHP](https://github.com/giggsey/libphonenumber-for-php)
-- [Composer](https://github.com/composer/composer)
+- The module is licensed under GNUv2 and makes use of other open-source modules. See below for more details
+- [Carddav-PHP](https://github.com/christian-putzke/CardDAV-PHP/blob/master/LICENSE)
+- [vCard-parser](https://github.com/nuovo/vCard-parser/blob/master/LICENSE)
+- [libphonenumber for PHP](https://github.com/giggsey/libphonenumber-for-php/blob/master/LICENSE)
+- [Composer](https://github.com/composer/composer/blob/master/LICENSE)
