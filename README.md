@@ -22,7 +22,7 @@ None for now
 5. Done!
 
 _**Reading the phonebook:**_
-- You can connect from http://IP_OF_YOUR_SERVER:PORT/phoneMiddleware/carddavtoXML.php from your phones to read the the entire phonebook
+- You can connect from http<span>://IP_OF_YOUR_SERVER:PORT/phoneMiddleware/carddavtoXML.php from your phones to read the the entire phonebook
 
 _**Enabling inbound CNAM:**_
 - To enable inbound CNAM create a Caller ID Lookup source and set the parameters like below, then match it with your inbound route(s) (Inbound route->your_route->Other->CID Lookup Source):
@@ -40,7 +40,7 @@ _**Enabling outbound CNAM:**_
       - Lookup timeout: 5 (it's usually enough)
       - Superfecta Processor: SINGLE
   - Save and enter the configuration by clicking on the scheme name, then turn OFF all the schemes but Regular Expressions 1, click the gear icon and set:
-    - url: http://localhost:PORT/phoneMiddleware/numberToCNAM.php?number=$thenumber
+    - url: http<span>://localhost:PORT/phoneMiddleware/numberToCNAM.php?number=$thenumber
     - reg exp: (.*)
   - Finally download outbound-CNAM from [here](https://github.com/Massi-X/freepbx-Outbound_CNAM/releases/tag/0.0.4_beta1) (all credits to the original author, waiting for them to approve my PR) and install it through Module Admin, then enable all the options and leave the Scheme on 'ALL'
 
