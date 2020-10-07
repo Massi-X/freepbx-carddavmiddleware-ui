@@ -1,8 +1,8 @@
 # The Prosperity Public License 3.0.0
 
-Contributor: $name
+Contributor: Massi-X
 
-Source Code: $address
+Source Code: https://github.com/Massi-X/freepbx-phonemiddleware
 
 ## Purpose
 
