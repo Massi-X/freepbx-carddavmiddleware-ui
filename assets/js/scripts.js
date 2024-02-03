@@ -276,7 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	/********************	END INIT POPUPS	********************/
 
 	/********************	LISTEN MAX_CNAM_OUTPUT CHECKBOX	********************/
-	document.getElementById('max_cnam_length').onblur = e => {
+	let max_cnam_length = document.getElementById('max_cnam_length');
+	let max_cnam_length_enable = document.getElementById('max_cnam_length_enable');
+
+	max_cnam_length.onblur = e => {
 		let elem = e.target;
 		let min = parseInt(elem.getAttribute('min'));
 		let max = parseInt(elem.getAttribute('max'));
@@ -295,14 +298,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	};
 
-	document.querySelectorAll('input[type="checkbox"][data-onchange]').forEach(elem => {
-		let target = document.getElementById(elem.getAttribute('data-onchange'));
-
-		elem.onchange = e => {
-			e.target.checked ? target.removeAttribute('disabled') : target.setAttribute('disabled', 'disabled');
-			target.value = target.getAttribute('min');
-		}
-	});
+	max_cnam_length_enable.onchange = () => {
+		max_cnam_length_enable.checked ? max_cnam_length.removeAttribute('disabled') : max_cnam_length.setAttribute('disabled', 'disabled');
+		max_cnam_length.value = max_cnam_length.getAttribute('min');
+	}
 	/********************	END LISTEN MAX_CNAM_OUTPUT CHECKBOX	********************/
 
 	/********************	MISC	********************/
