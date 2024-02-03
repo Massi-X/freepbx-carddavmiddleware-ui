@@ -4,24 +4,35 @@
  * This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
  */
 
+ :root {
+	--timepicker-background: #fff;
+	--timepicker-background-dark: #fafafa;
+	--timepicker-border: #ddd;
+	--timepicker-border-dark: #959595;
+	--timepicker-hover: #eee;
+	--timepicker-text: #000;
+	--timepicker-gray: #616161;
+	--timepicker-fpbx: rgba(94, 156, 125, 0.9);
+}
+
 .__timepicker-container {
 	display: flex;
 	height: 39px;
 	padding: 0;
-	background: #fff;
-	border: 1px solid #DDD;
+	background: var(--timepicker-background);
+	border: 1px solid var(--timepicker-border);
 }
 
 .__timepicker-container:hover,
 .__timepicker-container:focus-within {
-	border-color: rgba(94, 156, 125, 0.9) !important;
+	border-color: var(--timepicker-fpbx) !important;
 }
 
 .__timepicker-div {
 	position: relative;
 	margin: 0;
 	flex: 1;
-	border-right: 1px solid #ddd;
+	border-right: 1px solid var(--timepicker-border);
 }
 
 .__timepicker-div:last-child {
@@ -37,19 +48,19 @@
 	padding-left: 66px;
 	outline: none !important;
 	box-shadow: none !important;
-	color: #000;
+	color: var(--timepicker-text);
 }
 
 .__timepicker-div>span {
 	position: absolute;
 	height: calc(100% - 3px);
 	cursor: default;
-	background: #fff;
+	background: var(--timepicker-background);
 	right: 0;
 	margin-top: 3px;
 	margin-right: 1px;
 	padding: 0 6px;
-	color: #757575;
+	color: var(--timepicker-gray);
 }
 
 .__timepicker-div>input::selection,
@@ -77,20 +88,20 @@
 	width: 24px;
 	cursor: pointer;
 	margin: 0;
-	border: 1px solid #959595;
+	border: 1px solid var(--timepicker-border-dark);
 	border-radius: 0;
-	background: #fafafa;
-	color: #616161;
+	background: var(--timepicker-background-dark);
+	color: var(--timepicker-gray);
 }
 
 .__timepicker-button-container label:hover {
-	background: #eee;
+	background: var(--timepicker-hover);
 }
 
 .__timepicker-button-container label:active,
 .__timepicker-button-container label:focus-visible {
 	outline: none;
-	background: #ddd;
+	background: var(--timepicker-border);
 }
 
 .__timepicker-button-container label:last-child {
@@ -113,11 +124,11 @@
 }
 
 .__timepicker-arrow-up {
-	border-bottom: 7px solid #616161;
+	border-bottom: 7px solid var(--timepicker-gray);
 }
 
 .__timepicker-arrow-down {
-	border-top: 7px solid #616161;
+	border-top: 7px solid var(--timepicker-gray);
 }
 
 @media screen and (max-width: 767px) {
@@ -128,7 +139,7 @@
 
 	.__timepicker-div {
 		height: 39px;
-		border-bottom: 1px solid#ddd;
+		border-bottom: 1px solid var(--timepicker-border);
 		border-right: 0;
 	}
 
