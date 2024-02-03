@@ -89,33 +89,38 @@ class Utilities
 	public static function check_connection($url)
 	{
 		try {
-			$headers = get_headers($url, true);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36');
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_FAILONERROR, true);
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+			curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+			$html = curl_exec($ch);
 
-			//I really don't know!
-			if ($headers === false)
-				throw new Exception(_('Unknown error.'));
-
-			if (strpos($headers[0], '404') !== false) //page not found
-				throw new Exception(str_replace('%code', '404', _('The server thrown a %code error.')));
-			else if (strpos($headers[0], '403') !== false) //forbidden
-				throw new Exception(str_replace('%code', '403', _('The server thrown a %code error.')));
+			if (!$html)
+				throw new Exception(curl_error($ch));
 
 			//no errors? OK we can proceed!
-
 		} catch (Throwable $t) { //something went wrong
 			$message = $t->getMessage();
 
 			//Those are the only messages parsed for now, could be expanded in the future with your help!
-			if (stripos($message, 'GET_SERVER_HELLO:unknown protocol') !== false) //SSL error
+			if (stripos($message, 'SSL received a record that exceeded the maximum permissible length') !== false) //SSL error
 				$message = _('Unable to estabilish a secure connection. Are you connecting to an http server over https?');
-			else if (stripos($message, 'ssl3_get_server_certificate:certificate verify failed') !== false) //SSL error
+			else if (stripos($message, 'Peer\'s Certificate has expired') !== false) //SSL error
 				$message = _('Unable to estabilish a secure connection. Please ensure that the server certificate is valid and not expired.');
-			else if (stripos($message, 'failed to open stream: Network is unreachable') !== false) //no network
+			else if (stripos($message, 'Network is unreachable') !== false) //no network
 				$message = _('The network is unreachable.');
 			else if (stripos($message, 'Connection refused') !== false) //connection refused
-				$message = _('The server refused the connection.');
-			else if (stripos($message, 'get_headers(): This function may only be used against URLs') !== false) //connection refused
+				$message = _('Connection to the server refused.');
+			else if (stripos($message, 'This function may only be used against URLs') !== false) //connection refused
 				$message = _('This does not seem to be an URL. Did you include the protocol?');
+			else if (stripos($message, '404 Not Found') !== false) //404
+				$message = str_replace('%code', '404', _('%code error.'));
+			else if (stripos($message, '403 Forbidden') !== false) //403
+				$message = str_replace('%code', '403', _('%code error.'));
 
 			throw new Exception($message);
 		}
