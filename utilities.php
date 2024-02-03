@@ -88,8 +88,9 @@ class Utilities
 	 */
 	public static function check_connection($url)
 	{
+		$ch = curl_init();
+
 		try {
-			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36');
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_FAILONERROR, true);
@@ -100,11 +101,12 @@ class Utilities
 			$html = curl_exec($ch);
 
 			if (!$html)
-				throw new Exception(curl_error($ch));
+				throw new Exception();
 
 			//no errors? OK we can proceed!
 		} catch (Throwable $t) { //something went wrong
-			$message = $t->getMessage();
+			$message = curl_error($ch);
+			$code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 
 			//Those are the only messages parsed for now, could be expanded in the future with your help!
 			if (stripos($message, 'SSL received a record that exceeded the maximum permissible length') !== false) //SSL error
@@ -117,12 +119,13 @@ class Utilities
 				$message = _('Connection to the server refused.');
 			else if (stripos($message, 'This function may only be used against URLs') !== false) //connection refused
 				$message = _('This does not seem to be an URL. Did you include the protocol?');
-			else if (stripos($message, '404 Not Found') !== false) //404
-				$message = str_replace('%code', '404', _('%code error.'));
-			else if (stripos($message, '403 Forbidden') !== false) //403
-				$message = str_replace('%code', '403', _('%code error.'));
+			else if ($code == 404) //404
+				$message = str_replace('%code', '404 Not Found', _('%code error.'));
+			else if ($code == 403) //403
+				$message = str_replace('%code', '403 Forbidden', _('%code error.'));
 
-			throw new Exception($message);
+			if ($code != 401) //unathorized is fine, this is not the point of the check
+				throw new Exception($message);
 		}
 
 		return true;
