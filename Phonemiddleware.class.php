@@ -126,6 +126,8 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"Birthday": "' . _('Birthday') . '", ' .
 			'"Address": "' . _('Address') . '", ' .
 			'"Name": "' . _('Name') . '", ' .
+			'"SSL_Active": "' . _('SSL Active') . '", ' .
+			'"SSL_Bypass": "' . _('Bypass SSL') . '", ' .
 			'"JS_fn": "' . _('Full card name') . '", ' .
 			'"JS_email_adr": "' . _('Email address') . '", ' .
 			'"JS_org": "' . _('Organization name') . '", ' .
@@ -298,6 +300,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				$this->Core->set_url($_POST['carddav_url']);
 				$this->Core->set_auth($_POST['carddav_user'], $_POST['carddav_psw']);
 				$this->Core->set_carddav_addressbooks($_POST['carddav_addressbooks']);
+				if (method_exists(Core::class, 'get_ssl_enabled')) $this->Core->set_ssl_enabled($_POST['carddav_ssl_enable'] == 'on');
 
 				try {
 					if (!$this->Core->store_config()) //store config with the updated values above
@@ -313,11 +316,13 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				//load all the values from the server
 				$this->Core->set_url($_POST['carddav_url']);
 				$this->Core->set_auth($_POST['carddav_user'], $_POST['carddav_psw']);
+				if (method_exists(Core::class, 'get_ssl_enabled')) $this->Core->set_ssl_enabled($_POST['carddav_ssl_enable'] == 'on');
 				$this->Core->init(); //force new init
+
 				$result = $this->Core->discover_addressbooks_to_display();
 				$uris = $this->Core->get_carddav_addressbooks();
 
-				//then reorder the array as we saved it. Position of not checked values will be obviously not be preserved as nobody cares.
+				//then reorder the array as we saved it. Position of non checked values will obviously not be preserved as nobody cares.
 				for ($i = count($uris) - 1; $i >= 0; --$i) {
 					$uri = $uris[$i];
 					if (array_key_exists($uri, $result)) { //if the book is still there (read: if not deleted from the server)
