@@ -4,12 +4,20 @@
  * This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
  */
 
- :root {
+/* colors that could be used also by core and others, do not change! */
+:root {
 	/* generic */
-	--light: #fff;
+	--background-pure: #fff;
+	--text: #000;
 	--background: #fafafa;
 	--text-soft: #9e9e9e;
 	--link-blue: #2196f3;
+
+	/* colors */
+	--green: #008000;
+	--yellow: #ffbf00;
+	--red: #c62828;
+	--blue: #263672;
 
 	/* borders */
 	--form-border: #ddd;
@@ -359,7 +367,7 @@ body.fix {
 
 .ph-checkbox>input:checked~span:after {
 	display: block;
-	color: var(--light);
+	color: var(--background-pure);
 }
 
 /* checkbox inside max cnam output */
@@ -587,7 +595,7 @@ a:hover>i.fa {
 }
 
 .arrow-container::after {
-	border-color: transparent transparent var(--light) transparent;
+	border-color: transparent transparent var(--background-pure) transparent;
 }
 
 .arrow-container::before {
@@ -699,7 +707,7 @@ a:hover>i.fa {
 	top: -3px;
 	z-index: 101;
 	background: var(--close);
-	color: var(--light);
+	color: var(--background-pure);
 	font-size: 12px;
 	line-height: 17px;
 	font-weight: bold;
@@ -722,7 +730,7 @@ a:hover>i.fa {
 	visibility: hidden;
 	border: 1px solid var(--tab-border);
 	border-radius: 0.3em;
-	background: var(--light);
+	background: var(--background-pure);
 	transition: all .25s ease;
 }
 
@@ -780,7 +788,7 @@ a:hover>i.fa {
 	float: right;
 	border-radius: 12.5px;
 	font-weight: bold;
-	color: var(--light);
+	color: var(--background-pure);
 }
 
 .notification-bubble>button {
