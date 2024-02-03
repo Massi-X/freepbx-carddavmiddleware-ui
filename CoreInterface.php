@@ -58,7 +58,13 @@ interface CoreInterface
 	public const PHONE_TYPE_NO_LIMITS = 1;
 	public const PHONE_TYPE_FANVIL = 2;
 	public const PHONE_TYPE_SNOM = 3;
-	public const PHONE_TYPES = [self::PHONE_TYPE_NO_LIMITS, self::PHONE_TYPE_FANVIL, self::PHONE_TYPE_SNOM];
+	//frendly names that HAVE TO correspond to the IDs (= array index) above. Mainly used fot GET requests (they cannot be translated)
+	public const PHONE_TYPES = [
+		null, //this is not defined but may be used in the future
+		'UNLIMITED', //=PHONE_TYPE_NO_LIMITS
+		'FANVIL', //=PHONE_TYPE_FANVIL
+		'SNOM' //=PHONE_TYPE_SNOM
+	];
 
 	//notification type and options constants. You can put below fixed notification IDs (> 0 && < 1000)
 	public const NOTIFICATION_TYPE_VERBOSE = 1; //this is a verbose message
