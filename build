@@ -106,6 +106,9 @@ function copy_i($from, $to, $exclude_list = [])
 //die with error color
 function die_i($msg)
 {
+	global $tmpFolder;
+	@exec("rm -rf $tmpFolder"); //don't care about errors
+
 	die(colorLog($msg, 'e'));
 }
 
@@ -162,9 +165,9 @@ if (!$fileList)
 //remove excluded files from root (these are only mine, so $excludedLibraryFiles)
 $fileList = array_diff($fileList, $excludedLibraryFiles);
 
-//now copy everything and pass $excludedGenericFiles here to exclude unnecessary files in core too
+//now copy everything
 foreach ($fileList as $file)
-	copy_i($file, "$tmpFolder/$rawname/$file", $excludedGenericFiles);
+	copy_i($file, "$tmpFolder/$rawname/$file");
 
 echo colorLog("Copied temporary files.\n", 's');
 
@@ -530,6 +533,28 @@ try {
 
 if ($config)
 	echo colorLog("Finished loading values from config file. Please read above to assure everything is correct\n", 's');
+
+echo colorLog("Checking for post_build_hook script...\n", 'i');
+
+//call core post_build script if provided
+if (file_exists("$tmpFolder/$rawname/core/post_build_hook")) {
+	try {
+		$output = array();
+		exec("php $tmpFolder/$rawname/core/post_build_hook 2> /dev/null", $output, $return);
+
+		if ($return != 0)
+			throw new Exception(implode("", $output));
+		else
+			echo colorLog("Executed post_build_hook script!\n", 's');
+
+		if (!unlink("$tmpFolder/$rawname/core/post_build_hook")) //delete after use
+			die_i("Unable to delete post_build_hook!\n");
+	} catch (Throwable $t) {
+		echo colorLog($t->getMessage() . "\n", 'e');
+		die_i("post_build_hook thrown an error, build canceled!\n");
+	}
+} else
+	echo colorLog("No post_build_hook script found, proceeding.\n", 'i');
 
 //signing is optional
 $res = interactive_shell('Do you want to sign the module?', null, ['Y', 'N']);
