@@ -54,7 +54,7 @@ interface CoreInterface
 	/***					Do not modify/delete constants!						***/
 	/******************************************************************************/
 
-	//if new are added remember to update getXMLforPhones + BMO class with new languages. MUST BE CONSECUTIVE. MUST START AT 1 (NOT 0).
+	//if new are added remember to update getXMLforPhones + BMO class with new languages. MUST BE CONSECUTIVE and >= 1
 	public const PHONE_TYPE_NO_LIMITS = 1;
 	public const PHONE_TYPE_FANVIL = 2;
 	public const PHONE_TYPE_SNOM = 3;
