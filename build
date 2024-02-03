@@ -182,7 +182,7 @@ if (file_exists("$tmpFolder/$rawname/core/config")) {
 	if (!unlink("$tmpFolder/$rawname/core/config"))
 		die_i("Unable to delete config file!\n");
 
-	echo colorLog("Using the provded config file\n", 's');
+	echo colorLog("Using the provided config file\n", 's');
 }
 
 //container for the xml below
