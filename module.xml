@@ -1,0 +1,5 @@
+<!-- this is now a dummy file only required for the update notification of old versions (1.x.x). It
+will be automatically overwritten when building. -->
+<module>
+	<version>2.0.0</version>
+</module>

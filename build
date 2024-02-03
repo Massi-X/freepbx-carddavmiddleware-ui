@@ -1,0 +1,570 @@
+#!/usr/bin/env php
+<?php
+/*
+ * CardDAV Middleware UI
+ * Written by Massi-X <firemetris@gmail.com> © 2023
+ * This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
+ */
+
+/**
+ * This build script handles package creation, versioning, signing and everything.
+ */
+
+require 'build_config';
+$rawname = 'temp'; //rawname is needed for create the tar archive (will change later to the chosen one)
+
+//Thanks to https://stackoverflow.com/a/15322457 for the interactive shell hint
+//Note that $allowed_answers is incompatible with $multiline
+function interactive_shell($question, $type = null, $allowed_answers = null, $multiline = false)
+{
+	$str = $question . ' ';
+	$res = '';
+
+	//print allowed answers
+	if (!empty($allowed_answers)) {
+		$str .= '(';
+		foreach ($allowed_answers as $answer)
+			$str .= $answer . '/';
+		$str = substr($str, 0, -1) . ') ';
+	}
+
+	//echo message
+	echo colorLog($str, $type);
+
+	//read input
+	if (!$multiline)
+		$res = readline();
+	else
+		while ($tmp = readline())
+			$res .= $tmp . "\n";
+
+	//keep looping till we get an allowed answer
+	if (!$multiline && !empty($allowed_answers)) {
+		foreach ($allowed_answers as $answer) {
+			if (strcasecmp($res, $answer) == 0)
+				return $res;
+		}
+		echo colorLog("I did not understand, please try again.\n", 'e');
+		return interactive_shell($question, $type, $allowed_answers);
+	}
+
+	return $res;
+}
+
+//Thanks to https://stackoverflow.com/a/66075475
+function colorLog($str, $type)
+{
+	switch ($type) {
+		case 'e': //error
+			echo "\033[31m$str\033[0m";
+			break;
+		case 's': //success
+			echo "\033[32m$str\033[0m";
+			break;
+		case 'w': //warning
+			echo "\033[33m$str\033[0m";
+			break;
+		case 'i': //info
+			echo "\033[36m$str\033[0m";
+			break;
+		case 'b': //boring
+			echo "\033[37m$str\033[0m";
+			break;
+		default:
+			echo $str;
+			break;
+	}
+}
+
+//redefined copy to recurse folders
+function copy_i($from, $to, $exclude_list = [])
+{
+	//don't copy hidden files
+	if (substr($from, 0, 1) == '.')
+		return true;
+
+	if (is_dir($from)) {
+		//don't need to array_diff with '.', '..' because hidden files will be removed anyway
+		$fileList = scandir($from);
+		if (!$fileList || !mkdir("$to"))
+			return false;
+
+		$fileList = array_diff($fileList, $exclude_list);
+		foreach ($fileList as $file) {
+			if (substr($file, 0, 1) == '.')
+				continue;
+
+			if (!copy_i("$from/$file", "$to/$file"))
+				return false;
+		}
+
+		return true;
+	} else
+		return copy($from, $to);
+}
+
+//die with error color
+function die_i($msg)
+{
+	die(colorLog($msg, 'e'));
+}
+
+/*****************************************************************/
+/*							ACTUAL SCRIPT						 */
+/*****************************************************************/
+
+echo colorLog("Welcome to the build script. A compress file will be created containing the module ready to be published.\n", 'i');
+echo colorLog("REMEMBER THAT HIDDEN FILES WILL NOT BE INCLUDED IN THE OUTPUT!\n", 'i');
+sleep(1);
+
+//first change to the correct dir
+if (!chdir(__DIR__))
+	die_i("Failed to change dir!\n");
+
+if (!file_exists('core/core.php'))
+	die_i("Unable to find core class! ABORTING!\n");
+
+if (file_exists('output.tar.gz')) {
+	$res = interactive_shell('output.tar.gz already exists, if you continue it will be overwritten! Are you sure?', 'w', ['Y', 'N']);
+
+	if ($res != 'Y' && $res != 'y')
+		die_i("ABORTING!\n");
+
+	echo "Deleting output.tar.gz...\n";
+	if (!unlink(__DIR__ . '/output.tar.gz'))
+		die_i("Cannot delete output.tar.gz!\n");
+}
+
+//create random folder
+$tmpFolder = 'ph_' . uniqid();
+while (true) {
+	if (file_exists($tmpFolder) || is_link($tmpFolder)) {
+		$tmpFolder = 'ph_' . uniqid();
+		continue;
+	}
+
+	$tmpFolder = sys_get_temp_dir() . '/' . $tmpFolder;
+	if (!@mkdir($tmpFolder . '/' . $rawname, 0777, true) || !@is_dir($tmpFolder . '/' . $rawname))
+		die_i("Cannot create tmp dir!\n");
+
+	break;
+}
+
+//list all the files in this dir
+$fileList = scandir(__DIR__);
+if (!$fileList)
+	die_i("Cannot scan dir!\n");
+
+//remove excluded files from root (these are only mine, so $excludedLibraryFiles)
+$fileList = array_diff($fileList, $excludedLibraryFiles);
+
+//now copy everything and pass $excludedGenericFiles here to exclude unnecessary files in core too
+foreach ($fileList as $file)
+	copy_i($file, "$tmpFolder/$rawname/$file", $excludedGenericFiles);
+
+echo colorLog("Copied temporary files.\n", 's');
+
+//ask some questions about the module details (that will be included in module.xml)
+echo colorLog("It's now time to get some information about the module... If you want to skip any section press enter.\n", 'i');
+echo colorLog("(PS. If you want to skip this for future releases, you can create a file called config (inside \"core\" directory) and it will be automatically loaded!)\n", 'i');
+
+//if config exists, preload all the values
+$config = false;
+if (file_exists("$tmpFolder/$rawname/core/config")) {
+	$config = @include "$tmpFolder/$rawname/core/config";
+	if ($config === false)
+		die_i('Unable to include config file!');
+
+	if (!unlink("$tmpFolder/$rawname/core/config"))
+		die_i("Unable to delete config file!\n");
+
+	echo colorLog("Using the provded config file\n", 's');
+}
+
+//container for the xml below
+$output_xml = new SimpleXMLElement('<?xml version="1.0"?><module></module>');
+
+//add meta tag with UI version
+$output_xml->addChild('meta-cmui-version', $UI_version);
+
+//rawname
+if (!$config)
+	$res = interactive_shell('What is the rawname of the module?');
+else
+	$res = @$config['rawname'];
+
+if (!empty($res)) {
+	echo colorLog("Setting rawname to \"$res\"\n", 'b');
+} else {
+	$res = (empty($modulexml['rawname']) ? 'none' : $modulexml['rawname']);
+	echo colorLog("Setting rawname to default \"$res\"\n", 'b');
+}
+
+$output_xml->addChild('rawname', htmlspecialchars(trim($res)));
+
+//now move the files to the new directory
+if (!@rename("$tmpFolder/$rawname", $tmpFolder . '/' . trim($res)))
+	die_i("Unable to rename tmp folder!\n");
+$rawname = trim($res);
+
+//name
+if (!$config)
+	$res = interactive_shell('What is the name (to display) of the module?');
+else
+	$res = @$config['name'];
+
+if (!empty($res)) {
+	echo colorLog("Setting name to \"$res\"\n", 'b');
+} else {
+	$res = (empty($modulexml['name']) ? 'none' : $modulexml['name']);
+	echo colorLog("Setting name to default \"$res\"\n", 'b');
+}
+
+$output_xml->addChild('name', htmlspecialchars(trim($res)));
+
+//version
+if (!$config)
+	$res = interactive_shell('Which version is this? (use three digits, ex. 1.0.0):');
+else
+	$res = @$config['version'];
+
+if (!empty($res))
+	echo colorLog("Setting version to \"$res\"\n", 'b');
+else {
+	$res = (empty($modulexml['version']) ? 'none' : $modulexml['version']);
+	echo colorLog("Setting version to default \"$res\"\n", 'b');
+}
+
+$output_xml->addChild('version', htmlspecialchars(trim($res)));
+
+//category
+$categories = [
+	0 => 'Uncategorized',
+	1 => 'Admin',
+	2 => 'Applications',
+	3 => 'Connectivity',
+	4 => 'Reports',
+	5 => 'Settings'
+];
+
+if (!$config) {
+	echo "Which category does your module belongs to?\n";
+	foreach ($categories as $index => $cat)
+		echo "[$index] $cat\n";
+	$res = interactive_shell('Input your choice:', null, array_keys($categories));
+} else {
+	$res = @$config['category'];
+	if (!empty($res) && is_string($res)) {
+		$key = array_search($res, $categories);
+		if (is_int($key))
+			$res = $key;
+		else {
+			$res = null;
+			echo colorLog("Config file contains an invalid value for category, skipping.\n", 'e');
+		}
+	}
+}
+
+if (!empty($res) && strcasecmp('0', trim($res)) != 0) {
+	echo colorLog('Setting category to "' . $categories[$res] . "\"\n", 'b');
+	$output_xml->addChild('category', htmlspecialchars($categories[$res]));
+} else
+	echo colorLog("Skipping category\n", 'b');
+
+//menu items
+$menu_to_add = [];
+
+if (isset($modulexml['menuitems']))
+	$menu_to_add = array_merge($modulexml['menuitems'], []); //add default values
+
+if (!$config) {
+	//print info for user (adding default menu items)
+	if (!empty($menu_to_add)) {
+		echo "Adding default menu items...\n";
+		foreach ($menu_to_add as $key => $val)
+			echo colorLog("Adding \"$key\" => \"$val\"\n", 'b');
+	}
+
+	$res = 'y';
+	while ($res != null) {
+		$res = interactive_shell('Does your module have any menu items? Then input here the (php) page name or skip with enter:');
+		if (!empty($res)) {
+			$key = $res;
+			$res = interactive_shell("OK, what is the name for the entry \"$res\"?");
+			if (!empty($res)) {
+				echo colorLog((isset($menu_to_add[$key]) ? 'Overwriting' : 'Adding') . " menu item \"$key\" => \"$res\"\n", 'b');
+				$menu_to_add[$key] = $res;
+			} else
+				echo colorLog("Invalid value, please retry.\n", 'w');
+		} else
+			$res = null;
+	}
+} else {
+	$arr = @$config['menuitems'];
+	if (!is_array($arr))
+		echo colorLog("Config file contains an invalid array for menuitems, skipping.\n", 'e');
+	else {
+		foreach ($arr as $key => $val)
+			$menu_to_add[$key] = $val;
+	}
+}
+
+//add all the values declared before (if any)
+if (count($menu_to_add)) {
+	$menuitems_xml = $output_xml->addChild('menuitems'); //subnode for menu items
+
+	foreach ($menu_to_add as $key => $val) {
+		echo colorLog("Adding menuitem \"$key\" => \"$val\"\n", 'b');
+		$menuitems_xml->addChild(trim($key), htmlspecialchars(trim($val)));
+	}
+
+	echo colorLog("Menu items set.\n", 'b');
+} else
+	echo colorLog("Skipping menu items\n", 'b');
+
+//publisher
+if (!$config)
+	$res = interactive_shell('Do you want to be added as a publisher? Input your name then:');
+else
+	$res = @$config['publisher'];
+
+if (!empty($res)) {
+	$res = $res . ' w/ ' . $modulexml['publisher'];
+	echo colorLog("Setting publisher to \"$res\"\n", 'b');
+} else {
+	$res = (empty($modulexml['publisher']) ? 'none' : $modulexml['publisher']);
+	echo colorLog("Setting publisher to default \"$res\"\n", 'b');
+}
+
+$output_xml->addChild('publisher', htmlspecialchars(trim($res)));
+
+//description
+if (!$config)
+	$res = interactive_shell('What is the short description of the module?');
+else
+	$res = @$config['description'];
+
+if (!empty($res))
+	echo colorLog("Setting description to \"$res\"\n", 'b');
+else {
+	$res = (empty($modulexml['description']) ? 'none' : $modulexml['description']);
+	echo colorLog("Setting description to default \"$res\"\n", 'b');
+}
+
+$output_xml->addChild('description', htmlspecialchars(trim($res)));
+
+//license
+if (!$config)
+	$res = interactive_shell('What license are you using?');
+else
+	$res = @$config['license'];
+
+if (!empty($res)) {
+	echo colorLog("Setting license to \"$res\"\n", 'b');
+	$output_xml->addChild('license', htmlspecialchars(trim($res)));
+
+	//license link is subject to license itself
+	if (!$config)
+		$res = interactive_shell("Please now input a link pointing to the license text of $res:");
+	else
+		$res = @$config['licenselink'];
+
+	if (!empty($res)) {
+		echo colorLog("Setting license link to \"$res\"\n", 'b');
+		$output_xml->addChild('licenselink', htmlspecialchars(trim($res)));
+	} else
+		die_i("You MUST include a license link in case you choose a different license.\n");
+} else {
+	$license = (empty($modulexml['license']) ? 'none' : $modulexml['license']);
+	echo colorLog("Setting license to default \"$license\"\n", 'b');
+
+	$output_xml->addChild('license', htmlspecialchars(trim($license)));
+	$output_xml->addChild('licenselink', htmlspecialchars(trim($modulexml['licenselink'])));
+}
+
+//more-info
+if (!$config)
+	$res = interactive_shell('Do you have a link with more info about the module? Please input it then:');
+else
+	$res = @$config['more-info'];
+
+if (!empty($res))
+	echo colorLog("Setting more-info to \"$res\"\n", 'b');
+else {
+	$res = (empty($modulexml['more-info']) ? 'none' : $modulexml['more-info']);
+	echo colorLog("Setting more-info to default \"$res\"\n", 'b');
+}
+
+$output_xml->addChild('more-info', htmlspecialchars(trim($res)));
+
+//updateurl
+if (!$config)
+	$res = interactive_shell('Do you have an update json for automatic updates? Please input the link then:');
+else
+	$res = @$config['updateurl'];
+
+if (!empty($res))
+	echo colorLog("Setting updateurl to \"$res\"\n", 'b');
+else {
+	$res = (empty($modulexml['updateurl']) ? 'none' : $modulexml['updateurl']);
+	echo colorLog("Setting updateurl to default \"$res\"\n", 'b');
+}
+
+$output_xml->addChild('updateurl', htmlspecialchars(trim($res)));
+
+//changelog
+if (!$config)
+	$res = interactive_shell('Do you want to insert any release notes? Please input them now (to finish hit enter twice):', null, null, true);
+else
+	$res = @$config['changelog'];
+
+if (!empty($res))
+	$modulexml['changelog'] .= $res;
+
+echo colorLog("Setting changelog to:\n" . trim(preg_replace('/\t+/', '', (empty($modulexml['changelog']) ? 'none' : $modulexml['changelog']))) . "\n", 'b');
+$output_xml->addChild('changelog', htmlspecialchars(trim($modulexml['changelog'])));
+
+//dependencies
+$depends_xml = $output_xml->addChild('depends'); //subnode for depends
+
+$depends_to_add = [];
+if (isset($modulexml['depends']))
+	$depends_to_add = array_merge($modulexml['depends'], []); //store the used keys to print an info for the user (except 'module' that can have multiple ones) + set default keys
+
+if (!$config) {
+	//print info for user (adding default dependencies)
+	echo "Adding default dependecies...\n";
+	foreach ($depends_to_add as $key => $val)
+		echo colorLog("Adding \"$key\" => \"$val\"\n", 'b');
+
+	$res = 'y';
+	while ($res != null) {
+		$res = interactive_shell('Does your module have any dependecies? If yes input it here (version/module/phpversion...) or skip with enter:');
+		if (!empty($res)) {
+			$key = $res;
+			$res = interactive_shell("OK, what is the description/version for dependecy \"$res\"?");
+			if (!empty($res)) {
+				if (strcasecmp($key, 'version') == 0 && version_compare($minimum_fpbx, $res) == 1) //disallow versions < $minimum_fpbx
+					echo colorLog("Minimum version is $minimum_fpbx, please retry.\n", 'e');
+				else {
+					if (strcasecmp($key, 'module') == 0) { //module is the only one that accepts multiple entries
+						echo colorLog("Adding dependecy \"$key\" => \"$res\"\n", 'b');
+						$depends_xml->addChild(trim($key), htmlspecialchars(trim($res)));
+					} else {
+						echo colorLog((isset($depends_to_add[$key]) ? 'Overwriting' : 'Adding') . " dependecy \"$key\" => \"$res\"\n", 'b');
+						$depends_to_add[$key] = $res;
+					}
+				}
+			} else
+				echo colorLog("Invalid value, please retry.\n", 'w');
+		} else
+			$res = null;
+	}
+
+	//add all the values declared before (apart from module)
+	foreach ($depends_to_add as $key => $val)
+		$depends_xml->addChild(trim($key), htmlspecialchars(trim($val)));
+} else {
+	//build the xml from an array
+	function arraywalk($arr, $is_default = false)
+	{
+		global $depends_xml;
+		global $minimum_fpbx;
+
+		foreach ($arr as $key => $value) {
+			if (!empty($key)) {
+				if (!empty($value)) {
+					if (strcasecmp($key, 'version') == 0 && version_compare($minimum_fpbx, $value) == 1) //disallow versions < $minimum_fpbx
+						echo colorLog("You were trying to set a minimum version below $minimum_fpbx but this is not allowed, skipping.\n", 'e');
+					else {
+						if (strcasecmp($key, 'module') == 0) { //module is the only one that accepts multiple entries
+							if (!is_array($value))
+								$value = [$value];
+
+							foreach ($value as $val) {
+								echo colorLog("Adding " . ($is_default ? 'default ' : '') . "dependecy \"module\" => \"$val\"\n", 'b');
+								$depends_xml->addChild('module', htmlspecialchars(trim($val)));
+							}
+						} else { //no need to check for duplicates here. It is impossible for the array to have any
+							echo colorLog("Adding " . ($is_default ? 'default ' : '') . "dependecy \"$key\" => \"$value\"\n", 'b');
+							$depends_xml->addChild(trim($key), htmlspecialchars(trim($value)));
+						}
+					}
+				} else
+					echo colorLog("$key is empty, skipping.\n", 'w');
+			}
+		}
+	}
+
+	if (!is_array(@$config['depends'])) //fail if depends is not an array
+		echo colorLog("Config file contains an invalid array for depends, skipping.\n", 'e');
+	else {
+		//remove overwritten default values
+		foreach ($depends_to_add as $key => $val) {
+			if (array_key_exists($key, $config['depends']))
+				unset($depends_to_add[$key]);
+		}
+
+		arraywalk($depends_to_add, true); //add default dependencies
+		arraywalk($config['depends']); //add 'core' dependencies
+	}
+}
+
+echo colorLog("Dependencies set.\n", 'b'); //no need to skip this if no dependency is set (it will never happen because version is always there)
+
+//remove module.xml from output (if present)...
+if (file_exists("$tmpFolder/$rawname/module.xml") && !unlink("$tmpFolder/$rawname/module.xml"))
+	die_i("Unable to delete module.xml!\n");
+
+//...and replace it with our generated one
+try {
+	$result = $output_xml->asXML("$tmpFolder/$rawname/module.xml");
+	file_put_contents("$tmpFolder/$rawname/module.xml", file_get_contents("$tmpFolder/$rawname/module.xml") .  "<!-- AUTO GENERATED FILE. DO NOT TOUCH! -->"); //put comment at the end for xml parser
+} catch (Throwable $t) {
+	die_i("Unable to write module.xml!\n");
+}
+
+if ($config)
+	echo colorLog("Finished loading values from config file. Please read above to assure everything is correct\n", 's');
+
+//signing is optional
+$res = interactive_shell('Do you want to sign the module?', null, ['Y', 'N']);
+if ($res == 'Y' || $res == 'y') {
+	//checks to be performed before everything else
+	if (!`which gpg`)
+		die_i('Please run `brew install gpg` to enable signing.');
+
+	if (!file_exists('devtools') || !is_dir('devtools'))
+		die_i("Unable to find devtools folder. Please download it from https://github.com/FreePBX/devtools and unzip it in the main directory (the same as this script) to continue.\n");
+
+	//a key ID is needed
+	$key = interactive_shell('Please provide now your GPG key ID to sign the module:');
+
+	if (empty($key))
+		die_i("GPG key cannot be empty! ABORTING!\n");
+
+	//exec the sign and echo every output
+	echo colorLog(exec("GPG_TTY=$(tty) && export GPG_TTY && php devtools/sign.php $tmpFolder/$rawname " . escapeshellarg($key)) . "\n", 'i');
+}
+
+//tar.gz the file (thanks to https://stackoverflow.com/a/20062628)
+try {
+	$phar = new PharData(__DIR__ . "/output.tar");
+
+	$phar->buildFromDirectory("$tmpFolder");
+
+	//tar archive will be created only after closing object
+	$phar->compress(Phar::GZ);
+
+	// NOTE THAT BOTH FILES WILL EXISTS. SO IF YOU WANT YOU CAN UNLINK archive.tar
+	unlink(__DIR__ . "/output.tar");
+} catch (Exception $e) {
+	die_i("Failed to create tar file!\n");
+}
+
+//delete tmp folder (don't care about exeptions)
+@exec("rm -rf $tmpFolder");
+
+//open output directory
+@exec('open ' . escapeshellarg(__DIR__)); //don't care about exceptions
+echo colorLog("Done, you can find the tar inside the source directory.\n", 's');

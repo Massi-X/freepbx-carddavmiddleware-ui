@@ -1,0 +1,809 @@
+/*
+ * CardDAV Middleware UI
+ * Written by Massi-X <firemetris@gmail.com> © 2023
+ * This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
+ */
+
+/* override default dragsort styles to prevent glithes. See also js or https://github.com/yairEO/dragsort/issues/5#issuecomment-1004465926 */
+.dragsort--dragStart .dragsort--hide {
+	display: none !important;
+}
+
+.dragsort--dragStart>* {
+	transition: margin .15s ease-in-out !important;
+}
+
+/* set a maximum width for dialogs + prettier close icon */
+.ui-dialog {
+	max-width: 95vw;
+}
+
+.ui-dialog-titlebar-close {
+	width: 20px !important;
+	padding: 0 !important;
+	height: 20px !important;
+	top: 17.5px !important;
+	right: 15px !important;
+	margin: 0 !important;
+	opacity: 1 !important;
+}
+
+.ui-dialog-titlebar-close::before {
+	font-family: 'FontAwesome';
+	content: "\f057";
+	line-height: 20px;
+	font-size: 20px;
+	opacity: 1;
+	color: #f44336;
+}
+
+.ui-dialog-titlebar-close:hover::before {
+	color: #d32f2f;
+}
+
+.ui-dialog-titlebar-close:active::before {
+	color: #b71c1c;
+}
+
+/* fix Sangoma's own footer... */
+#footer {
+	height: auto !important;
+	min-height: 100px;
+}
+
+@media screen and (max-width: 991px) {
+	#footer #footer_content #footer_logo {
+		float: initial !important;
+		padding-right: 0 !important;
+	}
+}
+
+/* fix row height */
+.element-container {
+	min-height: 42px;
+}
+
+/* fix input hiding */
+input[hidden] {
+	display: none !important;
+}
+
+/* fix button style per my taste */
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+	outline: none;
+}
+
+/* radioset tabulation selection/focus/active colors */
+.radioset label:focus-visible {
+	outline: none;
+}
+
+.radioset>input:not(:checked)+label:focus-visible {
+	background: #d2ddd8 !important;
+}
+
+.radioset>input:checked+label:focus-visible {
+	background: #4a7d64 !important;
+}
+
+/* fix dialog height */
+.ui-dialog {
+	max-height: calc(100vh - 30px);
+	overflow-y: auto;
+}
+
+/* keep dialog at center of screen */
+.ui-dialog {
+	position: fixed !important;
+	top: 50% !important;
+	left: 50% !important;
+	transform: translate(-50%, -50%);
+}
+
+/* adjust dialog list per my taste */
+.ui-dialog ul li {
+	margin-bottom: 5px;
+}
+
+/* fix fpbx-tagify conflict see issue https://github.com/yairEO/tagify/issues/1110 */
+.tagify {
+	height: auto;
+	--tag-inset-shadow-size: 1.3em !important;
+}
+
+/* adjust select (single-value mode) style of tagify per my needs */
+.phone_type__tagify .tagify__input::selection {
+	background: transparent;
+}
+
+.tagify--select .tagify__tag__removeBtn {
+	display: none !important;
+}
+
+/* overcome tagify visibility hidden after loading */
+.tagify {
+	visibility: visible !important;
+}
+
+/* align tagify and inputs to the same styles */
+.tagify {
+	--tags-focus-border-color: rgba(94, 156, 125, 0.9) !important;
+	--tags-hover-border-color: rgba(94, 156, 125, 0.9) !important;
+	--tag-border-radius: 4px !important;
+}
+
+:root {
+	--tagify-dd-color-primary: rgba(94, 156, 125, 0.9) !important;
+}
+
+#page_body input.form-control,
+.ui-dialog input.form-control {
+	min-height: 37px;
+	border-color: #ddd;
+}
+
+#page_body input.form-control:hover:enabled,
+.ui-dialog input.form-control:hover:enabled,
+#page_body input.form-control:focus:enabled,
+.ui-dialog input.form-control:focus:enabled {
+	box-shadow: none;
+	border-color: rgba(94, 156, 125, 0.9);
+}
+
+#page_body input.form-control:focus,
+.ui-dialog input.form-control:focus {
+	box-shadow: none;
+}
+
+/* adjust input style of tagify per my needs */
+.phone_type__tagify,
+.output_construct__tagify {
+	cursor: pointer !important;
+}
+
+/* To be used together to place a button beside an input */
+.col-md-9-flex {
+	display: flex;
+}
+
+.form-control-flex {
+	flex: 1;
+}
+
+.btn-input-flex {
+	margin-left: 10px;
+}
+
+/* custom checkbox */
+.ph-checkbox {
+	display: block;
+	user-select: none;
+	cursor: pointer;
+	height: 25px;
+	width: 25px;
+}
+
+.ph-checkbox>input {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
+}
+
+.ph-checkbox>span {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	border-radius: 0.3em;
+	border: 1px solid #9e9e9e;
+	background-color: #fafafa;
+}
+
+.ph-checkbox>span:after {
+	font: normal normal normal 14px/1 FontAwesome;
+	content: "\f00c";
+	position: absolute;
+	color: #9E9E9E;
+	left: 5px;
+	top: 5px;
+	width: 5px;
+	height: 10px;
+}
+
+.ph-checkbox:hover input:not(:checked)~span {
+	background-color: #eee;
+}
+
+.ph-checkbox:active input:not(:checked)~span,
+.ph-checkbox>input:not(:checked):focus-visible~span {
+	background-color: #e0e0e0;
+}
+
+.ph-checkbox>input:checked~span {
+	background-color: rgba(94, 156, 125, 0.9);
+	border-color: #4a7d64;
+}
+
+.ph-checkbox:hover input:checked~span {
+	background-color: #5e9c7d;
+}
+
+.ph-checkbox:active input:checked~span,
+.ph-checkbox>input:checked:focus-visible~span {
+	background-color: #4a7d64;
+}
+
+.ph-checkbox>input:checked~span:after {
+	display: block;
+	color: #fff;
+}
+
+/* checkbox inside max cnam output */
+#max_cnam_container {
+	position: relative;
+}
+
+#max_cnam_container>input[type="number"] {
+	padding-left: 37px;
+	transition: outline-color 0.25s ease;
+	outline: solid 1px transparent;
+}
+
+.input-invalid-blink {
+	border-color: #F44336 !important;
+	outline-color: #F44336 !important;
+}
+
+#max_cnam_container>.ph-checkbox {
+	position: absolute;
+	margin: 6px 6px;
+}
+
+/* Other styles */
+pre {
+	white-space: pre-line;
+}
+
+.notvisible {
+	visibility: hidden;
+}
+
+details {
+	padding: 5px;
+	background: #fffde7;
+	border: 1px solid #fff59d;
+	border-radius: 4px;
+}
+
+summary {
+	cursor: pointer;
+	color: #616161;
+}
+
+summary::-webkit-details-marker {
+	display: none;
+}
+
+summary:before {
+	content: "►";
+	font-size: 10px;
+	padding-right: 5px;
+}
+
+details[open] summary:before {
+	content: "▼";
+}
+
+.col-md-9.flexible {
+	display: flex;
+	align-items: center;
+}
+
+.header-img {
+	height: 30px;
+}
+
+.ph-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 3px;
+}
+
+.ph-header>.title,
+.ph-header>.activation {
+	display: flex;
+	align-items: center;
+}
+
+.ph-header>div>*:not(script):not(style) {
+	display: inline-flex;
+	flex-shrink: 0;
+}
+
+.ph-header>div>*:not(:first-child) {
+	margin-left: 8px;
+}
+
+.ph-header>.title {
+	flex: 1;
+	order: 1;
+}
+
+.ph-header>.activation {
+	order: 2;
+}
+
+.ph-header>.title>h2 {
+	margin-bottom: 0;
+}
+
+ul.numeric-list {
+	list-style: decimal;
+}
+
+ul.numeric-list> ::marker {
+	font-weight: bold;
+}
+
+.item-info {
+	font-size: 12px;
+	color: #9e9e9e;
+	margin-left: 10px;
+}
+
+.element-container.flexible {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.btn-magic {
+	display: inline-block;
+	margin: 5px 5px;
+}
+
+.btn-magic>* {
+	text-decoration: none !important;
+}
+
+.btn-magic>i {
+	padding-right: 9px;
+	font-size: 18px;
+	line-height: 18px;
+	vertical-align: middle;
+}
+
+.btn-popup {
+	display: inline-block;
+	font-weight: bold;
+	text-decoration: underline;
+	color: #2196f3;
+}
+
+.btn-popup:visited {
+	color: #2196f3;
+}
+
+.btn-popup>i {
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.btn-submit {
+	float: right;
+	margin: 10px 10px 5px 0;
+}
+
+#restoredonationPopup>form>input {
+	min-width: 300px;
+}
+
+.help-section {
+	display: inline-flex;
+	margin: 5px;
+	background: #f1fbfc;
+	border: 1px solid #b2ebf2;
+	border-radius: 4px;
+}
+
+.help-section>* {
+	padding: 8px;
+}
+
+.help-section>*:nth-child(odd) {
+	border-right: 1px solid #b2ebf2;
+}
+
+.footer {
+	width: 100%;
+	margin: 0;
+	padding: 10px 0;
+	border: none;
+	font-size: 11px;
+	text-align: center;
+}
+
+.footer>b:first-of-type {
+	display: inline-block;
+	margin-bottom: 4px;
+}
+
+a:hover>i.fa {
+	text-decoration: underline;
+}
+
+/* Nice rotating animation for spinners */
+.fa.fa-spinner.letsspin {
+	animation: 1.4s linear;
+	animation-name: spinner-fa;
+	animation-iteration-count: infinite;
+	animation-direction: normal;
+}
+
+@keyframes spinner-fa {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Carddav setup popup custom styles */
+#setupCarddav input[type=text],
+#setupCarddav input[type=password] {
+	width: 100%;
+	min-width: 300px;
+}
+
+.ui-dialog-content>form>.btn {
+	float: right;
+	margin: 10px 0;
+	font-size: inherit;
+}
+
+#carddav_result {
+	user-select: none;
+	width: calc(100% - 4px);
+	border-collapse: collapse;
+	margin: 0 2px;
+}
+
+#carddav_result tr {
+	height: 23px;
+	cursor: default;
+}
+
+#carddav_result th,
+#carddav_result td {
+	border: 1px solid #bdbdbd;
+	padding: 0 5px;
+}
+
+#carddav_result th:nth-child(1),
+#carddav_result th:nth-child(2),
+#carddav_result td:nth-child(1),
+#carddav_result td:nth-child(2) {
+	width: 0;
+	text-align: center;
+}
+
+#carddav_result th:last-child,
+#carddav_result td:last-child {
+	word-break: break-all;
+}
+
+#carddav_result td>i.fa {
+	line-height: 23px;
+	font-size: 16px;
+	vertical-align: middle;
+	cursor: grab;
+}
+
+.carddav-setup-line label {
+	margin-bottom: 0;
+	margin-right: 10px;
+}
+
+#carddav_parameters tbody tr {
+	width: 100%;
+	display: inline-grid;
+	margin-bottom: 10px;
+}
+
+.carddav_info {
+	margin: 3px 5px 0 5px;
+	font-size: 12px;
+	color: #757575;
+}
+
+/* Notification UI */
+#notification-ui {
+	display: flex;
+	order: 3;
+	position: relative;
+	margin: 0 5px;
+}
+
+#notification-ui p {
+	margin: 0;
+}
+
+#notification-header {
+	cursor: pointer;
+	font-size: 25px;
+	border-radius: 0.3em;
+}
+
+#notification-count {
+	position: absolute;
+	pointer-events: none;
+	display: flex;
+	justify-content: center;
+	vertical-align: middle;
+	height: 17px;
+	width: 17px;
+	right: -5px;
+	top: -3px;
+	z-index: 101;
+	background: #f44336;
+	color: #fff;
+	font-size: 12px;
+	line-height: 17px;
+	font-weight: bold;
+	border-radius: 17px;
+}
+
+#notification-container {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	pointer-events: none;
+	z-index: 99;
+	top: 38px;
+	right: -4px;
+	width: 35vw;
+	min-width: 600px;
+	max-width: 800px;
+	max-height: 60vh;
+	opacity: 0;
+	visibility: hidden;
+	border: 1px solid #bdbdbd;
+	border-radius: 0.3em;
+	background: #fff;
+	transition: all .25s ease;
+}
+
+#notification-container::after,
+#notification-container::before {
+	content: '';
+	position: absolute;
+	display: block;
+	right: 5px;
+	width: 0;
+	height: 0;
+	border-style: solid;
+}
+
+#notification-container::after {
+	top: -20px;
+	border-color: transparent transparent #fff transparent;
+	border-width: 10px;
+}
+
+#notification-container::before {
+	top: -21px;
+	border-color: transparent transparent #bdbdbd transparent;
+	border-width: 10px;
+}
+
+#notification-container>.delete-all {
+	pointer-events: all;
+	padding: 10px 14px;
+}
+
+.bubble-container {
+	pointer-events: all;
+	max-height: calc(60vh - 20px);
+	padding: 0 10px 7px 10px;
+	overflow: scroll;
+}
+
+#notification-ui.open>#notification-container {
+	visibility: visible;
+	opacity: 1;
+}
+
+.notification-bubble {
+	padding: 10px 15px;
+	margin-bottom: 3px;
+	border-radius: 0.3em;
+	font-size: 14px;
+	line-height: 25px;
+	border: 1px solid #f5f5f5;
+	word-break: break-word;
+}
+
+.notification-bubble.info {
+	background-color: #f1f8e9;
+}
+
+.notification-bubble.error {
+	background-color: #ffcdd2;
+}
+
+.notification-bubble.verbose {
+	background-color: #ddd;
+}
+
+.notification-bubble>button,
+#notification-container>.delete-all>button {
+	float: right;
+	border-radius: 12.5px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.notification-bubble>button {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	height: 26px;
+	width: 26px;
+	margin: 0 -6px;
+}
+
+.notification-bubble.info>button {
+	background-color: #b0ca93;
+	border: 1px solid #a6bf8b;
+}
+
+.notification-bubble.error>button,
+#notification-container>.delete-all>button {
+	background-color: #e57373;
+	border: 1px solid #ef9a9a;
+}
+
+.notification-bubble.verbose>button {
+	background-color: #9e9e9e;
+	border: 1px solid #919191;
+}
+
+.notification-bubble>button:hover,
+#notification-container>.delete-all>button:hover {
+	background: #f44336;
+	border: 1px solid #f44336;
+}
+
+.notification-bubble>button:focus,
+#notification-container>.delete-all>button:focus {
+	background: #c15c5c;
+	border: 1px solid #c15c5c;
+}
+
+.bell-shake {
+	animation: 10s linear;
+	animation-name: bell-shake;
+	animation-iteration-count: infinite;
+	animation-direction: normal;
+}
+
+@keyframes bell-shake {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	94% {
+		transform: rotate(0deg);
+	}
+
+	95% {
+		transform: rotate(-5deg);
+	}
+
+	96% {
+		transform: rotate(5deg);
+	}
+
+	97% {
+		transform: rotate(-5deg);
+	}
+
+	98% {
+		transform: rotate(5deg);
+	}
+
+	99% {
+		transform: rotate(-5deg);
+	}
+
+	100% {
+		transform: rotate(0deg);
+	}
+}
+
+@media screen and (max-width: 1023px) {
+
+	/* set a minimum width for dialogs on small screens to prevent them from being ridiculous */
+	.ui-dialog {
+		min-width: 80vw;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	.visible-mobile {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 767px) {
+	.visible-desktop {
+		display: none;
+	}
+}
+
+@media screen and (max-width: 991px) {
+	#notification-ui {
+		order: 2;
+	}
+
+	.ph-header>.activation {
+		order: 3;
+	}
+
+	.ph-header {
+		flex-wrap: wrap;
+	}
+
+	.ph-header>.activation {
+		margin-top: 8px;
+	}
+
+	.ph-header>.title,
+	.ph-header>.activation {
+		width: 100%;
+	}
+
+	#notification-ui {
+		margin-left: auto;
+	}
+
+	#notification-container {
+		width: 94.4vw;
+		min-width: 0;
+	}
+
+	.help-section {
+		display: flex;
+		justify-content: space-around;
+	}
+
+	.help-section>*:nth-child(odd) {
+		border: none;
+	}
+}
+
+/* Autoselect trick used for config popup */
+.autoselect_container {
+	width: 100% !important;
+	margin-top: 5px !important;
+	padding: 4px 10px !important;
+	border-radius: 3em !important;
+	border: 1px solid #e0e0e0 !important;
+	background: #fafafa !important;
+	box-shadow: none !important;
+	outline: none !important;
+	font-family: inherit !important;
+	font-size: inherit !important;
+	color: inherit !important;
+	text-overflow: ellipsis;
+}
