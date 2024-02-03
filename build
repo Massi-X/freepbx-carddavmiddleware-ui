@@ -133,6 +133,10 @@ if (file_exists('output.tar.gz')) {
 	echo "Deleting output.tar.gz...\n";
 	if (!unlink(__DIR__ . '/output.tar.gz'))
 		die_i("Cannot delete output.tar.gz!\n");
+
+	echo "Deleting output.tar...\n";
+	if (!unlink(__DIR__ . '/output.tar'))
+		die_i("Cannot delete output.tar!\n");
 }
 
 //create random folder
