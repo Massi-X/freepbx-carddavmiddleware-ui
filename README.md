@@ -4,7 +4,7 @@
      <img src="assets/images/icon.png" alt="Module icon"/>
     </td>
     <td style="border: none;">
-     <h2>CardDAV Middleware UI for FreePBX (formerly PhoneMiddleware)</h2>
+     <h2>CardDAV Middleware UI for FreePBX/Incredible PBX/izpbx (formerly PhoneMiddleware)</h2>
     </td>
   </tr>
 </table>
