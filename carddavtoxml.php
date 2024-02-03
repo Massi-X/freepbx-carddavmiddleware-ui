@@ -12,7 +12,17 @@ use Core;
 
 try {
 	$instance = Core::getInstance();
-	echo $instance->getXMLforPhones($instance::get_cache_expire() == 0);
+
+	//calculate phone type to provide to getXMLforPhones()
+	$typeName = $_GET['type'];
+	if (isset($typeName) && !$type = array_search(strtoupper($typeName), $instance::PHONE_TYPES)) //strtoupper because in CoreInterface are defined like that
+		Core::sendUINotification(Core::NOTIFICATION_TYPE_VERBOSE, str_replace('%type', $typeName, _('The given type "%type" does not correspond to a valid entry for phonebook selection. Please check your phone configuration.'))); //verbose notification are never sent by email
+
+	//default type will be used if not found (the one set in UI)
+	if (!isset($type))
+		$type = -1;
+
+	echo $instance->getXMLforPhones(false, $type);
 } catch (Exception $e) {
 	//send real message to the UI
 	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, $e->getMessage());
