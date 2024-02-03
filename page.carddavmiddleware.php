@@ -8,7 +8,6 @@
 <div class="fpbx-container">
 	<div class="display no-border">
 		<?php
-		$Core = \FreePBX::PhoneMiddleware()->getCore();
 		//print all the errors (if any)
 		if (isset($_POST['errors']) && is_array($_POST['errors'])) {
 			echo '<div class="alert alert-danger" role="alert">' . str_replace('%d', count($_POST['errors']), ngettext('You have one error.', 'You have %d errors.', count($_POST['errors']))) . '<ul>';
@@ -52,7 +51,7 @@
 			<!-- NOTIFICATION UI -->
 			<div id="notification-ui">
 				<?php
-				$notifications = $Core->retrieveUINotifications();
+				$notifications = Core::retrieveUINotifications();
 
 				echo '<i class="fa fa-bell" onclick="toggleNotification()" id="notification-header" title="' . _('Notifications') . '"></i><span id="notification-count" data-count="' . count($notifications) . '">…</span>'; //count handled by js
 				echo '<div id="notification-container" class="arrow-container">';
@@ -100,9 +99,9 @@
 												<label for="carddav_display_url"><?= _('CardDAV Setup'); ?></label>
 											</div>
 											<div class="col-md-9 col-md-9-flex">
-												<input disabled="disabled" type="text" class="form-control form-control-flex" id="carddav_display_url" name="carddav_display_url" value="<?= empty($Core->get_url()) ? _('Not Configured') : $Core->get_url() ?>">
+												<input disabled="disabled" type="text" class="form-control form-control-flex" id="carddav_display_url" name="carddav_display_url" value="<?= empty(Core::get_url()) ? _('Not Configured') : Core::get_url() ?>">
 												<div class="relative">
-													<button name="carddav-setup" class="btn btn-danger btn-input-flex" onclick="$('#setupCarddav').dialog('open'); return false;"><?= _('Setup/Change'); ?></button>
+													<a href="javascript:;" name="carddav-setup" class="btn btn-danger btn-input-flex" onclick="$('#setupCarddav').dialog('open'); return false;"><?= _('Setup/Change'); ?></a>
 													<div class="tips arrow-container" data-tips="2">
 														<p><?= _('Then you should setup the module to read data from your server. To do that click "Setup/Change and follow the instructions.'); ?></p>
 														<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
@@ -131,7 +130,7 @@
 												</div>
 											</div>
 											<div class="col-md-9">
-												<input type="text" class="form-control notvisible" id="output_construct" name="output_construct" value="<?= $Core->get_output_construct() ?>">
+												<input type="text" class="form-control notvisible" id="output_construct" name="output_construct" value="<?= Core::get_output_construct() ?>">
 											</div>
 										</div>
 									</div>
@@ -157,11 +156,11 @@
 											</div>
 											<div class="col-md-9">
 												<div id="max_cnam_container">
-													<label class="ph-checkbox">
-														<input type="checkbox" id="max_cnam_length_enable" name="max_cnam_length_enable" data-onchange="max_cnam_length" value="on" <?= $Core->get_max_cnam_length() == 0 ? '' : 'checked'; ?>>
+													<label class="ph-checkbox border left">
+														<input type="checkbox" id="max_cnam_length_enable" name="max_cnam_length_enable" value="on" <?= Core::get_max_cnam_length() == 0 ? '' : 'checked'; ?>>
 														<span data-info="custom-checkbox"></span>
 													</label>
-													<input type="number" class="form-control" id="max_cnam_length" name="max_cnam_length" value="<?= $Core->get_max_cnam_length() < 10 ? '10' : $Core->get_max_cnam_length(); ?>" min="10" max="200" <?= $Core->get_max_cnam_length() == 0 ? 'disabled' : ''; ?>>
+													<input type="number" class="form-control" id="max_cnam_length" name="max_cnam_length" value="<?= Core::get_max_cnam_length() < 10 ? '10' : Core::get_max_cnam_length(); ?>" min="10" max="200" <?= Core::get_max_cnam_length() == 0 ? 'disabled' : ''; ?>>
 												</div>
 											</div>
 										</div>
@@ -187,7 +186,7 @@
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="phone_type"></i>
 											</div>
 											<div class="col-md-9">
-												<input type="text" class="form-control notvisible" id="phone_type" name="phone_type" value="<?= $Core->get_phone_type() ?>">
+												<input type="text" class="form-control notvisible" id="phone_type" name="phone_type" value="<?= Core::get_phone_type() ?>">
 											</div>
 										</div>
 									</div>
@@ -212,7 +211,7 @@
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="cache_expire"></i>
 											</div>
 											<div class="col-md-9">
-												<input type="number" class="form-control" id="cache_expire" name="cache_expire" value="<?= $Core->get_cache_expire() ?>" max="43200"> <!-- 30 days -->
+												<input type="number" class="form-control" id="cache_expire" name="cache_expire" value="<?= Core::get_cache_expire() ?>" max="43200"> <!-- 30 days -->
 											</div>
 										</div>
 									</div>
@@ -237,7 +236,7 @@
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="country_code"></i>
 											</div>
 											<div class="col-md-9">
-												<input type="text" class="form-control notvisible" id="country_code" name="country_code" value="<?= $Core->get_country_code() ?>">
+												<input type="text" class="form-control notvisible" id="country_code" name="country_code" value="<?= Core::get_country_code() ?>">
 											</div>
 										</div>
 									</div>
@@ -263,9 +262,9 @@
 											</div>
 											<div class="col-md-9">
 												<span class="radioset">
-													<input type="radio" name="superfecta_compat" id="superfecta_OFF" value="off" <?php if (!$Core->get_superfecta_compat()) echo 'checked'; ?>>
+													<input type="radio" name="superfecta_compat" id="superfecta_OFF" value="off" <?php if (!Core::get_superfecta_compat()) echo 'checked'; ?>>
 													<label for="superfecta_OFF" tabindex="0"><?= _('Standard'); ?></label>
-													<input type="radio" name="superfecta_compat" id="superfecta_ON" value="on" <?php if ($Core->get_superfecta_compat()) echo 'checked'; ?>>
+													<input type="radio" name="superfecta_compat" id="superfecta_ON" value="on" <?php if (Core::get_superfecta_compat()) echo 'checked'; ?>>
 													<label for="superfecta_ON" tabindex="0"><?= _('Full'); ?></label>
 												</span>
 											</div>
@@ -293,9 +292,9 @@
 											</div>
 											<div class="col-md-9">
 												<span class="radioset">
-													<input type="radio" name="spam_match" id="spam_OFF" value="off" <?php if (!$Core->get_spam_match()) echo 'checked'; ?>>
+													<input type="radio" name="spam_match" id="spam_OFF" value="off" <?php if (!Core::get_spam_match()) echo 'checked'; ?>>
 													<label for="spam_OFF" tabindex="0"><?= _('OFF'); ?></label>
-													<input type="radio" name="spam_match" id="spam_ON" value="on" <?php if ($Core->get_spam_match()) echo 'checked'; ?>>
+													<input type="radio" name="spam_match" id="spam_ON" value="on" <?php if (Core::get_spam_match()) echo 'checked'; ?>>
 													<label for="spam_ON" tabindex="0"><?= _('ON'); ?></label>
 												</span>
 											</div>
@@ -323,9 +322,9 @@
 											</div>
 											<div class="col-md-9 flexible">
 												<span class="radioset">
-													<input type="checkbox" name="mail_level[]" id="notification_info" value="<?= Core::NOTIFICATION_TYPE_INFO; ?>" <?php if (in_array(Core::NOTIFICATION_TYPE_INFO, $Core->get_mail_level())) echo 'checked' ?>>
+													<input type="checkbox" name="mail_level[]" id="notification_info" value="<?= Core::NOTIFICATION_TYPE_INFO; ?>" <?php if (in_array(Core::NOTIFICATION_TYPE_INFO, Core::get_mail_level())) echo 'checked' ?>>
 													<label for="notification_info" tabindex="0"><?= _('Info'); ?></label>
-													<input type="checkbox" name="mail_level[]" id="notification_error" value="<?= Core::NOTIFICATION_TYPE_ERROR; ?>" <?php if (in_array(Core::NOTIFICATION_TYPE_ERROR, $Core->get_mail_level())) echo 'checked' ?>>
+													<input type="checkbox" name="mail_level[]" id="notification_error" value="<?= Core::NOTIFICATION_TYPE_ERROR; ?>" <?php if (in_array(Core::NOTIFICATION_TYPE_ERROR, Core::get_mail_level())) echo 'checked' ?>>
 													<label for="notification_error" tabindex="0"><?= _('Error'); ?></label>
 												</span>
 												<span class="item-info">
@@ -444,8 +443,13 @@
 							<td>
 								<label for="carddav_url"><?= _('Server URL:'); ?></label>
 							</td>
-							<td>
-								<input autocomplete="off" type="text" id="carddav_url" class="form-control" name="carddav_url" placeholder="<?= _('Empty'); ?>" value="<?= $Core->get_url() ?>" />
+							<td class="relative">
+								<input autocomplete="off" type="text" id="carddav_url" class="form-control" name="carddav_url" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_url() ?>" />
+								<label class="ph-checkbox border right" <?= !method_exists(Core::class, 'get_ssl_enabled') ? 'style="display:none;' : ''; ?>>
+									<input type="checkbox" id="carddav_ssl_enable" name="carddav_ssl_enable" value="on" <?= Core::get_ssl_enabled() ? 'checked' : ''; ?>>
+									<span data-info="custom-checkbox"></span>
+									<span class="description <?= Core::get_ssl_enabled() ? 'green' : 'red'; ?>" data-toggled-by="carddav_ssl_enable"><?= Core::get_ssl_enabled() ? _('SSL Active') : _('Bypass SSL'); ?></span>
+								</label>
 							</td>
 							<td>
 								<div class="carddav_info small_padding">
@@ -459,7 +463,7 @@
 								<label for="carddav_user"><?= _('Username:'); ?></label>
 							</td>
 							<td>
-								<input autocomplete="off" type="text" id="carddav_user" class="form-control" name="carddav_user" placeholder="<?= _('Empty'); ?>" value="<?= $Core->get_auth()['username'] ?>" />
+								<input autocomplete="off" type="text" id="carddav_user" class="form-control" name="carddav_user" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_auth()['username'] ?>" />
 							</td>
 						</tr>
 						<tr>
@@ -467,25 +471,27 @@
 								<label for="carddav_psw"><?= _('Password:'); ?></label>
 							</td>
 							<td>
-								<input autocomplete="off" type="password" id="carddav_psw" class="form-control" name="carddav_psw" placeholder="<?= _('Empty'); ?>" value="<?= $Core->get_auth()['password'] ?>" />
+								<input autocomplete="off" type="password" id="carddav_psw" class="form-control" name="carddav_psw" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_auth()['password'] ?>" />
 							</td>
 						</tr>
 					</tbody>
 				</table>
 				<label style="margin-left: 4px;"><?= _('Addressbooks:'); ?></label>
-				<table id="carddav_result">
-					<thead>
-						<tr>
-							<th><i class="fa fa-arrows"></i></th>
-							<th><?= _('Enabled'); ?></th>
-							<th><?= _('Name'); ?></th>
-							<th><?= _('URL'); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- filled by js -->
-					</tbody>
-				</table>
+				<div class="carddav_result-tabfix">
+					<table id="carddav_result">
+						<thead>
+							<tr>
+								<th><i class="fa fa-arrows"></i></th>
+								<th><?= _('Enabled'); ?></th>
+								<th><?= _('Name'); ?></th>
+								<th><?= _('URL'); ?></th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- filled by js -->
+						</tbody>
+					</table>
+				</div>
 				<div class="carddav_info large_padding">
 					<i class="fa fa-info-circle"></i>
 					<i><?= _('Enable the addressbook(s) you want to use to save the changes. To modify greyed out inputs disable all the addressbooks first.'); ?></i>
