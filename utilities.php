@@ -83,10 +83,11 @@ class Utilities
 	 * Check connection to a server, throws an Exception in case any error occurs with a friendly description ready to print.
 	 *
 	 * @param	string	$url		The URL to check against
+	 * @param	bool	$skip_ssl	If you want to skip SSL checks and errors
 	 * @return	boolean				Always true
 	 * @throws	Exception			If the connection failed for any reason
 	 */
-	public static function check_connection($url)
+	public static function check_connection($url, $skip_ssl = false)
 	{
 		$ch = curl_init();
 
@@ -98,6 +99,10 @@ class Utilities
 			curl_setopt($ch, CURLOPT_AUTOREFERER, true);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+			if ($skip_ssl) {
+				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+			}
 			$html = curl_exec($ch);
 
 			if (!$html)
