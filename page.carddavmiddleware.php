@@ -184,7 +184,7 @@
 							<div class="row">
 								<div class="col-md-12">
 									<span id="phone_type-help" class="help-block fpbx-help-block">
-										<?= str_replace(['%url', '%developer'], [\FreePBX::PhoneMiddleware()->getXmlPhonebookURL(), (method_exists(Core::class, 'get_author') && !empty(Core::get_author())) ? Core::get_author() : 'the developer'], _('Choose the default type for the generated phonebook. You can request a specific phonebook via a GET request with the URL: <a target="_blank" href="%url?TYPE=...">%url?TYPE=...</a> (type must be one present in the droplist, without the brackets).<br>Selecting anything different than "Unlimited" causes the library to apply some filters and limit the generated output so that your devices can happily read it. You can try with some other manufacturer if yours is not listed, but if this still isn\'t working reach out to %developer.<br>')); ?>
+										<?= str_replace(['%url', '%developer'], [\FreePBX::PhoneMiddleware()->getXmlPhonebookURL(), (method_exists(Core::class, 'get_author') && !empty(Core::get_author())) ? Core::get_author() : 'the developer'], _('Choose the default type for the generated phonebook. You can request a specific phonebook via a GET request with the URL: <a target="_blank" href="%url?TYPE=...">%url?TYPE=...</a> ("..." must be one of the types present in the droplist, without the brackets).<br>Selecting anything different than "Unlimited" causes the library to apply some filters and limit the generated output so that your devices can happily read it. You can try with some other manufacturer if yours is not listed, but if this still isn\'t working reach out to %developer.<br>')); ?>
 									</span>
 								</div>
 							</div>
