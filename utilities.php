@@ -96,9 +96,9 @@ class Utilities
 				throw new Exception(_('Unknown error.'));
 
 			if (strpos($headers[0], '404') !== false) //page not found
-				throw new Exception(str_replace('%error', '404', _('The server thrown a %error error.')));
+				throw new Exception(str_replace('%code', '404', _('The server thrown a %code error.')));
 			else if (strpos($headers[0], '403') !== false) //forbidden
-				throw new Exception(str_replace('%error', '403', _('The server thrown a %error error.')));
+				throw new Exception(str_replace('%code', '403', _('The server thrown a %code error.')));
 
 			//no errors? OK we can proceed!
 
