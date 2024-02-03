@@ -333,9 +333,7 @@ function validateCarddav() {
 			} else {
 				carddav_result_tbody.innerHTML = ''; //reset content
 
-				if (data.message) //if some error is raised from above
-					carddav_result_tbody.innerHTML = '<tr><td colspan="4"><b style="color: red">' + data.message + '</b></td></tr>';
-				else if (data.length == 0) //or if nothing is found
+				if (data.length == 0) //if nothing is found
 					carddav_result_tbody.innerHTML = '<tr><td colspan="4"><b style="color: red">' + pm_language['No_addresbook_found'] + '</b></td></tr>';
 				else {
 					data.forEach(item => {
@@ -353,7 +351,7 @@ function validateCarddav() {
 			if (isSave) //only if there is an error during save alert the user
 				alert(error.error.message);
 			else //else we only show a generic no address book found inside the table
-				carddav_result_tbody.innerHTML = '<tr><td colspan="4"><b style="color: red">' + pm_language['No_addresbook_found'] + '</b></td></tr>';
+				carddav_result_tbody.innerHTML = '<tr><td colspan="4"><b style="color: red">' + error.error.message + '</b></td></tr>';
 			changeCarddavButton();
 		});
 }

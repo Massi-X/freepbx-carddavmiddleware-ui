@@ -16,6 +16,7 @@ require_once __DIR__ . '/core/core.php'; //once! It could be required by others 
 use Exception;
 use FreePBX;
 use Core;
+use Throwable;
 use Utilities;
 
 class Phonemiddleware extends \DB_Helper implements \BMO
@@ -112,7 +113,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"Saving_dots": "' . _('Saving…') . '", ' .
 			'"Validating_dots": "' . _('Validating…') . '", ' .
 			'"Loading_dots": "' . _('Loading…') . '", ' .
-			'"No_addresbook_found": "' . _('Nothing found! Please check your connection parameters.') . '", ' .
+			'"No_addresbook_found": "' . _('Connected successfully to the server, but no addressbooks found.') . '", ' .
 			'"Move": "' . _('Move') . '", ' .
 			'"Role": "' . _('Role') . '", ' .
 			'"Title": "' . _('Title') . '", ' .
@@ -302,6 +303,32 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				if (empty($_POST['carddav_url']))
 					throw new Exception(_('URL must be set.')); //url must be there
 
+				//try to see if the URL is valid (only SSL, 404, 403 and connection_refused errors)
+				try {
+					$headers = get_headers($_POST['carddav_url'], true);
+
+					//I really don't know!
+					if ($headers === false)
+						throw new Exception(_('Unknown error.'));
+
+					if (strpos($headers[0], '404') !== false) //page not found
+						throw new Exception(str_replace('%error', '404', _('The server thrown a %error error.')));
+					else if (strpos($headers[0], '403') !== false) //forbidden
+						throw new Exception(str_replace('%error', '403', _('The server thrown a %error error.')));
+
+					//no errors? OK we can proceed!
+
+				} catch (Throwable $t) { //something went wrong
+					$message = $t->getMessage();
+
+					if (stripos($message, 'GET_SERVER_HELLO:unknown protocol') !== false) //SSL error
+						$message = _('Unable to estabilish a secure connection. Please ensure that the server certificate is valid.');
+					else if (stripos($message, 'Connection refused') !== false) //connection refused
+						$message = _('The server refused the connection.');
+
+					throw new Exception(_('An error occured while connecting: ') . $message);
+				}
+
 				//load all the values from the server
 				$this->Core->set_url($_POST['carddav_url']);
 				$this->Core->set_auth($_POST['carddav_user'], $_POST['carddav_psw']);
@@ -389,7 +416,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 					}
 
 					return ['status' => true, 'message' => _('Moved scheme at the top.')];
-				} catch (\Throwable $t) {
+				} catch (Throwable $t) {
 					return ['status' => false, 'message' => _('Unable to move scheme at the top. Proceeding anyway...')];
 				}
 			case 'outcnamsetup':
@@ -409,7 +436,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				//reset cidlookup
 				try {
 					$this->FreePBX->Cidlookup->didDelete($route->extension, $route->cidnum); //viewing_itemid is unused here so doesn't matter (I don't know if this note is still valid, it was from the old method)
-				} catch (\Throwable $t) {
+				} catch (Throwable $t) {
 					$extra = _('Module cidlookup not installed/active. Skipping...') . "\n";
 					//cidlookup is not installed. No worry, skip this step and only add an info message
 				}
@@ -534,7 +561,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 		try {
 			if (method_exists(Core::class, 'post_uninstall_hook'))
 				Core::post_uninstall_hook($this->FreePBX);
-		} catch (\Throwable $t) {
+		} catch (Throwable $t) {
 			$isException = true;
 		}
 
