@@ -80,6 +80,48 @@ class Utilities
 	}
 
 	/**
+	 * Check connection to a server, throws an Exception in case any error occurs with a friendly description ready to print.
+	 *
+	 * @param	string	$url		The URL to check against
+	 * @return	boolean				Always true
+	 * @throws	Exception			If the connection failed for any reason
+	 */
+	public static function check_connection($url)
+	{
+		try {
+			$headers = get_headers($url, true);
+
+			//I really don't know!
+			if ($headers === false)
+				throw new Exception(_('Unknown error.'));
+
+			if (strpos($headers[0], '404') !== false) //page not found
+				throw new Exception(str_replace('%error', '404', _('The server thrown a %error error.')));
+			else if (strpos($headers[0], '403') !== false) //forbidden
+				throw new Exception(str_replace('%error', '403', _('The server thrown a %error error.')));
+
+			//no errors? OK we can proceed!
+
+		} catch (Throwable $t) { //something went wrong
+			$message = $t->getMessage();
+
+			//Those are the only messages parsed for now, could be expanded in the future with your help!
+			if (stripos($message, 'GET_SERVER_HELLO:unknown protocol') !== false) //SSL error
+				$message = _('Unable to estabilish a secure connection. Are you connecting to an http server over https?');
+			else if (stripos($message, 'ssl3_get_server_certificate:certificate verify failed') !== false) //SSL error
+				$message = _('Unable to estabilish a secure connection. Please ensure that the server certificate is valid and not expired.');
+			else if (stripos($message, 'failed to open stream: Network is unreachable') !== false) //no network
+				$message = _('The network is unreachable.');
+			else if (stripos($message, 'Connection refused') !== false) //connection refused
+				$message = _('The server refused the connection.');
+
+			throw new Exception($message);
+		}
+
+		return true;
+	}
+
+	/**
 	 * BMO Function
 	 * Get email "To" address from fpbx config
 	 * 
