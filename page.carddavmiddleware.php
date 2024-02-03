@@ -35,7 +35,7 @@
 						['%module', '%author'],
 						[
 							method_exists(Core::class, 'get_module_name') ? Core::get_module_name() : _('CardDAV Middleware UI'),
-							(method_exists(Core::class, 'get_author') && !empty(Core::get_author())) ? Core::get_author() . _(' w/ ') : ''
+							(method_exists(Core::class, 'get_author') && !empty(Core::get_author()) && strcmp(Core::get_author(), _('Massi-X')) != 0) ? Core::get_author() . _(' w/ ') : ''
 						],
 						_('%module by %author')
 					);
@@ -171,7 +171,7 @@
 									<div class="row">
 										<div class="form-group">
 											<div class="col-md-3 control-label">
-												<label for="phone_type"><?= _('Phone type'); ?></label>
+												<label for="phone_type"><?= _('Default phonebook type'); ?></label>
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="phone_type"></i>
 											</div>
 											<div class="col-md-9">
@@ -184,7 +184,7 @@
 							<div class="row">
 								<div class="col-md-12">
 									<span id="phone_type-help" class="help-block fpbx-help-block">
-										<?= _('Some phones don\'t allow multiple tags for the phonebook, so we must rely on using the three available even if they are wrong (the lib tries its best to match them).<br>You can try with some other manufacturer if yours is not listed, but if this still isn\'t working reach out to the developer.'); ?>
+										<?= str_replace(['%url', '%developer'], [\FreePBX::PhoneMiddleware()->getXmlPhonebookURL(), (method_exists(Core::class, 'get_author') && !empty(Core::get_author())) ? Core::get_author() : 'the developer'], _('Choose the default type for the generated phonebook. You can request a specific phonebook via a GET request with the URL: <a target="_blank" href="%url?TYPE=...">%url?TYPE=...</a> (type must be one present in the droplist, without the brackets).<br>Selecting anything different than "Unlimited" causes the library to apply some filters and limit the generated output so that your devices can happily read it. You can try with some other manufacturer if yours is not listed, but if this still isn\'t working reach out to %developer.<br>')); ?>
 									</span>
 								</div>
 							</div>
@@ -351,7 +351,7 @@
 		</div>
 		<div class="footer">
 			<!-- Website -->
-			<b><a href="<?= _('https://massi-x.github.io/'); ?>" target="_blank"><?= _('Massi-X DevSite') ?></a></b>
+			<b><a href="<?= _('https://massi-x.dev/'); ?>" target="_blank"><?= _('Massi-X DevSite') ?></a></b>
 			<!-- Version number -->
 			<br><?= str_replace('%version', \Utilities::get_version(), _('Version: %version')); ?>
 			&#32;-&#32;
@@ -363,7 +363,7 @@
 				echo str_replace(['%linkstart', '%linkend'], ['<a href="javascript:;" onclick="$(\'#licensePopupCore\').dialog(\'open\'); return false;">', '</a>'], $license['description']);
 			} catch (\Throwable $t) {
 				//core did not provide a license. Show UI one
-				echo str_replace('%license', '<a href="javascript:;" onclick="$(\'#licensePopupUI\').dialog(\'open\'); return false;">' . _('CC-BY-NC-ND-4.0') . '</a>', str_replace('%modulename', '<a target="_blank" href="https://github.com/Massi-X/freepbx-phonemiddleware">' . _('CardDAV Middleware UI') . '</a>', _('%modulename licensed under %license')));
+				echo str_replace('%license', '<a href="javascript:;" onclick="$(\'#licensePopupUI\').dialog(\'open\'); return false;">' . _('CC-BY-NC-ND-4.0') . '</a>', str_replace('%modulename', '<a target="_blank" href="https://github.com/Massi-X/freepbx-carddavmiddleware">' . _('CardDAV Middleware UI') . '</a>', _('%modulename licensed under %license')));
 			}
 			?>
 			&#32;-&#32;
@@ -392,7 +392,7 @@
 			<ul>
 				<?php
 				if ($license) //if license is provided by core, UI is now only a library. Treat it like that
-					echo '<li><a target="_blank" href="https://github.com/Massi-X/freepbx-phonemiddleware">' . _('CardDAV Middleware UI') . '</a></li>';
+					echo '<li><a target="_blank" href="https://github.com/Massi-X/freepbx-carddavmiddleware">' . _('CardDAV Middleware UI') . '</a></li>';
 				?>
 
 				<li><a target="_blank" href="https://github.com/yairEO/tagify">Tagify</a></li>
