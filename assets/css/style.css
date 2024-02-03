@@ -388,7 +388,7 @@ ul.numeric-list> ::marker {
 	color: #2196f3;
 }
 
-.btn-popup:visited {
+.btn-popup:visited:not(:hover) {
 	color: #2196f3;
 }
 
