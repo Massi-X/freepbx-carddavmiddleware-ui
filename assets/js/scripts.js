@@ -8,6 +8,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 	/********************	GET ELEMENTS	********************/
 	carddav_url = document.getElementById('carddav_url');
+	carddav_ssl_enable = document.getElementById('carddav_ssl_enable');
 	carddav_user = document.getElementById('carddav_user');
 	carddav_psw = document.getElementById('carddav_psw');
 	carddav_validate = document.getElementById('carddav_validate');
@@ -212,7 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		height: 'auto',
 		width: 'auto',
 		show: !reducemovement,
-		hide: !reducemovement
+		hide: !reducemovement,
+		dialogClass: 'no-close-btn',
+		closeOnEscape: false
 	});
 
 	$('#errorPopup').dialog({
@@ -321,6 +324,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	//disallow spaces inside addressbook dialog inputs
 	carddav_url.oninput = carddav_user.oninput = carddav_psw.oninput = e => e.target.value = e.target.value.replace(/\s/g, '');
+
+	//follow checkbox and change text color
+	carddav_ssl_enable.onchange = e => {
+		let target = document.querySelector('*[data-toggled-by="carddav_ssl_enable"]');
+		target.classList.remove('green', 'red');
+
+		if (e.target.checked) {
+			target.classList.add('green')
+			target.innerHTML = pm_language['SSL_Active'];
+		} else {
+			target.classList.add('red');
+			target.innerHTML = pm_language['SSL_Bypass'];
+		}
+
+		validateCarddav(); //need to be done so we can save the data correctly (and not that the user change the box after validating)
+	};
 }, false);
 
 /********************	CARDDAV VALIDATION & SAVE	********************/
@@ -341,6 +360,7 @@ function validateCarddav() {
 
 	//construct base formdata request
 	formData.append('carddav_url', carddav_url.value);
+	formData.append('carddav_ssl_enable', carddav_ssl_enable.checked ? carddav_ssl_enable.value : '');
 	formData.append('carddav_user', carddav_user.value);
 	formData.append('carddav_psw', carddav_psw.value);
 
@@ -361,7 +381,7 @@ function validateCarddav() {
 
 	//disable every input
 	carddav_validate.setAttribute('disabled', 'disabled');
-	carddav_url.disabled = carddav_user.disabled = carddav_psw.disabled = 'disabled';
+	carddav_url.disabled = carddav_user.disabled = carddav_psw.disabled = carddav_ssl_enable.disabled = 'disabled';
 
 	//send request
 	fetch(request_type, options) //absolute path to www folder SAME AS UNINSTALL.PHP AND INSTALL.PHP
@@ -381,13 +401,15 @@ function validateCarddav() {
 				carddav_result_tbody.innerHTML = ''; //reset content
 
 				if (data.length == 0) //if nothing is found
-					carddav_result_tbody.innerHTML = '<tr><td colspan="4"><b style="color: red">' + pm_language['No_addresbook_found'] + '</b></td></tr>';
+					carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + pm_language['No_addresbook_found'] + '</b></td></tr>';
 				else {
 					data.forEach(item => {
-						carddav_result_tbody.innerHTML +=
-							'<tr><td><i class="fa fa-bars ui-sortable-handle" title="' + pm_language['Move'] + '"></i></td><td><input type="checkbox" ' + (item['checked'] ? 'checked' : '') +
-							' name="carddav_addressbooks[]" onclick="changeCarddavButton()" data-uri="' + item['uri'] +
-							'"></td><td>' + item['name'] + '</td><td>' + item['uri'] + '</td></tr>';
+						carddav_result_tbody.innerHTML += '<tr>' +
+							'<td><i class="fa fa-bars ui-sortable-handle" title="' + pm_language['Move'] + '"></i></td>' + //move
+							'<td><label class="ph-checkbox small"><input type="checkbox" ' + (item['checked'] ? 'checked' : '') + ' name="carddav_addressbooks[]" onclick="changeCarddavButton()" data-uri="' + item['uri'] + '"><span data-info="custom-checkbox"></span></label></td>' + //checkbox
+							'<td>' + item['name'] + '</td>' + //name
+							'<td>' + item['uri'] + '</td>' + //url
+							'</tr>';
 					});
 					sortableListResize();
 					initSortableList();
@@ -398,7 +420,7 @@ function validateCarddav() {
 			if (isSave) //only if there is an error during save alert the user
 				alert(error.error.message);
 			else //else we only show a generic no address book found inside the table
-				carddav_result_tbody.innerHTML = '<tr><td colspan="4"><b style="color: red">' + error.error.message + '</b></td></tr>';
+				carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + error.error.message + '</b></td></tr>';
 			changeCarddavButton();
 		});
 }
@@ -407,12 +429,12 @@ function validateCarddav() {
 function changeCarddavButton() {
 	carddav_validate.innerHTML = pm_language['Validate'];
 	carddav_validate.removeAttribute('disabled');
-	carddav_url.disabled = carddav_user.disabled = carddav_psw.disabled = '';
+	carddav_url.disabled = carddav_user.disabled = carddav_psw.disabled = carddav_ssl_enable.disabled = '';
 
 	document.querySelectorAll('input[type=checkbox][name="carddav_addressbooks[]"]').forEach(elem => { //this change at every request
 		if (elem.checked) {
 			carddav_validate.innerHTML = pm_language['Save'];
-			carddav_url.disabled = carddav_user.disabled = carddav_psw.disabled = 'disabled';
+			carddav_url.disabled = carddav_user.disabled = carddav_psw.disabled = carddav_ssl_enable.disabled = 'disabled';
 		}
 	});
 }
