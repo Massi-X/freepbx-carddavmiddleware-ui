@@ -401,16 +401,18 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				return ['status' => true, 'message' => _('OutCNAM configured.')]; //outcnam does not return any useful information so as long as there is no errors this will be the return value
 			case 'inboundroutesetup':
 				//hacky way to get to the result.
+				$extra = _('Deleted cidlookup configuration.') . "\n";
 				$route = json_decode(file_get_contents("php://input"));
 				if (!$route)
 					throw new Exception(_('Data is invalid.')); //the data is not valid
 
 				//reset cidlookup
-				$this->FreePBX->Modules->loadFunctionsInc('cidlookup');
-				if (function_exists('cidlookup_did_del'))
-					cidlookup_did_del($route->extension, $route->cidnum); //viewing_itemid is unused here so doesn't matter
-				else
-					throw new Exception(_('Required function not found!'));
+				try {
+					$this->FreePBX->Cidlookup->didDelete($route->extension, $route->cidnum); //viewing_itemid is unused here so doesn't matter (I don't know if this note is still valid, it was from the old method)
+				} catch (\Throwable $t) {
+					$extra = _('Module cidlookup not installed/active. Skipping...') . "\n";
+					//cidlookup is not installed. No worry, skip this step and only add an info message
+				}
 
 				//set superfecta
 				$settings['sf_enable'] = 'true';
@@ -420,7 +422,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 
 				$this->FreePBX->Superfecta->bulkhandler_superfecta_cfg($settings); //viewing_itemid is unused here so doesn't matter
 
-				return ['status' => true, 'message' => _('Inbound route updated.')]; //sadly there is no way (simple enough) to know if this was successful or not
+				return ['status' => true, 'message' => $extra . _('Updated superfecta configuration.')]; //sadly there is no way (simple enough) to know if this was successful or not
 		}
 	}
 
