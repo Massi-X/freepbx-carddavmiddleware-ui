@@ -32,7 +32,7 @@ if (isset($_GET['number'])) {
 
 //actual code
 try {
-	if (isset($_POST['number'])) {
+	if (isset($_POST['number']) && !empty($_POST['number'])) {
 		$instance = Core::getInstance();
 		echo $instance->getCNFromPhone($_POST['number'], $instance::get_cache_expire() == 0);
 	} else if (!Core::get_superfecta_compat())
