@@ -317,7 +317,7 @@
 													<label for="notification_error" tabindex="0"><?= _('Error'); ?></label>
 												</span>
 												<span class="item-info">
-													<?= 'Email will be sent to: ' . \FreePBX::Phonemiddleware()->getEmailAddresses()['To']; ?>
+													<?= 'Email will be sent to: ' . \FreePBX::Phonemiddleware()->getToAddress(); ?>
 												</span>
 											</div>
 										</div>
