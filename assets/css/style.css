@@ -1069,6 +1069,10 @@ a:hover>i.fa {
 		min-width: 0;
 	}
 
+	.help-section {
+		width: calc(100% - 9px);
+	}
+
 	.help-section a {
 		width: calc(50% - 2px);
 		text-align: center;
