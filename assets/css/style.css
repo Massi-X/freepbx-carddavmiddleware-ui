@@ -521,9 +521,16 @@ a:hover>i.fa {
 }
 
 .carddav_info {
-	margin: 3px 5px 0 5px;
 	font-size: 12px;
 	color: #757575;
+}
+
+.carddav_info.small_padding {
+	margin: 3px 2px 0 2px;
+}
+
+.carddav_info.large_padding {
+	margin: 3px 5px 0 5px;
 }
 
 /* Notification UI */

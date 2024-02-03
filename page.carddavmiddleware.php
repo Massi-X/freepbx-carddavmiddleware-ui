@@ -419,6 +419,12 @@
 							<td>
 								<input autocomplete="off" type="text" id="carddav_url" class="form-control" name="carddav_url" placeholder="<?= _('Empty'); ?>" value="<?= $Core->get_url() ?>" />
 							</td>
+							<td>
+								<div class="carddav_info small_padding">
+									<i class="fa fa-info-circle"></i>
+									<i><?= _('Include the protocol (http or https). In case of secure connection make sure the certificate is valid and you are pointing to a domain, not an IP!'); ?></i>
+								</div>
+							</td>
 						</tr>
 						<tr>
 							<td>
@@ -452,7 +458,7 @@
 						<!-- filled by js -->
 					</tbody>
 				</table>
-				<div class="carddav_info">
+				<div class="carddav_info large_padding">
 					<i class="fa fa-info-circle"></i>
 					<i><?= _('To change greyed out values, disable all the addressbooks first.'); ?></i>
 				</div>
