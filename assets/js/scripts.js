@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	carddav_validate = document.getElementById('carddav_validate');
 	carddav_display_url = document.getElementById('carddav_display_url');
 	carddav_result_tbody = document.getElementById('carddav_result').getElementsByTagName('tbody')[0];
+	reducemovement = window.matchMedia('(prefers-reduced-motion: reduce)').matches; //it works only on reload. Well, it's fine
 
 	/********************	START TAGIFY	********************/
 	document.addEventListener('dragover', e => e.preventDefault());
@@ -184,8 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		draggable: false,
 		height: 'auto',
 		width: 'auto',
-		show: true,
-		hide: true,
+		show: !reducemovement,
+		hide: !reducemovement,
 		dialogClass: 'no-close-btn',
 		closeOnEscape: false,
 		buttons: [
@@ -210,8 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		draggable: false,
 		height: 'auto',
 		width: 'auto',
-		show: true,
-		hide: true
+		show: !reducemovement,
+		hide: !reducemovement
 	});
 
 	$('#errorPopup').dialog({
@@ -221,8 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		draggable: false,
 		height: 'auto',
 		width: 'auto',
-		show: true,
-		hide: true
+		show: !reducemovement,
+		hide: !reducemovement
 	});
 
 	$('#licensePopupUI').dialog({
@@ -232,8 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		draggable: false,
 		height: 'auto',
 		width: 'auto',
-		show: true,
-		hide: true
+		show: !reducemovement,
+		hide: !reducemovement
 	});
 
 	$('#licensePopupCore').dialog({
@@ -243,8 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		draggable: false,
 		height: 'auto',
 		width: 'auto',
-		show: true,
-		hide: true
+		show: !reducemovement,
+		hide: !reducemovement
 	});
 
 	$('#librariesPopup').dialog({
@@ -254,8 +255,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		draggable: false,
 		height: 'auto',
 		width: 'auto',
-		show: true,
-		hide: true
+		show: !reducemovement,
+		hide: !reducemovement
 	});
 
 	window.magicPopup = $('#magicPopup').dialog({
@@ -265,8 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		draggable: false,
 		height: 'auto',
 		width: 'auto',
-		show: true,
-		hide: true
+		show: !reducemovement,
+		hide: !reducemovement
 	});
 
 	//only load welcome popup if this is the first run
