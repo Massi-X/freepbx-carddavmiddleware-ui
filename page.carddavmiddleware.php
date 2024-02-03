@@ -363,7 +363,7 @@
 				echo str_replace(['%linkstart', '%linkend'], ['<a href="javascript:;" onclick="$(\'#licensePopupCore\').dialog(\'open\'); return false;">', '</a>'], $license['description']);
 			} catch (\Throwable $t) {
 				//core did not provide a license. Show UI one
-				echo str_replace('%license', '<a href="javascript:;" onclick="$(\'#licensePopupUI\').dialog(\'open\'); return false;">' . _('CC-BY-NC-ND-4.0') . '</a>', str_replace('%modulename', '<a target="_blank" href="https://github.com/Massi-X/freepbx-carddavmiddleware">' . _('CardDAV Middleware UI') . '</a>', _('%modulename licensed under %license')));
+				echo str_replace('%license', '<a href="javascript:;" onclick="$(\'#licensePopupUI\').dialog(\'open\'); return false;">' . _('CC-BY-NC-ND-4.0') . '</a>', str_replace('%modulename', '<a target="_blank" href="https://github.com/Massi-X/freepbx-carddavmiddleware-ui">' . _('CardDAV Middleware UI') . '</a>', _('%modulename licensed under %license')));
 			}
 			?>
 			&#32;-&#32;
@@ -392,7 +392,7 @@
 			<ul>
 				<?php
 				if ($license) //if license is provided by core, UI is now only a library. Treat it like that
-					echo '<li><a target="_blank" href="https://github.com/Massi-X/freepbx-carddavmiddleware">' . _('CardDAV Middleware UI') . '</a></li>';
+					echo '<li><a target="_blank" href="https://github.com/Massi-X/freepbx-carddavmiddleware-ui">' . _('CardDAV Middleware UI') . '</a></li>';
 				?>
 
 				<li><a target="_blank" href="https://github.com/yairEO/tagify">Tagify</a></li>
