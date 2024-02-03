@@ -4,6 +4,74 @@
  * This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
  */
 
+ :root {
+	/* generic */
+	--light: #fff;
+	--background: #fafafa;
+	--text-soft: #9e9e9e;
+	--link-blue: #2196f3;
+
+	/* borders */
+	--form-border: #ddd;
+	--tab-border: #bdbdbd;
+
+	/* close buttons or similar */
+	--close: #f44336;
+	--close-hover: #d32f2f;
+	--close-active: #b71c1c;
+
+	/* notification styles */
+	--notification-border: #f5f5f5;
+	--notification-info: #f1f8e9;
+	--notification-error: #ffcdd2;
+	--notification-verbose: #ddd;
+	--notification-info-delete-background: #b0ca93;
+	--notification-info-delete-border: #a6bf8b;
+	--notification-error-delete-background: #e57373;
+	--notification-error-delete-border: #ef9a9a;
+	--notification-verbose-delete-background: #9e9e9e;
+	--notification-verbose-delete-border: #919191;
+
+	/* footer help box */
+	--help-section-background: #f1fbfc;
+	--help-section-border: #b2ebf2;
+
+	/* checkboxes */
+	--checkbox-main: var(--text-soft);
+	--checkbox-unchecked: #eee;
+	--checkbox-checked: #e0e0e0;
+
+	/* radio buttons */
+	--radioset-unchecked: #d2ddd8;
+	--radioset-checked: #4a7d64;
+
+	/* details sections */
+	--details-background: #fffde7;
+	--details-border: #fff59d;
+
+	/* summary sections */
+	--summary-main: #616161;
+
+	/* fpbx-like styles */
+	--fpbx-background: rgba(94, 156, 125, 0.9);
+	--fpbx-border: #4a7d64;
+	--fpbx-hover: #5e9c7d;
+
+	/* tagify set correct fpbx color */
+	--tagify-dd-color-primary: var(--fpbx-background) !important;
+}
+
+/* set scroll behavior to the correct value for accessibility */
+* {
+	scroll-behavior: smooth;
+}
+
+@media(prefers-reduced-motion: reduce) {
+	* {
+		scroll-behavior: auto;
+	}
+}
+
 /* override default dragsort styles to prevent glithes. See also js or https://github.com/yairEO/dragsort/issues/5#issuecomment-1004465926 */
 .dragsort--dragStart .dragsort--hide {
 	display: none !important;
@@ -11,38 +79,6 @@
 
 .dragsort--dragStart>* {
 	transition: margin .15s ease-in-out !important;
-}
-
-/* set a maximum width for dialogs + prettier close icon */
-.ui-dialog {
-	max-width: 95vw;
-}
-
-.ui-dialog-titlebar-close {
-	width: 20px !important;
-	padding: 0 !important;
-	height: 20px !important;
-	top: 17.5px !important;
-	right: 15px !important;
-	margin: 0 !important;
-	opacity: 1 !important;
-}
-
-.ui-dialog-titlebar-close::before {
-	font-family: 'FontAwesome';
-	content: "\f057";
-	line-height: 20px;
-	font-size: 20px;
-	opacity: 1;
-	color: #f44336;
-}
-
-.ui-dialog-titlebar-close:hover::before {
-	color: #d32f2f;
-}
-
-.ui-dialog-titlebar-close:active::before {
-	color: #b71c1c;
 }
 
 /* fix Sangoma's own footer... */
@@ -68,6 +104,21 @@ input[hidden] {
 	display: none !important;
 }
 
+/* class for non-scrollable body */
+body.fix {
+	overflow: hidden;
+}
+
+/* relative position class */
+.relative {
+	position: relative;
+}
+
+/* float right class */
+.fl-right {
+	float: right;
+}
+
 /* fix button style per my taste */
 .btn:focus,
 .btn:active:focus,
@@ -84,11 +135,80 @@ input[hidden] {
 }
 
 .radioset>input:not(:checked)+label:focus-visible {
-	background: #d2ddd8 !important;
+	background: var(--radioset-unchecked) !important;
 }
 
 .radioset>input:checked+label:focus-visible {
-	background: #4a7d64 !important;
+	background: var(--radioset-checked) !important;
+}
+
+/* better styles for popups */
+.ui-dialog {
+	max-width: 95vw;
+}
+
+.ui-dialog .ui-dialog-content {
+	padding: 0.5em 20px 0 !important;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+	border-top: none !important;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	border-bottom: none !important;
+}
+
+.ui-dialog.no-close-btn .ui-dialog-titlebar-close {
+	display: none;
+}
+
+/* fix non needed scroll in dialogs */
+.ui-helper-clearfix:after {
+	content: "";
+}
+
+/* set an overlay that works correctly with other parts of UI */
+.ui-widget-overlay {
+	z-index: 1049;
+}
+
+/* if you want to lower the overlay and make it darker... */
+.ui-widget-overlay.low {
+	transition: background-color .25s ease;
+	z-index: 1047;
+}
+
+.ui-widget-overlay.low.active {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* prettier close icon in dialogs */
+.ui-dialog-titlebar-close {
+	width: 20px !important;
+	padding: 0 !important;
+	height: 20px !important;
+	top: 17.5px !important;
+	right: 15px !important;
+	margin: 0 !important;
+	opacity: 1 !important;
+}
+
+.ui-dialog-titlebar-close::before {
+	font-family: 'FontAwesome';
+	content: "\f057";
+	line-height: 20px;
+	font-size: 20px;
+	opacity: 1;
+	color: var(--close);
+}
+
+.ui-dialog-titlebar-close:hover::before {
+	color: var(--close-hover);
+}
+
+.ui-dialog-titlebar-close:active::before {
+	color: var(--close-active);
 }
 
 /* fix dialog height */
@@ -108,6 +228,25 @@ input[hidden] {
 /* adjust dialog list per my taste */
 .ui-dialog ul li {
 	margin-bottom: 5px;
+}
+
+#page_body input.form-control,
+.ui-dialog input.form-control {
+	min-height: 37px;
+	border-color: var(--form-border);
+}
+
+#page_body input.form-control:hover:enabled,
+.ui-dialog input.form-control:hover:enabled,
+#page_body input.form-control:focus:enabled,
+.ui-dialog input.form-control:focus:enabled {
+	box-shadow: none;
+	border-color: var(--fpbx-background);
+}
+
+#page_body input.form-control:focus,
+.ui-dialog input.form-control:focus {
+	box-shadow: none;
 }
 
 /* fix fpbx-tagify conflict see issue https://github.com/yairEO/tagify/issues/1110 */
@@ -132,32 +271,9 @@ input[hidden] {
 
 /* align tagify and inputs to the same styles */
 .tagify {
-	--tags-focus-border-color: rgba(94, 156, 125, 0.9) !important;
-	--tags-hover-border-color: rgba(94, 156, 125, 0.9) !important;
+	--tags-focus-border-color: var(--fpbx-background) !important;
+	--tags-hover-border-color: var(--fpbx-background) !important;
 	--tag-border-radius: 4px !important;
-}
-
-:root {
-	--tagify-dd-color-primary: rgba(94, 156, 125, 0.9) !important;
-}
-
-#page_body input.form-control,
-.ui-dialog input.form-control {
-	min-height: 37px;
-	border-color: #ddd;
-}
-
-#page_body input.form-control:hover:enabled,
-.ui-dialog input.form-control:hover:enabled,
-#page_body input.form-control:focus:enabled,
-.ui-dialog input.form-control:focus:enabled {
-	box-shadow: none;
-	border-color: rgba(94, 156, 125, 0.9);
-}
-
-#page_body input.form-control:focus,
-.ui-dialog input.form-control:focus {
-	box-shadow: none;
 }
 
 /* adjust input style of tagify per my needs */
@@ -203,15 +319,15 @@ input[hidden] {
 	height: 100%;
 	width: 100%;
 	border-radius: 0.3em;
-	border: 1px solid #9e9e9e;
-	background-color: #fafafa;
+	border: 1px solid var(--checkbox-main);
+	background-color: var(--background);
 }
 
 .ph-checkbox>span:after {
 	font: normal normal normal 14px/1 FontAwesome;
 	content: "\f00c";
 	position: absolute;
-	color: #9E9E9E;
+	color: var(--checkbox-main);
 	left: 5px;
 	top: 5px;
 	width: 5px;
@@ -219,31 +335,31 @@ input[hidden] {
 }
 
 .ph-checkbox:hover input:not(:checked)~span {
-	background-color: #eee;
+	background-color: var(--checkbox-unchecked);
 }
 
 .ph-checkbox:active input:not(:checked)~span,
 .ph-checkbox>input:not(:checked):focus-visible~span {
-	background-color: #e0e0e0;
+	background-color: var(--checkbox-checked);
 }
 
 .ph-checkbox>input:checked~span {
-	background-color: rgba(94, 156, 125, 0.9);
-	border-color: #4a7d64;
+	background-color: var(--fpbx-background);
+	border-color: var(--fpbx-border);
 }
 
 .ph-checkbox:hover input:checked~span {
-	background-color: #5e9c7d;
+	background-color: var(--fpbx-hover);
 }
 
 .ph-checkbox:active input:checked~span,
 .ph-checkbox>input:checked:focus-visible~span {
-	background-color: #4a7d64;
+	background-color: var(--fpbx-border);
 }
 
 .ph-checkbox>input:checked~span:after {
 	display: block;
-	color: #fff;
+	color: var(--light);
 }
 
 /* checkbox inside max cnam output */
@@ -258,8 +374,8 @@ input[hidden] {
 }
 
 .input-invalid-blink {
-	border-color: #F44336 !important;
-	outline-color: #F44336 !important;
+	border-color: var(--close) !important;
+	outline-color: var(--close) !important;
 }
 
 #max_cnam_container>.ph-checkbox {
@@ -278,14 +394,14 @@ pre {
 
 details {
 	padding: 5px;
-	background: #fffde7;
-	border: 1px solid #fff59d;
+	background: var(--details-background);
+	border: 1px solid var(--details-border);
 	border-radius: 4px;
 }
 
 summary {
 	cursor: pointer;
-	color: #616161;
+	color: var(--summary-main);
 }
 
 summary::-webkit-details-marker {
@@ -355,7 +471,7 @@ ul.numeric-list> ::marker {
 
 .item-info {
 	font-size: 12px;
-	color: #9e9e9e;
+	color: var(--text-soft);
 	margin-left: 10px;
 }
 
@@ -385,11 +501,11 @@ ul.numeric-list> ::marker {
 	display: inline-block;
 	font-weight: bold;
 	text-decoration: underline;
-	color: #2196f3;
+	color: var(--link-blue);
 }
 
 .btn-popup:visited:not(:hover) {
-	color: #2196f3;
+	color: var(--link-blue);
 }
 
 .btn-popup>i {
@@ -407,19 +523,19 @@ ul.numeric-list> ::marker {
 }
 
 .help-section {
-	display: inline-flex;
+	display: inline-block;
 	margin: 5px;
-	background: #f1fbfc;
-	border: 1px solid #b2ebf2;
+	background: var(--help-section-background);
+	border: 1px solid var(--help-section-border);
 	border-radius: 4px;
 }
 
-.help-section>* {
+.help-section a {
 	padding: 8px;
 }
 
-.help-section>*:nth-child(odd) {
-	border-right: 1px solid #b2ebf2;
+.help-section a:nth-child(odd) {
+	border-right: 1px solid var(--help-section-border);
 }
 
 .footer {
@@ -458,6 +574,26 @@ a:hover>i.fa {
 	}
 }
 
+/* arrow to indicate something (for popups) */
+.arrow-container::before,
+.arrow-container::after {
+	content: '';
+	position: absolute;
+	display: block;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 10px;
+}
+
+.arrow-container::after {
+	border-color: transparent transparent var(--light) transparent;
+}
+
+.arrow-container::before {
+	border-color: transparent transparent var(--tab-border) transparent;
+}
+
 /* Carddav setup popup custom styles */
 #setupCarddav input[type=text],
 #setupCarddav input[type=password] {
@@ -485,7 +621,7 @@ a:hover>i.fa {
 
 #carddav_result th,
 #carddav_result td {
-	border: 1px solid #bdbdbd;
+	border: 1px solid var(--tab-border);
 	padding: 0 5px;
 }
 
@@ -498,7 +634,7 @@ a:hover>i.fa {
 }
 
 #carddav_result th:last-child,
-#carddav_result td:last-child {
+#carddav_result td:last-child>*:not(b) {
 	word-break: break-all;
 }
 
@@ -522,7 +658,7 @@ a:hover>i.fa {
 
 .carddav_info {
 	font-size: 12px;
-	color: #757575;
+	color: va(--text-soft);
 }
 
 .carddav_info.small_padding {
@@ -562,8 +698,8 @@ a:hover>i.fa {
 	right: -5px;
 	top: -3px;
 	z-index: 101;
-	background: #f44336;
-	color: #fff;
+	background: var(--close);
+	color: var(--light);
 	font-size: 12px;
 	line-height: 17px;
 	font-weight: bold;
@@ -584,33 +720,20 @@ a:hover>i.fa {
 	max-height: 60vh;
 	opacity: 0;
 	visibility: hidden;
-	border: 1px solid #bdbdbd;
+	border: 1px solid var(--tab-border);
 	border-radius: 0.3em;
-	background: #fff;
+	background: var(--light);
 	transition: all .25s ease;
 }
 
-#notification-container::after,
+#notification-container:after,
 #notification-container::before {
-	content: '';
-	position: absolute;
-	display: block;
 	right: 5px;
-	width: 0;
-	height: 0;
-	border-style: solid;
-}
-
-#notification-container::after {
-	top: -20px;
-	border-color: transparent transparent #fff transparent;
-	border-width: 10px;
-}
-
-#notification-container::before {
 	top: -21px;
-	border-color: transparent transparent #bdbdbd transparent;
-	border-width: 10px;
+}
+
+#notification-container:after {
+	top: -20px;
 }
 
 #notification-container>.delete-all {
@@ -636,20 +759,20 @@ a:hover>i.fa {
 	border-radius: 0.3em;
 	font-size: 14px;
 	line-height: 25px;
-	border: 1px solid #f5f5f5;
+	border: 1px solid var(--notification-border);
 	word-break: break-word;
 }
 
 .notification-bubble.info {
-	background-color: #f1f8e9;
+	background-color: var(--notification-info);
 }
 
 .notification-bubble.error {
-	background-color: #ffcdd2;
+	background-color: var(--notification-error);
 }
 
 .notification-bubble.verbose {
-	background-color: #ddd;
+	background-color: var(--notification-verbose);
 }
 
 .notification-bubble>button,
@@ -657,7 +780,7 @@ a:hover>i.fa {
 	float: right;
 	border-radius: 12.5px;
 	font-weight: bold;
-	color: #fff;
+	color: var(--light);
 }
 
 .notification-bubble>button {
@@ -670,31 +793,31 @@ a:hover>i.fa {
 }
 
 .notification-bubble.info>button {
-	background-color: #b0ca93;
-	border: 1px solid #a6bf8b;
+	background-color: var(--notification-info-delete-background);
+	border: 1px solid var(--notification-info-delete-border);
 }
 
 .notification-bubble.error>button,
 #notification-container>.delete-all>button {
-	background-color: #e57373;
-	border: 1px solid #ef9a9a;
+	background-color: var(--notification-error-delete-background);
+	border: 1px solid var(--notification-error-delete-border);
 }
 
 .notification-bubble.verbose>button {
-	background-color: #9e9e9e;
-	border: 1px solid #919191;
+	background-color: var(--notification-verbose-delete-background);
+	border: 1px solid var(--notification-verbose-delete-border);
 }
 
 .notification-bubble>button:hover,
 #notification-container>.delete-all>button:hover {
-	background: #f44336;
-	border: 1px solid #f44336;
+	background: var(--close);
+	border: 1px solid var(--close);
 }
 
 .notification-bubble>button:focus,
 #notification-container>.delete-all>button:focus {
-	background: #c15c5c;
-	border: 1px solid #c15c5c;
+	background: var(--close-active);
+	border: 1px solid var(--close-active);
 }
 
 .bell-shake {
@@ -738,6 +861,153 @@ a:hover>i.fa {
 	}
 }
 
+/* Autoselect trick used for inputs */
+.autoselect_container {
+	width: 100% !important;
+	margin-top: 5px !important;
+	padding: 4px 10px !important;
+	border-radius: 3em !important;
+	border: 1px solid var(--tab-border) !important;
+	background: var(--background) !important;
+	box-shadow: none !important;
+	outline: none !important;
+	font-family: inherit !important;
+	font-size: inherit !important;
+	color: inherit !important;
+	text-overflow: ellipsis;
+}
+
+/* welcome popups/tips classes */
+.tips {
+	position: absolute;
+	visibility: hidden;
+	width: 300px;
+	max-width: 100vw;
+	opacity: 0;
+	padding: 20px;
+	background: var(--background);
+	border: 1px solid var(--tab-border);
+	border-radius: 1em;
+	user-select: none;
+	font-weight: normal;
+	transition: opacity .15s ease .5s;
+}
+
+.tips .btn {
+	margin-right: 0;
+}
+
+/* arrows and positioning for tips popups */
+.tips[data-tips="1"],
+.tips[data-tips="4"] {
+	top: -10px;
+	transform: translateY(-100%);
+}
+
+.tips[data-tips="1"]::after,
+.tips[data-tips="1"]::before,
+.tips[data-tips="4"]::after,
+.tips[data-tips="4"]::before {
+	left: 35px;
+	bottom: -21px;
+	rotate: 180deg;
+}
+
+.tips[data-tips="1"]::after,
+.tips[data-tips="4"]::after {
+	bottom: -20px;
+}
+
+@media screen and (min-width: 992px) {
+	.tips[data-tips="2"] {
+		transform: translateX(-100%);
+		top: -30px;
+		left: -10px;
+	}
+
+	.tips[data-tips="2"]::after,
+	.tips[data-tips="2"]::before {
+		right: -21px;
+		top: 35px;
+		rotate: 90deg;
+	}
+
+	.tips[data-tips="2"]::after {
+		right: -20px;
+	}
+}
+
+@media screen and (max-width: 991px) {
+	.tips[data-tips="2"] {
+		top: -20px;
+		right: 0;
+		transform: translateY(-100%);
+	}
+
+	.tips[data-tips="2"]::after,
+	.tips[data-tips="2"]::before {
+		right: 35px;
+		bottom: -21px;
+		rotate: 180deg;
+	}
+
+	.tips[data-tips="2"]::after {
+		bottom: -20px;
+	}
+}
+
+@media screen and (min-width: 992px) {
+
+	.tips[data-tips="3"] {
+		transform: translateX(100%) translateY(50%);
+		bottom: 0;
+	}
+
+	.tips[data-tips="3"]::after,
+	.tips[data-tips="3"]::before {
+		left: -21px;
+		bottom: 50%;
+		rotate: 270deg;
+	}
+
+	.tips[data-tips="3"]::after {
+		left: -20px;
+	}
+}
+
+@media screen and (max-width: 991px) {
+
+	.tips[data-tips="3"] {
+		bottom: 40px;
+	}
+
+	.tips[data-tips="3"]::after,
+	.tips[data-tips="3"]::before {
+		left: 45%;
+		bottom: -21px;
+		rotate: 180deg;
+	}
+
+	.tips[data-tips="3"]::after {
+		bottom: -20px;
+	}
+}
+
+/* elevate tips and other elements to show them above the overlay */
+.overlayed>.tips,
+.overlayed>* {
+	z-index: 1048;
+}
+
+.overlayed>*:not(.tips) {
+	position: relative;
+}
+
+.tips.visible {
+	visibility: visible;
+	opacity: 1;
+}
+
 @media screen and (max-width: 1023px) {
 
 	/* set a minimum width for dialogs on small screens to prevent them from being ridiculous */
@@ -778,6 +1048,8 @@ a:hover>i.fa {
 	.ph-header>.title,
 	.ph-header>.activation {
 		width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 
 	#notification-ui {
@@ -789,28 +1061,9 @@ a:hover>i.fa {
 		min-width: 0;
 	}
 
-	.help-section {
-		display: flex;
-		justify-content: space-around;
+	.help-section a {
+		width: calc(50% - 2px);
+		text-align: center;
+		vertical-align: middle;
 	}
-
-	.help-section>*:nth-child(odd) {
-		border: none;
-	}
-}
-
-/* Autoselect trick used for config popup */
-.autoselect_container {
-	width: 100% !important;
-	margin-top: 5px !important;
-	padding: 4px 10px !important;
-	border-radius: 3em !important;
-	border: 1px solid #e0e0e0 !important;
-	background: #fafafa !important;
-	box-shadow: none !important;
-	outline: none !important;
-	font-family: inherit !important;
-	font-size: inherit !important;
-	color: inherit !important;
-	text-overflow: ellipsis;
 }
