@@ -77,15 +77,27 @@ interface CoreInterface
 /***			These are optional methods of your Core class				***/
 /******************************************************************************/
 
-interface UIAddons
+interface Branding
 {
 	public static function get_module_name(): string; //return here your module name to be displayed in UI
 	public static function get_author(): string; //return here your name to be displayed in UI
 	public static function get_readme_url(): string; //return here your readme URL if you have one. Must be a valid HTML <a href=...>
-	public static function get_license_to_display(): array; //if you have a license, you should have this method too. returns ['description' => intestation with '%linkstart' and '%Linkend' anchors to be replaced for license link, 'text' => full text of the license, 'title' => title of the dialog]
+}
+
+interface Legal
+{
+	public static function get_license_to_display(): array; //if you have a license, you should have this method too. returns ['description' => footer text with '%linkstart' and '%Linkend' anchors to be replaced for license link, 'text' => full text of the license, 'title' => title of the dialog]
 	public static function get_libraries_to_display(): array; //any library you used. returns array of arrays containing ['name' => library name, 'url' => library url]
+}
+
+interface Footer
+{
 	public static function get_additional_footer(): string; //any additional information to print in footer
-	public static function get_help(): array; //return an array of raw strings containing help informations to print for the user. You should use the sandard format: <b>title:</b>text...
+}
+
+interface Help
+{
+	public static function get_help(): array; //return an array of raw strings containing help informations to print for the user. You should use the standard format: <b>title:</b>text...
 }
 
 interface Activation
