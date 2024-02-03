@@ -9,21 +9,13 @@
 
 $minimum_fpbx = '15.0'; //minimum compatible FreePBX
 $UI_version = '1.0.0'; //version to change in case of new releases
-$readme = 'https://github.com/Massi-X/freepbx-phonemiddleware/#readme'; //readme URL
+$readme = 'https://github.com/Massi-X/freepbx-carddavmiddleware-ui/#readme'; //readme URL
 
 //list of files from this library that should not end up in the finished module
 $excludedLibraryFiles = [
 	'build',
 	'build_config',
 	'devtools'
-];
-
-//list of files that are not needed even if in core
-$excludedGenericFiles = [
-	//not used for now
-	//'composer.json',
-	//'composer.lock'
-	//config is automatically removed after loading values, no need to include it here
 ];
 
 //default module xml array
@@ -33,7 +25,7 @@ $modulexml = [
 	'version' => '1.0.0',
 	'publisher' => 'Massi-X',
 	'license' => 'CC-BY-NC-ND-4.0',
-	'licenselink' => 'https://github.com/Massi-X/freepbx-phonemiddleware/blob/main/LICENSE',
+	'licenselink' => 'https://github.com/Massi-X/freepbx-carddavmiddleware-ui/blob/main/LICENSE',
 	'description' => 'This is the UI for CardDAV Middleware. Please change this when releasing.',
 	'more-info' => $readme,
 	'updateurl' => '',
