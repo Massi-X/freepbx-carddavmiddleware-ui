@@ -893,7 +893,7 @@ a:hover>i.fa {
 	max-width: 100vw;
 	opacity: 0;
 	padding: 20px;
-	background: var(--background);
+	background: var(--background-pure);
 	border: 1px solid var(--tab-border);
 	border-radius: 1em;
 	user-select: none;
