@@ -9,10 +9,10 @@
   </tr>
 </table>
 
-# For the users: <a href="https://phonemiddleware.000webhostapp.com/releases/latest">Download the latest release here</a>
+# For the users: <a href="https://carddavmiddleware.massi-x.dev/latest">Download the latest release here</a>
 
 ## About this
-This is not the complete module and *will not work as is!* This is only meant for developers who wants to build their backends and release a module based on that. So if you are an end user and you still reading this, well.. you shouldn't! Find more info <a href="https://phonemiddleware.000webhostapp.com/releases#README">here</a>
+This is not the complete module and *will not work as is!* This is only meant for developers who wants to build their backends and release a module based on that. So if you are an end user and you still reading this, well.. you shouldn't! Find more info <a href="https://carddavmiddleware.massi-x.dev/#readme">here</a>
 
 ## Development
 First pull the main repo or, even better, one of the tagged versions available, then start developing by having a look at the main files in the project:
