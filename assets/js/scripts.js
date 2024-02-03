@@ -177,54 +177,101 @@ document.addEventListener('DOMContentLoaded', () => {
 	/********************	END NOTIFICATION UI	********************/
 
 	/********************	INIT POPUPS	********************/
+	$('#welcomePopup').dialog({
+		autoOpen: false,
+		modal: true,
+		resizable: false,
+		draggable: false,
+		height: 'auto',
+		width: 'auto',
+		show: true,
+		hide: true,
+		dialogClass: 'no-close-btn',
+		closeOnEscape: false,
+		buttons: [
+			{
+				text: pm_language['Yes'],
+				click: initTour
+			},
+			{
+				text: pm_language['Donotshowagain'],
+				click: function () {
+					$(this).dialog("close");
+					setFirstRun();
+				}
+			}
+		]
+	});
+
 	$('#setupCarddav').dialog({
 		autoOpen: false,
 		modal: true,
 		resizable: false,
 		draggable: false,
 		height: 'auto',
-		width: 'auto'
+		width: 'auto',
+		show: true,
+		hide: true
 	});
+
 	$('#errorPopup').dialog({
 		autoOpen: false,
 		modal: true,
 		resizable: false,
 		draggable: false,
 		height: 'auto',
-		width: 'auto'
+		width: 'auto',
+		show: true,
+		hide: true
 	});
+
 	$('#licensePopupUI').dialog({
 		autoOpen: false,
 		modal: true,
 		resizable: false,
 		draggable: false,
 		height: 'auto',
-		width: 'auto'
+		width: 'auto',
+		show: true,
+		hide: true
 	});
+
 	$('#licensePopupCore').dialog({
 		autoOpen: false,
 		modal: true,
 		resizable: false,
 		draggable: false,
 		height: 'auto',
-		width: 'auto'
+		width: 'auto',
+		show: true,
+		hide: true
 	});
+
 	$('#librariesPopup').dialog({
 		autoOpen: false,
 		modal: true,
 		resizable: false,
 		draggable: false,
 		height: 'auto',
-		width: 'auto'
+		width: 'auto',
+		show: true,
+		hide: true
 	});
+
 	window.magicPopup = $('#magicPopup').dialog({
 		autoOpen: false,
 		modal: true,
 		resizable: false,
 		draggable: false,
 		height: 'auto',
-		width: 'auto'
+		width: 'auto',
+		show: true,
+		hide: true
 	});
+
+	//only load welcome popup if this is the first run
+	if (phonemiddleware['isFirstRun'])
+		$('#welcomePopup').dialog('open');
 	/********************	END INIT POPUPS	********************/
 
 	/********************	LISTEN MAX_CNAM_OUTPUT CHECKBOX	********************/
@@ -516,3 +563,99 @@ function deleteAllNotifications() { //delete ALL notifications
 	});
 }
 /********************	END NOTIFICATION UI	********************/
+
+/********************	WELCOME TOUR	********************/
+function initTour() {
+	//prevent body from moving
+	document.body.classList.add('fix');
+
+	//close welcome popup
+	$('#welcomePopup').dialog('close');
+
+	//create and append overlay that look the same as the error popup
+	let overlay = document.createElement('div');
+	overlay.classList.add('ui-widget-overlay', 'low');
+	document.body.appendChild(overlay);
+	setTimeout(() => overlay.classList.add('active'), 0); //fade it to a darker shade
+
+	//vars
+	let ID = 1; //current step
+	let tipsSelector = '.tips[data-tips="' + ID + '"]'; //tips query selector
+	let object = document.querySelector(tipsSelector); //current tip
+
+	//function used to go to next tip
+	function nextTip() {
+		//make the tip visible + elevate the object that is referring to
+		object.classList.add('visible');
+		object.parentElement.classList.add('overlayed');
+
+		//scroll to the tip position
+		window.scrollTo({
+			top: window.scrollY + object.getBoundingClientRect().top - 50
+		});
+	}
+
+	//function to keep the scroll fixed when resizing the page
+	function resize() {
+		window.scrollTo({
+			top: window.scrollY + object.getBoundingClientRect().top - 50
+		});
+	}
+
+	//open first tip
+	nextTip();
+
+	//listener for click events to go to next tip
+	window.addEventListener('click', function click(e) {
+		//only handle tips elements
+		if (e.target.id != "next-tip" && e.target.id != "close-tip")
+			return;
+
+		//prevent form submission etc.
+		e.preventDefault();
+
+		//update variables to next tip
+		tipsSelector = tipsSelector.replace(ID, ID + 1);
+		ID++;
+
+		//hide current tip and update reference to next one
+		object.classList.remove('visible');
+		object.parentElement.classList.remove('overlayed');
+		object = document.querySelector(tipsSelector);
+
+		//this is the last tip
+		if (e.target.id == "close-tip") {
+			//remove overlay
+			overlay.remove();
+
+			//unlock body
+			document.body.classList.remove('fix');
+
+			//scroll back to top
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth'
+			});
+
+			//store first run in php
+			setFirstRun();
+
+			//remove listeners
+			window.removeEventListener('resize', resize);
+			window.removeEventListener('click', click);
+		} else
+			nextTip(); //go to next tip
+	});
+
+	//see resize()
+	window.addEventListener('resize', resize);
+}
+
+function setFirstRun() {
+	fetch('ajax.php?' + new URLSearchParams({
+		module: phonemiddleware['ajax_name'],
+		command: 'setfirstrun'
+	}), []); //no check for errors
+}
+
+/********************	END WELCOME TOUR	********************/
