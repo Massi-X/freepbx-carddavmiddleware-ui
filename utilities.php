@@ -114,6 +114,8 @@ class Utilities
 				$message = _('The network is unreachable.');
 			else if (stripos($message, 'Connection refused') !== false) //connection refused
 				$message = _('The server refused the connection.');
+			else if (stripos($message, 'get_headers(): This function may only be used against URLs') !== false) //connection refused
+				$message = _('This does not seem to be an URL. Did you include the protocol?');
 
 			throw new Exception($message);
 		}
