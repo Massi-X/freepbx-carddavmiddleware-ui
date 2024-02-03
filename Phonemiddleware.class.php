@@ -19,6 +19,8 @@ use Core;
 use Throwable;
 use Utilities;
 
+const NOT_FIRST_RUN_KEY = 'NOT_FIRST_RUN_KEY';
+
 class Phonemiddleware extends \DB_Helper implements \BMO
 {
 	private $FreePBX;
@@ -104,11 +106,14 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 
 		//language variable
 		echo 'var pm_language = {' .
+			'"Yes": "' . _('Yes') . '", ' .
 			'"OK": "' . _('OK') . '", ' .
 			'"Cancel": "' . _('Cancel') . '", ' .
+			'"Close": "' . _('Close') . '", ' .
 			'"Save": "' . _('Save') . '", ' .
 			'"empty": "' . _('empty') . '", ' .
 			'"undefined": "' . _('undefined') . '", ' .
+			'"Donotshowagain": "' . _('Do not show again') . '", ' .
 			'"Validate": "' . _('Validate') . '", ' .
 			'"Saving_dots": "' . _('Saving…') . '", ' .
 			'"Validating_dots": "' . _('Validating…') . '", ' .
@@ -136,7 +141,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"JS_magic_step3_2": "' . _('Processing route with cid=%cid and did=%did...') . '", ' .
 			'"JS_magic_step3_notfound": "' . _('No route found! Please run Auto Configure again when you have created one') . '", ' .
 			'"JS_magic_error": "' . _('Something went wrong during previous step. Please see the log for more information.') . '", ' .
-			'"JS_magic_completed": "' . _('Process completed. You are ready to rock! Please wait for the changes to be applied...') . '",';
+			'"JS_magic_completed": "' . _('Process completed. You are ready to rock! Please wait for the changes to be applied... You may now close the window.') . '",';
 		//these are "special" languages entries. The key is also used as value in javascript
 		for ($i = 0; $i < count(Core::PHONE_TYPES); $i++) { //we start at 0 even if not rally needed (see @CoreInterface.php)
 			$type = Core::PHONE_TYPES[$i];
@@ -166,6 +171,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 
 		//phonemiddleware values to js object (do not change these, can be used by core too)
 		echo "var phonemiddleware = {" .
+			'"isFirstRun": ' . ($this->getConfig(NOT_FIRST_RUN_KEY) ? 'false' : 'true') . ', ' .
 			'"ajax_name": "phonemiddleware", ' .
 			'"numberToCnamURL": "' . self::$numberToCnamURL . '", ' .
 			'"SUPERFECTA_SCHEME": "' . Utilities::SUPERFECTA_SCHEME . '", ' .
@@ -270,6 +276,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			case 'createorder':
 			case 'validatepurchase':
 			case 'restorepurchase':
+			case 'setfirstrun':
 				return true;
 			default:
 				return false;
@@ -302,32 +309,6 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			case 'validatecarddav':
 				if (empty($_POST['carddav_url']))
 					throw new Exception(_('URL must be set.')); //url must be there
-
-				//try to see if the URL is valid (only SSL, 404, 403 and connection_refused errors)
-				try {
-					$headers = get_headers($_POST['carddav_url'], true);
-
-					//I really don't know!
-					if ($headers === false)
-						throw new Exception(_('Unknown error.'));
-
-					if (strpos($headers[0], '404') !== false) //page not found
-						throw new Exception(str_replace('%error', '404', _('The server thrown a %error error.')));
-					else if (strpos($headers[0], '403') !== false) //forbidden
-						throw new Exception(str_replace('%error', '403', _('The server thrown a %error error.')));
-
-					//no errors? OK we can proceed!
-
-				} catch (Throwable $t) { //something went wrong
-					$message = $t->getMessage();
-
-					if (stripos($message, 'GET_SERVER_HELLO:unknown protocol') !== false) //SSL error
-						$message = _('Unable to estabilish a secure connection. Please ensure that the server certificate is valid.');
-					else if (stripos($message, 'Connection refused') !== false) //connection refused
-						$message = _('The server refused the connection.');
-
-					throw new Exception(_('An error occured while connecting: ') . $message);
-				}
 
 				//load all the values from the server
 				$this->Core->set_url($_POST['carddav_url']);
@@ -450,6 +431,10 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				$this->FreePBX->Superfecta->bulkhandler_superfecta_cfg($settings); //viewing_itemid is unused here so doesn't matter
 
 				return ['status' => true, 'message' => $extra . _('Updated superfecta configuration.')]; //sadly there is no way (simple enough) to know if this was successful or not
+			case 'setfirstrun':
+				//store first run, no input needed and return value is always true
+				$this->FreePBX->PhoneMiddleware->setConfig(NOT_FIRST_RUN_KEY, true);
+				return ['status' => true, 'message' => ''];
 		}
 	}
 
