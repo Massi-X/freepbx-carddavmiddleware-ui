@@ -81,13 +81,13 @@ class Utilities
 
 	/**
 	 * BMO Function
-	 * Get email "To" and "From" addresses from fpbx config
+	 * Get email "To" address from fpbx config
 	 * 
 	 * @param	FreePBX	$FreePBX	BMO object
-	 * @return 	array			the registered email address in the format ["To" => "...", "From" => "..."]
-	 * @throws	Exception		If the "To" (and only "To") email address is not set
+	 * @return 	string				the registered email address
+	 * @throws	Exception			If the "To" email address is not set
 	 */
-	public static function get_fpbx_registered_email_config($FreePBX)
+	public static function get_fpbx_to_email_config($FreePBX)
 	{
 		if (!is_a($FreePBX, 'FreePBX', true))
 			throw new Exception(_('Not given a FreePBX Object'));
@@ -96,11 +96,7 @@ class Utilities
 		if (empty($to))
 			throw new Exception(_('"To" field is empty.'));
 
-		$from = $FreePBX->Config()->get('AMPUSERMANEMAILFROM');
-		if (empty($from))
-			$from = null; //make sure to null it so the caller will have a consistent result
-
-		return ["To" => $to, "From" => $from];
+		return $to;
 	}
 
 	/**
