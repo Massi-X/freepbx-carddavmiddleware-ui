@@ -100,6 +100,12 @@ interface Help
 	public static function get_help(): array; //return an array of raw strings containing help informations to print for the user. You should use the standard format: <b>title:</b>text...
 }
 
+interface SSL
+{
+	public static function get_ssl_enabled(): bool; //if you want to give the user permission to bypass the SSL this is the method for you! Will enable a checkbox in the carddav popup.
+	public static function set_ssl_enabled(bool $enabled): void; //store the current state of SSL validation
+}
+
 interface Activation
 {
 	public static function get_purchase_buttons(): string; //return a well formatted HTML string containing your purchase/donation button(s). Include any <script> or <style> you want to use here. You can take advantage of the ajax calls createorder (that will call create_order()), validatepurchase (validate_purchase()) and restorepurchase (restore_purchase())
