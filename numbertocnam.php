@@ -27,6 +27,7 @@ if (isset($_GET['number'])) {
 	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, _('Passing parameters to numbertocnam with GET is deprecated. Please use "Auto Configure" again to fix this for you.'));
 	//and print a generic one here
 	printBasicXML('name', '[W!] ' . _('GET is deprecated, please switch to POST.'));
+	die();
 }
 
 //actual code
