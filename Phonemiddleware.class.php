@@ -344,9 +344,12 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				$scheme = $p->getValue($this->FreePBX->Superfecta);
 				$scheme['scheme_name'] = Utilities::SUPERFECTA_SCHEME;
 				$scheme['destination'] = ''; //missing value in defaults. So add empty
-				$scheme['Curl_Timeout'] = 5;
-				$scheme['SPAM_Text'] = '[SPAM] ';
-				$scheme['SPAM_threshold'] = 1;
+				$scheme['Curl_Timeout'] = 5; //5 seconds is already too much
+				$scheme['SPAM_Text'] = '[SPAM] '; //a default text. Could be changed by the user if needed
+				$scheme['SPAM_threshold'] = 1; //1 = the only value supported by Core
+				$scheme['Character_Encodings'] = 'UTF-8'; //added in 16.0.27
+				$scheme['Strip_Accent_Characters'] = 'N'; //added in 16.0.27. Do not strip accent chars (hope devices in 2023 don't have problems with that!)
+				$scheme['Caller_Id_Max_Length'] = -1; //added in 16.0.27. -1 = no limit (limit is already managed by Core)
 				if (!$this->FreePBX->Superfecta->getScheme(Utilities::SUPERFECTA_SCHEME)) {
 					if (!$this->FreePBX->Superfecta->addScheme(Utilities::SUPERFECTA_SCHEME, $scheme)['status'])
 						return ['status' => false, 'message' => _('An unknown exception occured.')];
