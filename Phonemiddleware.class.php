@@ -137,10 +137,15 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"JS_magic_error": "' . _('Something went wrong during previous step. Please see the log for more information.') . '", ' .
 			'"JS_magic_completed": "' . _('Process completed. You are ready to rock! Please wait for the changes to be applied...') . '",';
 		//these are "special" languages entries. The key is also used as value in javascript
-		foreach (Core::PHONE_TYPES as $type) {
-			echo '"PHONE_TYPE_' . $type . '": "';
+		for ($i = 0; $i < count(Core::PHONE_TYPES); $i++) { //we start at 0 even if not rally needed (see @CoreInterface.php)
+			$type = Core::PHONE_TYPES[$i];
 
-			switch ($type) {
+			if ($type == null)
+				continue;
+
+			echo '"PHONE_TYPE_' . $i . '": "[' . $type . '] - ';
+
+			switch ($i) {
 				case Core::PHONE_TYPE_NO_LIMITS:
 					echo  _('Phone without limitations');
 					break;
@@ -151,7 +156,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 					echo _('Snom Phone (\'Telephone\', \'Mobile\', \'Office\' tags) - Maximum 3 numbers');
 					break;
 				default:
-					echo _('Unknown type ' . $type);
+					echo _('Unknown type');
 					break;
 			}
 			echo '", ';
