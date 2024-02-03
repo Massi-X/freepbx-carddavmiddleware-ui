@@ -55,7 +55,7 @@
 				$notifications = $Core->retrieveUINotifications();
 
 				echo '<i class="fa fa-bell" onclick="toggleNotification()" id="notification-header" title="' . _('Notifications') . '"></i><span id="notification-count" data-count="' . count($notifications) . '">…</span>'; //count handled by js
-				echo '<div id="notification-container">';
+				echo '<div id="notification-container" class="arrow-container">';
 				echo '<div class="delete-all"><button onclick="deleteAllNotifications()">' . _('Delete All') . '</button></div>';
 				echo '<div class="bubble-container">';
 
@@ -101,7 +101,13 @@
 											</div>
 											<div class="col-md-9 col-md-9-flex">
 												<input disabled="disabled" type="text" class="form-control form-control-flex" id="carddav_display_url" name="carddav_display_url" value="<?= empty($Core->get_url()) ? _('Not Configured') : $Core->get_url() ?>">
-												<button name="carddav-setup" class="btn btn-danger btn-input-flex" onclick="$('#setupCarddav').dialog('open'); return false;"><?= _('Setup/Change'); ?></button>
+												<div class="relative">
+													<button name="carddav-setup" class="btn btn-danger btn-input-flex" onclick="$('#setupCarddav').dialog('open'); return false;"><?= _('Setup/Change'); ?></button>
+													<div class="tips arrow-container" data-tips="2">
+														<p><?= _('Then you should setup the module to read data from your server. To do that click "Setup/Change and follow the instructions.'); ?></p>
+														<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -117,6 +123,12 @@
 											<div class="col-md-3 control-label">
 												<label for="output_construct"><?= _('CNAM/Phonebook Output'); ?></label>
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="output_construct"></i>
+												<div class="relative">
+													<div class="tips arrow-container" data-tips="3">
+														<p><?= str_replace('%simble', '<i class="fa fa-question-circle"></i>', _('Done that, the module is ready to work as it should. You should now tweak the settings per your taste, you can get help for any section by hovering the %simble simble.')); ?></p>
+														<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
+													</div>
+												</div>
 											</div>
 											<div class="col-md-9">
 												<input type="text" class="form-control notvisible" id="output_construct" name="output_construct" value="<?= $Core->get_output_construct() ?>">
@@ -334,9 +346,15 @@
 						</div>
 						<!-- BUTTONS -->
 						<div class="element-container flexible">
-							<div class="link-container">
+							<!-- AUTO CONFIG -->
+							<div class="link-container relative">
 								<a href="javascript:;" class="btn btn-warning btn-magic" onclick="$('#magicPopup').dialog('open'); return false;"><i class="fa fa-magic"></i><?= _('Auto Configure'); ?></a>
+								<div class="tips arrow-container" data-tips="1">
+									<p><?= _('The first thing needed is to setup you PBX system to work nicely with the module. To do that click "Auto Configure" and follow the instructions.'); ?></p>
+									<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
+								</div>
 							</div>
+							<!-- SAVE -->
 							<input name="submit" type="submit" value="<?= _('Save &amp; Apply'); ?>" class="btn-submit">
 						</div>
 					</div>
@@ -345,9 +363,15 @@
 		</div>
 
 		<!-- HELP/CONFIG -->
-		<div class="help-section">
-			<a target="_blank" href="<?= \FreePBX::PhoneMiddleware()->getXmlPhonebookURL(); ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
-			<a href="javascript:;" class="btn-popup" onclick="$('#errorPopup').dialog('open'); return false;"><?= _('Error codes and fixes'); ?></a>
+		<div class="relative">
+			<div class="tips arrow-container" data-tips="4">
+				<p><?= _('You can find here the URL for the XML Phonebook to be used on your devices. On the side an help section with some common error and fixes.'); ?></p>
+				<button id="close-tip" class="btn fl-right"><?= _('Got it'); ?></button>
+			</div>
+			<div class="help-section">
+				<a target="_blank" href="<?= \FreePBX::PhoneMiddleware()->getXmlPhonebookURL(); ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
+				<a href="javascript:;" class="btn-popup" onclick="$('#errorPopup').dialog('open'); return false;"><?= _('Error codes and fixes'); ?></a>
+			</div>
 		</div>
 		<div class="footer">
 			<!-- Website -->
@@ -358,7 +382,7 @@
 			<!-- (Eventual) Core license -->
 			<?php
 			try { //if license is provided by core, UI is now only a library. Treat it like that
-				$license = $Core->get_license_to_display();
+				$license = Core::get_license_to_display();
 				//use '%linkstart' and '%linkend' in core to create link
 				echo str_replace(['%linkstart', '%linkend'], ['<a href="javascript:;" onclick="$(\'#licensePopupCore\').dialog(\'open\'); return false;">', '</a>'], $license['description']);
 			} catch (\Throwable $t) {
@@ -372,7 +396,7 @@
 			<!-- Custom core -->
 			<?php
 			try { //load any additional arbitrary thing from core
-				$txt = $Core->get_additional_footer();
+				$txt = Core::get_additional_footer();
 				echo ' - ' . $txt;
 			} catch (\Throwable $t) {
 			}
@@ -380,6 +404,10 @@
 		</div>
 
 		<!-- POPUPS -->
+		<div id="welcomePopup" title="<?= str_replace('%module', method_exists(Core::class, 'get_module_name') ? Core::get_module_name() : _('CardDAV Middleware UI'), _('Welcome to %module!')); ?>" style="display: none">
+			<?= _('It seems it is the first time you are using the module, would you like to take a quick tour?') ?>
+		</div>
+
 		<div id="licensePopupUI" title="<?= str_replace('%modulename', _('CardDAV Middleware UI'), _('%modulename license terms')); ?>" style="display: none">
 			<pre><?= file_get_contents(__DIR__ . '/LICENSE'); ?></pre> <!-- This popup is only available if core has not declared his license -->
 		</div>
@@ -400,7 +428,7 @@
 
 				<?php
 				try { //display used libraries if provided by core
-					foreach ($Core->get_libraries_to_display() as $library)
+					foreach (Core::get_libraries_to_display() as $library)
 						echo '<li><a target="_blank" href="' . $library['url'] . '">' . $library['name'] . '</a></li>';
 				} catch (\Throwable $t) {
 				}
@@ -460,7 +488,7 @@
 				</table>
 				<div class="carddav_info large_padding">
 					<i class="fa fa-info-circle"></i>
-					<i><?= _('To change greyed out values, disable all the addressbooks first.'); ?></i>
+					<i><?= _('Enable the addressbook(s) you want to use to save the changes. To modify greyed out inputs disable all the addressbooks first.'); ?></i>
 				</div>
 				<button type="submit" id="carddav_validate" name="carddav_validate" class="btn" onclick="validateCarddav();">
 					<!-- filled by js -->
@@ -492,8 +520,8 @@
 				</ul>
 
 				<pre id="magic_pre_container">
-			<?= _('Waiting to start...'); ?>
-		</pre>
+					<?= _('Waiting to start...'); ?>
+				</pre>
 
 				<details>
 					<summary><b><?= _('Manual configuration'); ?></b></summary>
