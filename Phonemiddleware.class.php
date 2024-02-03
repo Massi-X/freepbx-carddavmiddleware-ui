@@ -30,7 +30,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 
 	private static $xmlPhonebookURL = null;
 	private static $numberToCnamURL = null;
-	private static $emailAddresses = null;
+	private static $emailTo = null;
 
 	/**
 	 * BMO constructor
@@ -93,9 +93,9 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 		self::$xmlPhonebookURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/carddavmiddleware/carddavtoxml.php';
 		self::$numberToCnamURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://localhost:' . $_SERVER['SERVER_PORT'] . '/carddavmiddleware/numbertocnam.php';
 		try {
-			self::$emailAddresses = Utilities::get_fpbx_registered_email_config($this->FreePBX);
+			self::$emailTo = Utilities::get_fpbx_to_email_config($this->FreePBX);
 		} catch (Exception $e) {
-			self::$emailAddresses['To'] = _('No address registered.'); //I only use "To" address here
+			self::$emailTo = _('No address registered.'); //I only use "To" address here
 		}
 
 		// prepare here all the (php) variables needed by scripts.js
@@ -235,17 +235,17 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	}
 
 	/**
-	 * Return the resolved email addresses
+	 * Return the resolved email address
 	 * 
-	 * @return	array					Array of email addresses with "To" (if available) and "From"
+	 * @return	string					"To" email address (if available)
 	 * @throws	Exception				If this doesn't run inside a page
 	 */
-	public static function getEmailAddresses()
+	public static function getToAddress()
 	{
-		if (self::$emailAddresses == null)
+		if (self::$emailTo == null)
 			throw new Exception(_('This is only available inside a page'));
 
-		return self::$emailAddresses;
+		return self::$emailTo;
 	}
 
 
