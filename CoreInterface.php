@@ -41,7 +41,7 @@ interface CoreInterface
 	public function store_config(): bool; //called when the UI class wants to store the data (i.e. when the user clicks "Apply")
 	public static function delete_cache(): bool; //if you have any cache, this method is called to invalidate it if there is any breaking change.
 
-	public function getXMLforPhones(bool $force = false): string; //returns a well formatted xml phonebook that can be read by a phone/other device. $force to force refresh
+	public function getXMLforPhones(bool $force = false, int $type = -1): string; //returns a well formatted xml phonebook that can be read by a phone/other device. $force to force refresh. $type to specify a phone type only for this request (from  CoreInterface.PHONE_TYPE)
 	public function getCNFromPhone(string $number, bool $force = false); //returns a CNAM (name) given a phone number. You should really not use $force because the result must come as fast as possible - output type should be string|null (not supported in PHP7)
 
 	public function discover_addressbooks_to_display(): array; //returns an array of addressbooks based on the current url, username and password. This s used by the UI in conjunction with get_carddav_addressbooks() to create a list of the current active/inactive addressbooks.
