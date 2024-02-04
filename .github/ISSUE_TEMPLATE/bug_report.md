@@ -28,6 +28,6 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**System:**
+**System**
  - PBX Version and distribution: [e.g. FreePBX 16 / Incredible PBX 2027]
  - Base OS System [e.g. CentOS 7]
