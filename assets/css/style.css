@@ -974,6 +974,10 @@ input.autoselect_container {
 	text-overflow: ellipsis;
 }
 
+input.autoselect_container:not(:last-child) {
+	margin-bottom: 5px;
+}
+
 /* welcome popups/tips classes */
 .tips {
 	position: absolute;
