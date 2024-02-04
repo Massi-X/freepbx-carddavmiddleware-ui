@@ -2,13 +2,14 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: 'improvement'
+labels: 'enhancement'
 assignees: ''
 
 ---
 
 **Component**
 Please flag the component that this request relates to:
+
 - [ ] UI
 - [ ] Core
 

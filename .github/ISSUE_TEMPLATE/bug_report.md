@@ -9,6 +9,7 @@ assignees: ''
 
 **Component**
 Please flag the component that this issue relates to:
+
 - [ ] UI
 - [ ] Core
 
