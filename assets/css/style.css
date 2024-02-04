@@ -959,18 +959,18 @@ a:hover>i.fa {
 }
 
 /* Autoselect trick used for inputs */
-.autoselect_container {
-	width: 100% !important;
-	margin-top: 5px !important;
-	padding: 4px 10px !important;
-	border-radius: 3em !important;
+input.autoselect_container {
+	width: 100%;
+	margin-top: 5px;
+	padding: 4px 10px;
+	border-radius: 3em;
 	border: 1px solid var(--tab-border) !important;
-	background: var(--background) !important;
+	background: var(--background);
 	box-shadow: none !important;
-	outline: none !important;
-	font-family: inherit !important;
-	font-size: inherit !important;
-	color: inherit !important;
+	outline: none;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
 	text-overflow: ellipsis;
 }
 
