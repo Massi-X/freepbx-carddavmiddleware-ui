@@ -93,7 +93,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	{
 		$this->FreePBX->Notifications->add_notice('phonemiddleware', 90325363258,  _('CardDAV Middleware Donation'), _('Hi! Do you remember that CardDAV Middleware is completely free? Yeah you heard it right! So why not donating a small amount to support the development? Click the PayPal button to continue!'), 'config.php?display=carddavmiddleware', false, true);
 		//variable needed by the php page
-		self::$xmlPhonebookURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/carddavmiddleware/carddavtoxml.php';
+		self::$xmlPhonebookURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'] . '/carddavmiddleware/carddavtoxml.php';
 		self::$numberToCnamURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://localhost:' . $_SERVER['SERVER_PORT'] . '/carddavmiddleware/numbertocnam.php';
 		try {
 			self::$emailTo = Utilities::get_fpbx_to_email_config($this->FreePBX);
