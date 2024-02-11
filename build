@@ -201,10 +201,10 @@ else
 	$res = @$config['rawname'];
 
 if (!empty($res)) {
-	echo colorLog("Setting rawname to \"$res\"\n", 'b');
+	echo colorLog("Set rawname to \"$res\"\n", 'b');
 } else {
 	$res = (empty($modulexml['rawname']) ? 'none' : $modulexml['rawname']);
-	echo colorLog("Setting rawname to default \"$res\"\n", 'b');
+	echo colorLog("Set rawname to default \"$res\"\n", 'b');
 }
 
 $output_xml->addChild('rawname', htmlspecialchars(trim($res)));
@@ -221,10 +221,10 @@ else
 	$res = @$config['name'];
 
 if (!empty($res)) {
-	echo colorLog("Setting name to \"$res\"\n", 'b');
+	echo colorLog("Set name to \"$res\"\n", 'b');
 } else {
 	$res = (empty($modulexml['name']) ? 'none' : $modulexml['name']);
-	echo colorLog("Setting name to default \"$res\"\n", 'b');
+	echo colorLog("Set name to default \"$res\"\n", 'b');
 }
 
 $output_xml->addChild('name', htmlspecialchars(trim($res)));
@@ -236,10 +236,10 @@ else
 	$res = @$config['version'];
 
 if (!empty($res))
-	echo colorLog("Setting version to \"$res\"\n", 'b');
+	echo colorLog("Set version to \"$res\"\n", 'b');
 else {
 	$res = (empty($modulexml['version']) ? 'none' : $modulexml['version']);
-	echo colorLog("Setting version to default \"$res\"\n", 'b');
+	echo colorLog("Set version to default \"$res\"\n", 'b');
 }
 
 $output_xml->addChild('version', htmlspecialchars(trim($res)));
@@ -273,10 +273,10 @@ if (!$config) {
 }
 
 if (!empty($res) && strcasecmp('0', trim($res)) != 0) {
-	echo colorLog('Setting category to "' . $categories[$res] . "\"\n", 'b');
+	echo colorLog('Set category to "' . $categories[$res] . "\"\n", 'b');
 	$output_xml->addChild('category', htmlspecialchars($categories[$res]));
 } else
-	echo colorLog("Skipping category\n", 'b');
+	echo colorLog("Skipped category\n", 'b');
 
 //menu items
 $menu_to_add = [];
@@ -289,7 +289,7 @@ if (!$config) {
 	if (!empty($menu_to_add)) {
 		echo "Adding default menu items...\n";
 		foreach ($menu_to_add as $key => $val)
-			echo colorLog("Adding \"$key\" => \"$val\"\n", 'b');
+			echo colorLog("Add \"$key\" => \"$val\"\n", 'b');
 	}
 
 	$res = 'y';
@@ -299,7 +299,7 @@ if (!$config) {
 			$key = $res;
 			$res = interactive_shell("OK, what is the name for the entry \"$res\"?");
 			if (!empty($res)) {
-				echo colorLog((isset($menu_to_add[$key]) ? 'Overwriting' : 'Adding') . " menu item \"$key\" => \"$res\"\n", 'b');
+				echo colorLog((isset($menu_to_add[$key]) ? 'Overwrite' : 'Add') . " menu item \"$key\" => \"$res\"\n", 'b');
 				$menu_to_add[$key] = $res;
 			} else
 				echo colorLog("Invalid value, please retry.\n", 'w');
@@ -321,7 +321,7 @@ if (count($menu_to_add)) {
 	$menuitems_xml = $output_xml->addChild('menuitems'); //subnode for menu items
 
 	foreach ($menu_to_add as $key => $val) {
-		echo colorLog("Adding menuitem \"$key\" => \"$val\"\n", 'b');
+		echo colorLog("Add menuitem \"$key\" => \"$val\"\n", 'b');
 		$menuitems_xml->addChild(trim($key), htmlspecialchars(trim($val)));
 	}
 
@@ -337,10 +337,10 @@ else
 
 if (!empty($res)) {
 	$res = $res . ' w/ ' . $modulexml['publisher'];
-	echo colorLog("Setting publisher to \"$res\"\n", 'b');
+	echo colorLog("Set publisher to \"$res\"\n", 'b');
 } else {
 	$res = (empty($modulexml['publisher']) ? 'none' : $modulexml['publisher']);
-	echo colorLog("Setting publisher to default \"$res\"\n", 'b');
+	echo colorLog("Set publisher to default \"$res\"\n", 'b');
 }
 
 $output_xml->addChild('publisher', htmlspecialchars(trim($res)));
@@ -352,10 +352,10 @@ else
 	$res = @$config['description'];
 
 if (!empty($res))
-	echo colorLog("Setting description to \"$res\"\n", 'b');
+	echo colorLog("Set description to \"$res\"\n", 'b');
 else {
 	$res = (empty($modulexml['description']) ? 'none' : $modulexml['description']);
-	echo colorLog("Setting description to default \"$res\"\n", 'b');
+	echo colorLog("Set description to default \"$res\"\n", 'b');
 }
 
 $output_xml->addChild('description', htmlspecialchars(trim($res)));
@@ -367,7 +367,7 @@ else
 	$res = @$config['license'];
 
 if (!empty($res)) {
-	echo colorLog("Setting license to \"$res\"\n", 'b');
+	echo colorLog("Set license to \"$res\"\n", 'b');
 	$output_xml->addChild('license', htmlspecialchars(trim($res)));
 
 	//license link is subject to license itself
@@ -377,13 +377,13 @@ if (!empty($res)) {
 		$res = @$config['licenselink'];
 
 	if (!empty($res)) {
-		echo colorLog("Setting license link to \"$res\"\n", 'b');
+		echo colorLog("Set license link to \"$res\"\n", 'b');
 		$output_xml->addChild('licenselink', htmlspecialchars(trim($res)));
 	} else
 		die_i("You MUST include a license link in case you choose a different license.\n");
 } else {
 	$license = (empty($modulexml['license']) ? 'none' : $modulexml['license']);
-	echo colorLog("Setting license to default \"$license\"\n", 'b');
+	echo colorLog("Set license to default \"$license\"\n", 'b');
 
 	$output_xml->addChild('license', htmlspecialchars(trim($license)));
 	$output_xml->addChild('licenselink', htmlspecialchars(trim($modulexml['licenselink'])));
@@ -396,10 +396,10 @@ else
 	$res = @$config['more-info'];
 
 if (!empty($res))
-	echo colorLog("Setting more-info to \"$res\"\n", 'b');
+	echo colorLog("Set more-info to \"$res\"\n", 'b');
 else {
 	$res = (empty($modulexml['more-info']) ? 'none' : $modulexml['more-info']);
-	echo colorLog("Setting more-info to default \"$res\"\n", 'b');
+	echo colorLog("Set more-info to default \"$res\"\n", 'b');
 }
 
 $output_xml->addChild('more-info', htmlspecialchars(trim($res)));
@@ -411,10 +411,10 @@ else
 	$res = @$config['updateurl'];
 
 if (!empty($res))
-	echo colorLog("Setting updateurl to \"$res\"\n", 'b');
+	echo colorLog("Set updateurl to \"$res\"\n", 'b');
 else {
 	$res = (empty($modulexml['updateurl']) ? 'none' : $modulexml['updateurl']);
-	echo colorLog("Setting updateurl to default \"$res\"\n", 'b');
+	echo colorLog("Set updateurl to default \"$res\"\n", 'b');
 }
 
 $output_xml->addChild('updateurl', htmlspecialchars(trim($res)));
@@ -428,95 +428,163 @@ else
 if (!empty($res))
 	$modulexml['changelog'] .= $res;
 
-echo colorLog("Setting changelog to:\n" . trim(preg_replace('/\t+/', '', (empty($modulexml['changelog']) ? 'none' : $modulexml['changelog']))) . "\n", 'b');
+echo colorLog("Set changelog to:\n" . trim(preg_replace('/\t+/', '', (empty($modulexml['changelog']) ? 'none' : $modulexml['changelog']))) . "\n", 'b');
 $output_xml->addChild('changelog', htmlspecialchars(trim($modulexml['changelog'])));
 
 //dependencies
+function arrayLoopPrint($pattern, $arr, $header = null)
+{
+	foreach ($arr as $key => $value) {
+		if (is_array($value)) {
+			arrayLoopPrint($pattern, $value, $key);
+		} else
+			echo colorLog(str_replace(['%key', '%value'], [(isset($header) ? $header : $key), $value], $pattern), 'b');
+	}
+}
+
+function arrayLoopAdd($arr, $header = null)
+{
+	global $depends_xml;
+	foreach ($arr as $key => $value) {
+		if (is_array($value)) {
+			arrayLoopAdd($value, $key);
+		} else
+			$depends_xml->addChild(trim((isset($header) ? $header : $key)), htmlspecialchars(trim($value)));
+	}
+}
+
+const MODE_INTERACTIVE = 0;
+const MODE_AUTO = 1;
+
+function processValue($key, $val, $mode)
+{
+	global $depends_to_add;
+	global $modulexml;
+
+	if (is_array($val)) {
+		foreach ($val as $value)
+			processValue($key, $value, $mode); //keep original key
+		return;
+	}
+
+	$val = trim($val);
+
+	if (strcasecmp($key, 'module') == 0) { //module is the only one that accepts multiple entries. Keep in mind that no check is done if the developer inputs a duplicated value
+		$add = true;
+		$overwriteWarn = false;
+
+		//prevent from overwriting default versions if lower than provided
+		if (isset($modulexml['depends']['module']) && is_array($modulexml['depends']['module'])) {
+			preg_match('/^(\S+)\s*([\d\.]*)/mi', $val, $matches); //matches the value provided splitting name and version (if present)
+			$module = $matches[1];
+			$version = isset($matches[2]) ? $matches[2] : null;
+
+			foreach ((array) $modulexml['depends']['module'] as $key => $value) {
+				preg_match('/^(' . $module . ')\s+([\d\.]*)/mi', $value, $matches); //check if the given value matches anything in the defaults
+
+				if (!isset($matches[1]))
+					continue;
+
+				$minimumVersion = isset($matches[2]) ? $matches[2] : null;
+
+				//compare versions, if the new version is higher then overwrite the defaults
+				if (
+					$minimumVersion != null && $version == null ||
+					$minimumVersion != null && version_compare($minimumVersion, $version) == 1
+				) {
+					echo colorLog(($mode == MODE_INTERACTIVE ? "Minimum version for \"$module\" is $minimumVersion, please retry" : "Unable to add dependency \"module\" => \"$module\" because minimum version is $minimumVersion") . ".\n", 'e');
+					$add = false;
+					break;
+				} else {
+					$overwriteWarn = true;
+					break; //the version is greater, let the code below handle this case (will overwrite)
+				}
+			}
+		}
+
+		//only if not already overwritten/rejected
+		if ($add) {
+			preg_match('/^(\S+)\s*.*/mi', $val, $matches); //matches the value provided extracting name only
+			$module = $matches[1];
+
+			for ($i = 0; $i < count($depends_to_add['module']); ++$i) {
+				preg_match('/^(' . $module . ')\s+.*/mi', $depends_to_add['module'][$i], $matches); //check if the given value matches another one the user input before
+
+				if (!isset($matches[1]))
+					continue;
+
+				echo colorLog('Overwrite ' . ($overwriteWarn ? 'default ' : '') . "dependecy \"module\" => \"$val\"\n", 'b');
+				$depends_to_add['module'][$i] = $val;
+
+				//if we go after the isset above it means we should continue and do not execute the add below
+				$add = false;
+				break;
+			}
+
+			if ($add) { //ok now this is REALLY a new value
+				echo colorLog("Add dependecy \"module\" => \"$val\"\n", 'b');
+				array_push($depends_to_add['module'], $val);
+			}
+		}
+	} else { //if not a module-type dependency
+		if (isset($depends_to_add[$key])) { //overwrite with check
+			if (version_compare($depends_to_add[$key], $val) == 1) {
+				echo colorLog(($mode == MODE_INTERACTIVE ? "Minimum version for \"$key\" is " . $depends_to_add[$key] . ", please retry" : "Unable to add dependency \"$key\" because minimum version is " . $depends_to_add[$key]) . ".\n", 'e');
+			} else {
+				echo colorLog("Overwrite default dependecy \"$key\" => \"$val\"\n", 'b');
+				$depends_to_add[$key] = $val;
+			}
+		} else { //add
+			echo colorLog("Add dependecy \"$key\" => \"$val\"\n", 'b');
+			$depends_to_add[$key] = $val;
+		}
+	}
+}
+
 $depends_xml = $output_xml->addChild('depends'); //subnode for depends
 
 $depends_to_add = [];
 if (isset($modulexml['depends']))
-	$depends_to_add = array_merge($modulexml['depends'], []); //store the used keys to print an info for the user (except 'module' that can have multiple ones) + set default keys
+	$depends_to_add = $modulexml['depends']; //store the used keys to print an info for the user (except 'module' that can have multiple ones) + set default keys
+
+if (!is_array($depends_to_add['module'])) //initialize array
+	$depends_to_add['module'] = [$depends_to_add['module']];
+
+//print info for user (adding default dependencies)
+echo colorLog("Add default dependencies... (you can overwrite them later)\n", 'b');
+arrayLoopPrint("Add \"%key\" => \"%value\"\n", $depends_to_add);
 
 if (!$config) {
-	//print info for user (adding default dependencies)
-	echo "Adding default dependecies...\n";
-	foreach ($depends_to_add as $key => $val)
-		echo colorLog("Adding \"$key\" => \"$val\"\n", 'b');
-
 	$res = 'y';
+	$first = true;
+
 	while ($res != null) {
-		$res = interactive_shell('Does your module have any dependecies? If yes input it here (version/module/phpversion...) or skip with enter:');
-		if (!empty($res)) {
-			$key = $res;
-			$res = interactive_shell("OK, what is the description/version for dependecy \"$res\"?");
-			if (!empty($res)) {
-				if (strcasecmp($key, 'version') == 0 && version_compare($minimum_fpbx, $res) == 1) //disallow versions < $minimum_fpbx
-					echo colorLog("Minimum version is $minimum_fpbx, please retry.\n", 'e');
-				else {
-					if (strcasecmp($key, 'module') == 0) { //module is the only one that accepts multiple entries
-						echo colorLog("Adding dependecy \"$key\" => \"$res\"\n", 'b');
-						$depends_xml->addChild(trim($key), htmlspecialchars(trim($res)));
-					} else {
-						echo colorLog((isset($depends_to_add[$key]) ? 'Overwriting' : 'Adding') . " dependecy \"$key\" => \"$res\"\n", 'b');
-						$depends_to_add[$key] = $res;
-					}
-				}
-			} else
-				echo colorLog("Invalid value, please retry.\n", 'w');
-		} else
-			$res = null;
-	}
+		$res = interactive_shell(($first ? 'Does your module have any dependencies? If yes input the first one here (version/module/phpversion...)' : 'Input another dependency') . ' or skip with enter:');
 
-	//add all the values declared before (apart from module)
-	foreach ($depends_to_add as $key => $val)
-		$depends_xml->addChild(trim($key), htmlspecialchars(trim($val)));
-} else {
-	//build the xml from an array
-	function arraywalk($arr, $is_default = false)
-	{
-		global $depends_xml;
-		global $minimum_fpbx;
+		if (empty($res)) break; //user pressed enter
 
-		foreach ($arr as $key => $value) {
-			if (!empty($key)) {
-				if (!empty($value)) {
-					if (strcasecmp($key, 'version') == 0 && version_compare($minimum_fpbx, $value) == 1) //disallow versions < $minimum_fpbx
-						echo colorLog("You were trying to set a minimum version below $minimum_fpbx but this is not allowed, skipping.\n", 'e');
-					else {
-						if (strcasecmp($key, 'module') == 0) { //module is the only one that accepts multiple entries
-							if (!is_array($value))
-								$value = [$value];
+		$key = trim($res);
+		$res = interactive_shell("OK, what is the description/version for dependecy \"$key\"?");
 
-							foreach ($value as $val) {
-								echo colorLog("Adding " . ($is_default ? 'default ' : '') . "dependecy \"module\" => \"$val\"\n", 'b');
-								$depends_xml->addChild('module', htmlspecialchars(trim($val)));
-							}
-						} else { //no need to check for duplicates here. It is impossible for the array to have any
-							echo colorLog("Adding " . ($is_default ? 'default ' : '') . "dependecy \"$key\" => \"$value\"\n", 'b');
-							$depends_xml->addChild(trim($key), htmlspecialchars(trim($value)));
-						}
-					}
-				} else
-					echo colorLog("$key is empty, skipping.\n", 'w');
-			}
-		}
-	}
-
-	if (!is_array(@$config['depends'])) //fail if depends is not an array
-		echo colorLog("Config file contains an invalid array for depends, skipping.\n", 'e');
-	else {
-		//remove overwritten default values
-		foreach ($depends_to_add as $key => $val) {
-			if (array_key_exists($key, $config['depends']))
-				unset($depends_to_add[$key]);
+		if (empty($res)) { //emtpy value
+			echo colorLog("Invalid value, please retry.\n", 'w');
+			$res = ' '; //set to something to avoid exiting the loop
+			continue;
 		}
 
-		arraywalk($depends_to_add, true); //add default dependencies
-		arraywalk($config['depends']); //add 'core' dependencies
+		processValue($key, $res, MODE_INTERACTIVE);
+
+		$first = false;
 	}
+} else if (!is_array(@$config['depends'])) //fail if depends is not an array
+	echo colorLog("Config file contains an invalid array for depends, skipping.\n", 'e');
+else { //add the config array
+	echo colorLog("Add core dependencies...\n", 'b');
+	foreach ($config['depends'] as $key => $value)
+		processValue($key, $value, MODE_AUTO);
 }
 
+arrayLoopAdd($depends_to_add); //add all the values declared before
 echo colorLog("Dependencies set.\n", 'b'); //no need to skip this if no dependency is set (it will never happen because version is always there)
 
 //remove module.xml from output (if present)...
@@ -564,7 +632,7 @@ if ($res == 'Y' || $res == 'y') {
 		die_i('Please run `brew install gpg` to enable signing.');
 
 	if (!file_exists('devtools') || !is_dir('devtools'))
-		die_i("Unable to find devtools folder. Please download it from https://github.com/FreePBX/devtools and unzip it in the main directory (the same as this script) to continue.\n");
+		die_i("Unable to find devtools folder. Please download it from https://github.com/FreePBX/devtools and unzip it in the main directory (the same as this script) to continue. Make sure the name is \"devtools\".\n");
 
 	//a key ID is needed
 	$key = interactive_shell('Please provide now your GPG key ID to sign the module:');
