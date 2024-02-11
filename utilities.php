@@ -25,7 +25,7 @@ class Utilities
 	/**
 	 * Get module version. Returns 0 in case of unknown failure
 	 * 
-	 * @return string	version number
+	 * @return string		version number
 	 */
 	public static function get_version()
 	{
@@ -36,11 +36,11 @@ class Utilities
 	/**
 	 * Same as file_put_contents, but automatically handle folder creation and related errors.
 	 *
-	 * @param	string	$filename	See @file_put_contents for description
-	 * @param	mixed	$data		See @file_put_contents for description
-	 * @param	int		$flags		See @file_put_contents for description
-	 * @param			$context	See @file_put_contents for description
-	 * @return	int|false			The function returns false in case of failure creating the folder structure or returns the result of @file_put_contents.
+	 * @param	string		$filename	See @file_put_contents for description
+	 * @param	mixed		$data		See @file_put_contents for description
+	 * @param	int			$flags		See @file_put_contents for description
+	 * @param				$context	See @file_put_contents for description
+	 * @return	int|false				The function returns false in case of failure creating the folder structure or returns the result of @file_put_contents.
 	 */
 	public static function file_put_contents_i($filename, $data, $flags = 0, $context = null)
 	{
@@ -82,8 +82,8 @@ class Utilities
 	/**
 	 * Check connection to a server, throws an Exception in case any error occurs with a friendly description ready to print.
 	 *
-	 * @param	string	$url		The URL to check against
-	 * @param	bool	$skip_ssl	If you want to skip SSL checks and errors
+	 * @param	string		$url		The URL to check against
+	 * @param	bool		$skip_ssl	If you want to skip SSL checks and errors
 	 * @return	boolean				Always true
 	 * @throws	Exception			If the connection failed for any reason
 	 */
@@ -140,9 +140,9 @@ class Utilities
 	 * BMO Function
 	 * Get email "To" address from fpbx config
 	 * 
-	 * @param	FreePBX	$FreePBX	BMO object
-	 * @return 	string				the registered email address
-	 * @throws	Exception			If the "To" email address is not set
+	 * @param	FreePBX		$FreePBX	BMO object
+	 * @return 	string					The registered email address
+	 * @throws	Exception				If the "To" email address is not set
 	 */
 	public static function get_fpbx_to_email_config($FreePBX)
 	{
@@ -160,8 +160,9 @@ class Utilities
 	 * BMO Function
 	 * Returns the server name extracted from shell.
 	 *
-	 * @param	FreePBX	$FreePBX	BMO object
-	 * @return	string				Server name or 'Unknown' in case of errors
+	 * @param	FreePBX		$FreePBX	BMO object
+	 * @return	string					Server name or 'Unknown' in case of errors
+	 * @throws	Exception				If $FreePBX is not the BMO object
 	 */
 	public static function get_server_name($FreePBX)
 	{
@@ -180,30 +181,24 @@ class Utilities
 	 * BMO Function
 	 * Construct the email body.
 	 *
-	 * @param	FreePBX	$FreePBX	BMO object
+	 * @param	FreePBX		$FreePBX	BMO object
 	 * @param	string		$to			"To" address
 	 * @param	string		$subject	Subject of email
 	 * @param	string		$html_txt	Message of email formatted in html
 	 * @param	string		$from_name	"From" name. Defaults to the email itself (WARNING! only the name, not the formatted "name <email>")
 	 * @return	boolean					True in case of success, false otherwise
+	 * @throws	Exception				If $FreePBX is not the BMO object or from field can't be retrieved
 	 */
 	public static function send_mail($FreePBX, $to, $subject, $html_txt, $from_name = '')
 	{
 		if (!is_a($FreePBX, 'FreePBX', true))
 			throw new Exception(_('Not given a FreePBX Object'));
 
-		//this is all taken from BMO/Mail.class.php
-		$from_email = get_current_user() . '@' . gethostname();
+		if (function_exists('fetchFromEmail'))
+			$from_email = call_user_func('fetchFromEmail');
 
-		//sysadmin allows to change "from" address
-		if (function_exists('sysadmin_get_storage_email')) {
-			$emails = call_user_func('sysadmin_get_storage_email');
-			//Check that what we got back above is a email address
-			if (!empty($emails['fromemail']) && filter_var($emails['fromemail'], FILTER_VALIDATE_EMAIL)) {
-				//Fallback address
-				$from_email = $emails['fromemail'];
-			}
-		}
+		if (!isset($from_email) || empty($from_email))
+			throw new Exception(_('Could not retrieve FROM field!'));
 
 		//set sender name to the address if nothing provided
 		if (empty($from_name))

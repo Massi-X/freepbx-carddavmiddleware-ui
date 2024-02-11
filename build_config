@@ -31,6 +31,9 @@ $modulexml = [
 	'updateurl' => '',
 	'changelog' => "*Powered by CardDAV Middleware UI v.$UI_version* More info at $readme\n", //changelog is one line. Do not add anything more than that
 	'depends' => [
-		'version' => $minimum_fpbx
+		'version' => $minimum_fpbx,
+		'module' => [
+			'framework 16.0.40.4' //for common email FROM field -> https://github.com/FreePBX/framework/commit/c05c245d691ecffaac52cc118adb4451e107300c
+			]
 	]
 ];
