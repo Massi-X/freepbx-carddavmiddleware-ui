@@ -349,7 +349,7 @@
 							<div class="link-container relative">
 								<a href="javascript:;" class="btn btn-warning btn-magic" onclick="$('#magicPopup').dialog('open'); return false;"><i class="fa fa-magic"></i><?= _('Auto Configure'); ?></a>
 								<div class="tips arrow-container" data-tips="1">
-									<p><?= _('The first thing needed is to setup you PBX system to work nicely with the module. To do that click "Auto Configure" and follow the instructions.'); ?></p>
+									<p><?= str_replace('%autoconfig', _('Auto Configure'), _('The first thing needed is to setup you PBX system to work nicely with the module. To do that click "%autoconfig" and follow the instructions.')); ?></p>
 									<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
 								</div>
 							</div>
@@ -448,7 +448,7 @@
 								<label class="ph-checkbox border right" <?= !method_exists(Core::class, 'get_ssl_enabled') ? 'style="display:none;' : ''; ?>>
 									<input type="checkbox" id="carddav_ssl_enable" name="carddav_ssl_enable" value="on" <?= Core::get_ssl_enabled() ? 'checked' : ''; ?>>
 									<span data-info="custom-checkbox"></span>
-									<span class="description <?= Core::get_ssl_enabled() ? 'green' : 'red'; ?>" data-toggled-by="carddav_ssl_enable"><?= Core::get_ssl_enabled() ? _('SSL Active') : _('Bypass SSL'); ?></span>
+									<span class="description <?= Core::get_ssl_enabled() ? 'greentext' : 'redtext'; ?>" data-toggled-by="carddav_ssl_enable"><?= Core::get_ssl_enabled() ? _('SSL Active') : _('Bypass SSL'); ?></span>
 								</label>
 							</td>
 							<td>

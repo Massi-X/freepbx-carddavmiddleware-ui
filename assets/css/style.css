@@ -20,7 +20,8 @@
 	--red-light: #e57373;
 	--red: red;
 	--red-dark: #c62828;
-	--blue: #263672;
+	--blue: #1E88E5;
+	--blue-dark: #263672;
 
 	/* borders */
 	--form-border: #ddd;
@@ -118,14 +119,30 @@ body.fix {
 	overflow: hidden;
 }
 
-/* relative position class */
+/* pre correctly break words */
+pre {
+	word-break: break-word;
+}
+
+/* some utility classes */
 .relative {
 	position: relative;
 }
 
-/* float right class */
 .fl-right {
 	float: right;
+}
+
+.greentext {
+	color: var(--green);
+}
+
+.redtext {
+	color: var(--red);
+}
+
+.bluetext {
+	color: var(--blue);
 }
 
 /* fix button style per my taste */
@@ -355,14 +372,6 @@ body.fix {
 	text-align: center;
 	font-weight: bold;
 	vertical-align: middle;
-}
-
-.ph-checkbox>span.description.green {
-	color: var(--green);
-}
-
-.ph-checkbox>span.description.red {
-	color: var(--red);
 }
 
 .ph-checkbox>span[data-info="custom-checkbox"] {

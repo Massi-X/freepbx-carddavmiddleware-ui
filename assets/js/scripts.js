@@ -328,13 +328,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	//follow checkbox and change text color
 	carddav_ssl_enable.onchange = e => {
 		let target = document.querySelector('*[data-toggled-by="carddav_ssl_enable"]');
-		target.classList.remove('green', 'red');
+		target.classList.remove('greentext', 'redtext');
 
 		if (e.target.checked) {
-			target.classList.add('green')
+			target.classList.add('greentext')
 			target.innerHTML = pm_language['SSL_Active'];
 		} else {
-			target.classList.add('red');
+			target.classList.add('redtext');
 			target.innerHTML = pm_language['SSL_Bypass'];
 		}
 
