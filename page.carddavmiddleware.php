@@ -545,6 +545,10 @@
 							<span><?= _('Set <u>URL</u> to:'); ?>&nbsp;</span>
 							<!-- This is from superfecta, it does not have a translation -->
 							<input type="text" readonly="true" onfocus="this.setSelectionRange(0, this.value.length)" class="autoselect_container" value="<?= \FreePBX::PhoneMiddleware()->getNumberToCnamURL(); ?>">
+							<?php
+							if (substr(\FreePBX::PhoneMiddleware()->getNumberToCnamURL(), 0, 5) === 'https')
+								echo '<b class="redtext">' . _('Caution! SSL detected, your system must have a valid FQDN and certificate or superfecta lookup will fail!') . '</b>';
+							?>
 						</li>
 						<li>
 							<span><?= _('Set <u>POST Data</u> to:'); ?>&nbsp;</span>

@@ -106,6 +106,10 @@ class MagicConfig {
 			this.#logContainer.innerHTML += this.#language['JS_magic_step1_2'] + '\n';
 			this.#logContainer.scrollIntoView(false); //scroll to bottom
 
+			//check if cnam URL starts with https. This has big implications and will probably make the superfecta lookup fail, so at least warn the user
+			if (phonemiddleware['numberToCnamURL'].startsWith('https'))
+				this.#logContainer.innerHTML += '<b class="bluetext">' + this.#language['JS_magic_SSL_warning'] + '</b>\n';
+
 			let formData = new FormData();
 			formData.append('URL', phonemiddleware['numberToCnamURL']);
 			formData.append('Enable_SPAM_Match', 'on');

@@ -91,9 +91,24 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	 */
 	public function doConfigPageInit($page)
 	{
-		//variable needed by the php page
-		self::$xmlPhonebookURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'] . '/carddavmiddleware/carddavtoxml.php';
-		self::$numberToCnamURL = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://localhost:' . $_SERVER['SERVER_PORT'] . '/carddavmiddleware/numbertocnam.php';
+		$rootPath = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'];
+
+		//xml phonebook URL
+		self::$xmlPhonebookURL = $rootPath . '/carddavmiddleware/carddavtoxml.php';
+
+		//cnam URL. By default it is the same URL and protocol as the browser.
+		//Then I try to check if plain http is available by looking at the current page or by calling sysadmin to see if force is disabled.
+		//if any of these matches I set the URL to localhost
+		//as a side note: sysadmin calls only works on genuine Sangoma systems. For other systems with SSL enabled a warning is printed in magicconfig.js
+		self::$numberToCnamURL = $rootPath  . '/carddavmiddleware/numbertocnam.php';
+		try {
+			if (substr($rootPath, 0, 5) !== 'https' || !$this->getSysAdminPorts()['forcessl'])
+				self::$numberToCnamURL = 'http://localhost/carddavmiddleware/numbertocnam.php';
+		} catch (Throwable $t) {
+			//an error occured. ignore it and fallback to default
+		}
+
+		//email "To" field
 		try {
 			self::$emailTo = Utilities::get_fpbx_to_email_config($this->FreePBX);
 		} catch (Exception $e) {
@@ -140,7 +155,8 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"JS_magic_step3": "' . _('** STEP 3: Inbound Route(s) Setup **') . '", ' .
 			'"JS_magic_step3_1": "' . _('Retrieving inbound route(s)...') . '", ' .
 			'"JS_magic_step3_2": "' . _('Processing route with cid=%cid and did=%did...') . '", ' .
-			'"JS_magic_step3_notfound": "' . _('No route found! Please run Auto Configure again when you have created one') . '", ' .
+			'"JS_magic_step3_notfound": "' . str_replace('%autoconfig', _('Auto Configure'), _('No route found! Please run %autoconfig again when you have created one')) . '", ' .
+			'"JS_magic_SSL_warning": "' . str_replace('%autoconfig', _('Auto Configure'), _('Your system is configured to redirect every request to https. Please make sure that you a valid FQDN and certificate or superfecta lookups will fail! You could also disable force redirect for the admin interface inside the \"System Admin\" module (section \"Port Management\") and then run %autoconfig again to fix this (Sytem Admin is only available on Sangoma systems).')) . '", ' .
 			'"JS_magic_error": "' . _('Something went wrong during previous step. Please see the log for more information.') . '", ' .
 			'"JS_magic_completed": "' . _('Process completed. You are ready to rock! Please wait for the changes to be applied... You may now close the window.') . '",';
 		//these are "special" languages entries. The key is also used as value in javascript
@@ -268,15 +284,19 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 		switch ($req) {
 			case 'savecarddav':
 			case 'validatecarddav':
+
 			case 'deletenotification':
 			case 'deleteallnotifications':
+
 			case 'superfectainit':
 			case 'superfectareorder':
 			case 'outcnamsetup':
 			case 'inboundroutesetup':
+
 			case 'createorder':
 			case 'validatepurchase':
 			case 'restorepurchase':
+
 			case 'setfirstrun':
 				return true;
 			default:
@@ -819,6 +839,34 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'ZA' => ['name' => 'SOUTH AFRICA', 'code' => '27'],
 			'ZM' => ['name' => 'ZAMBIA', 'code' => '260'],
 			'ZW' => ['name' => 'ZIMBABWE', 'code' => '263'],
+		];
+	}
+
+	/**
+	 * Query sysadmin module for default acp (Admin Control Panel) ports and wheter SSL is forced or not
+	 *
+	 * @return	array				['forcessl' => bool, 'port' => int]
+	 * @throws	Exception			If some error happens while querying the data or executing the regex
+	 */
+	private function getSysAdminPorts()
+	{
+		exec('fwconsole sysadmin ports', $out); //retrieve ports from sysadmin
+
+		foreach ($out as $line) {
+			if (!isset($acp) || empty($acp))
+				preg_match('/\|\s*(\S*)\s*\|\s*acp\s*\|\s*(\S*).*/', $line, $acp); //matches the http port of web UI
+			if (!isset($sslacp) || empty($sslacp))
+				preg_match('/\|\s*(\S*)\s*\|\s*sslacp.*/', $line, $sslacp); //matches the https port of web UI
+		}
+
+		if (!isset($acp[1]) || !isset($acp[2]) || !isset($sslacp[1]))
+			throw new Exception(_('Failed to find default ports for sysadmin!'));
+
+		$forceSSL = strcasecmp($acp[2], 'Enabled') === 0;
+
+		return [
+			'forcessl' => $forceSSL,
+			'port' => $forceSSL ? $sslacp[1] : $acp[1]
 		];
 	}
 }
