@@ -1,6 +1,6 @@
 <!--
  CardDAV Middleware UI
- Written by Massi-X <firemetris@gmail.com> © 2023
+ Written by Massi-X <support@massi-x.dev> © 2024
  This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
 -->
 
