@@ -33,7 +33,7 @@ $modulexml = [
 	'depends' => [
 		'version' => $minimum_fpbx,
 		'module' => [
-			'framework 16.0.40.4' //for common email FROM field -> https://github.com/FreePBX/framework/commit/c05c245d691ecffaac52cc118adb4451e107300c
+			'framework' //the version is checked at runtime (see Phonemiddleware.class.php)
 			]
 	]
 ];

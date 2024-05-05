@@ -530,6 +530,38 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 		//add Job
 		FreePBX::Job()->addClass('phonemiddleware', 'job', 'FreePBX\modules\PhoneMiddleware\Job', '* * * * *');
 
+		//because the module is compatible with both 15 and 16 framework, I need to check the framework module itself for the required version (not possible inside module.xml)
+		//see https://github.com/FreePBX/framework/commit/c05c245d691ecffaac52cc118adb4451e107300c and https://github.com/FreePBX/framework/commit/f4b390e451c4db4238cb1dfb20f195e04aba3907
+		out(_('Checking dependencies...'));
+
+		if (!function_exists('getversion'))
+			die('<span class="error">' . _('Unable to get system version!') . '</span>');
+
+		$version = getversion();
+
+		//there is no compare for versions lower than 15 because it is prevented by module.xml
+		$is15 = version_compare($version, 15) >= 0;
+		$is16 = version_compare($version, 16) >= 0;
+		$framework_version = 0;
+
+		//I do not check 17 or higher simply because there is no need
+		if ($is15 || $is16) {
+			try {
+				$framework_version = $this->FreePBX->Modules->getXML('framework')->version;
+			} catch (Throwable $t) {
+				die('<span class="error">' . _('Unable to get framework version!')) . '</span>';
+			}
+
+			//always check from highest to lowest
+			if ($is16) {
+				if (version_compare($framework_version, '16.0.40.4') == -1)
+					die('<span class="error">' . str_replace('%version', '16.0.40.4', _('Minimum required version of framework is %version. Please update first to the required version before install/update.')) . '</span>');
+			} else if ($is15) {
+				if (version_compare($framework_version, '15.0.37.2') == -1)
+					die('<span class="error">' . str_replace('%version', '15.0.37.2', _('Minimum required version of framework is %version. Please update first to the required version before install/update.')) . '</span>');
+			}
+		}
+
 		//post install hooks from core, if providen. Excpetions are not catched here, if you care you must catch them yourself.
 		if (method_exists(Core::class, 'post_install_hook'))
 			Core::post_install_hook($this->FreePBX);
