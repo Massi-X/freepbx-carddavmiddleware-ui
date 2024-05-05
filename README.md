@@ -1,18 +1,15 @@
-<table>
-  <tr>
-    <td width="200" style="border: none;">
-     <img src="assets/images/icon.png" alt="Module icon"/>
-    </td>
-    <td style="border: none;">
-     <h2>CardDAV Middleware UI for FreePBX/Incredible PBX/izpbx (formerly PhoneMiddleware)</h2>
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <img src="assets/images/icon.png" alt="Module icon" width="164">
+  <h3>CardDAV Middleware UI</h3>
+</div>
 
-# For the users: <a href="https://carddavmiddleware.massi-x.dev/latest">Download the latest release here</a>
+> [!CAUTION]
+> This is not intended for the end user! You can <a href="https://carddavmiddleware.massi-x.dev/latest">download the latest release here</a>
 
 ## About this
-This is not the complete module and *will not work as is!* This is only meant for developers who wants to build their backends and release a module based on that. So if you are an end user and you still reading this, well.. you shouldn't! Find more info <a href="https://carddavmiddleware.massi-x.dev/#readme">here</a>
+CardDAV Middleware UI (formerly known as PhoneMiddleware) is the base to build a complete moduoe for FreePBX/Incredible PBX and izpbx systems meant to fill the gap between cardDAV servers and the internal PBX contact system.
+
+This is not a complete module and *will not work as is!* It's only meant for developers who want to build their backends and release a module based on that. So if you are an end user and you still reading this, well.. you shouldn't! Find more info <a href="https://carddavmiddleware.massi-x.dev">here</a>.
 
 ## Development
 First pull the main repo or, even better, one of the tagged versions available, then start developing by having a look at the main files in the project:
