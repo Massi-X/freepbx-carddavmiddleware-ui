@@ -27,7 +27,7 @@
 
 		<div class="ph-header">
 			<div class="title">
-				<img class="header-img" src="assets/phonemiddleware/images/icon.png"> <!-- as in cdr module there is no way to not hardcode this path -->
+				<img class="header-img" src="assets/phonemiddleware/images/<?= file_exists('assets/phonemiddleware/images/icon_core.png') ? 'icon_core.png' : 'icon.png' ?>"> <!-- load custom core icon if present - as in cdr module there is no way to not hardcode this path -->
 				<h2>
 					<?php
 					echo str_replace(

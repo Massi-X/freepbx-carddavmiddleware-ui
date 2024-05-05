@@ -587,6 +587,18 @@ else { //add the config array
 arrayLoopAdd($depends_to_add); //add all the values declared before
 echo colorLog("Dependencies set.\n", 'b'); //no need to skip this if no dependency is set (it will never happen because version is always there)
 
+//icon
+echo colorLog("Searching for core custom icon...\n", 'b');
+
+//if icon exists, copy it into the assets folder
+if (file_exists("$tmpFolder/$rawname/core/assets/images/icon.png")) {
+	if (!copy("$tmpFolder/$rawname/core/assets/images/icon.png", "$tmpFolder/$rawname/assets/images/icon_core.png"))
+		echo colorLog("Unable to copy core icon!\n", 'e');
+	else
+		echo colorLog("Using the provided core icon\n", 'b');
+} else
+	echo colorLog("'core/assets/images/icon.png' not found\n", 'b');
+
 //remove module.xml from output (if present)...
 if (file_exists("$tmpFolder/$rawname/module.xml") && !unlink("$tmpFolder/$rawname/module.xml"))
 	die_i("Unable to delete module.xml!\n");
