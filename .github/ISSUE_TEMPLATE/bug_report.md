@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a bug report
 title: ''
 labels: 'bug'
 assignees: ''
@@ -10,8 +10,8 @@ assignees: ''
 **Component**
 Please flag the component that this issue relates to:
 
-- [ ] UI
-- [ ] Core
+- [ ] UI - If checked -> VERSION x.x.x
+- [ ] Core - If checked -> VERSION x.x.x
 
 **Describe the bug**
 A clear and concise description of what the bug is.
