@@ -474,7 +474,9 @@ summary {
 	color: var(--summary-main);
 }
 
+summary::marker,
 summary::-webkit-details-marker {
+	content: '';
 	display: none;
 }
 
