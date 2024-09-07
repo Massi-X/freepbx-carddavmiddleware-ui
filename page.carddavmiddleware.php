@@ -156,7 +156,7 @@
 											</div>
 											<div class="col-md-9">
 												<div id="max_cnam_container">
-													<label class="ph-checkbox border left">
+													<label class="ph-checkbox with-border left">
 														<input type="checkbox" id="max_cnam_length_enable" name="max_cnam_length_enable" value="on" <?= Core::get_max_cnam_length() == 0 ? '' : 'checked'; ?>>
 														<span data-info="custom-checkbox"></span>
 													</label>
@@ -445,7 +445,7 @@
 							</td>
 							<td class="relative">
 								<input autocomplete="off" type="text" id="carddav_url" class="form-control" name="carddav_url" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_url() ?>" />
-								<label class="ph-checkbox border right" <?= !method_exists(Core::class, 'get_ssl_enabled') ? 'style="display:none;' : ''; ?>>
+								<label class="ph-checkbox with-border right" <?= !method_exists(Core::class, 'get_ssl_enabled') ? 'style="display:none;' : ''; ?>>
 									<input type="checkbox" id="carddav_ssl_enable" name="carddav_ssl_enable" value="on" <?= Core::get_ssl_enabled() ? 'checked' : ''; ?>>
 									<span data-info="custom-checkbox"></span>
 									<span class="description <?= Core::get_ssl_enabled() ? 'greentext' : 'redtext'; ?>" data-toggled-by="carddav_ssl_enable"><?= Core::get_ssl_enabled() ? _('SSL Active') : _('Bypass SSL'); ?></span>
