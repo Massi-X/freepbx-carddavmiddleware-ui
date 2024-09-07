@@ -288,6 +288,22 @@ p {
 	--tag-inset-shadow-size: 1.3em !important;
 }
 
+/* tagify adjustments */
+.tagify__dropdown__item {
+    user-select: none;
+	max-height: 100% !important;
+    padding-left: 31px !important;
+	text-indent: 0 !important;
+}
+
+.tagify__dropdown__item--selected::before {
+    font-size: 20px;
+    padding: 0 9px;
+    inset-inline-start: 0 !important;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 /* adjust select (single-value mode) style of tagify per my needs */
 .phone_type__tagify .tagify__input::selection {
 	background: transparent;
