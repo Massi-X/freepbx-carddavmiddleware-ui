@@ -4,7 +4,7 @@
  * This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
  */
 
- :root {
+:root {
 	--timepicker-background: #fff;
 	--timepicker-background-dark: #fafafa;
 	--timepicker-border: #ddd;
@@ -17,6 +17,7 @@
 
 .__timepicker-container {
 	display: flex;
+	user-select: none;
 	height: 39px;
 	padding: 0;
 	background: var(--timepicker-background);
@@ -48,6 +49,10 @@
 	padding-left: 66px;
 	outline: none !important;
 	box-shadow: none !important;
+	color: var(--timepicker-text);
+}
+
+.__timepicker-div>input::selection {
 	color: var(--timepicker-text);
 }
 
