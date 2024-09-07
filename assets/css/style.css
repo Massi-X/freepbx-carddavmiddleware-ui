@@ -12,6 +12,7 @@
 	--background: #fafafa;
 	--text-soft: #9e9e9e;
 	--link-blue: #2196f3;
+	--input-height: 37px;
 
 	/* colors */
 	--green: #008000;
@@ -122,6 +123,11 @@ body.fix {
 /* pre correctly break words */
 pre {
 	word-break: break-word;
+}
+
+/* consistently apply p styles to both 16 & 17 */
+p {
+	margin: 0 0 10px;
 }
 
 /* some utility classes */
@@ -258,7 +264,7 @@ pre {
 
 #page_body input.form-control,
 .ui-dialog input.form-control {
-	min-height: 37px;
+	min-height: var(--input-height);
 	border-color: var(--form-border);
 }
 
@@ -277,6 +283,7 @@ pre {
 
 /* fix fpbx-tagify conflict see issue https://github.com/yairEO/tagify/issues/1110 */
 .tagify {
+	user-select: none;
 	height: auto;
 	--tag-inset-shadow-size: 1.3em !important;
 }
@@ -318,6 +325,8 @@ pre {
 }
 
 .btn-input-flex {
+	min-height: var(--input-height);
+	padding-top: 7px;
 	margin-left: 10px;
 }
 
@@ -335,7 +344,7 @@ pre {
 	left: 0;
 }
 
-.ph-checkbox.border.left {
+.ph-checkbox.with-border.left {
 	border-right: 1px solid var(--form-border);
 }
 
@@ -343,7 +352,7 @@ pre {
 	right: 0;
 }
 
-.ph-checkbox.border.right {
+.ph-checkbox.with-border.right {
 	border-left: 1px solid var(--form-border);
 }
 
@@ -376,6 +385,7 @@ pre {
 
 .ph-checkbox>span[data-info="custom-checkbox"] {
 	display: flex;
+	position: relative;
 	align-items: center;
 	justify-content: center;
 	height: 25px;
@@ -390,23 +400,15 @@ pre {
 	width: 16px;
 }
 
-.ph-checkbox.small>span[data-info="custom-checkbox"] {
-	height: 16px;
-	width: 16px;
-}
-
 .ph-checkbox>span[data-info="custom-checkbox"]:after {
 	font: normal normal normal 14px/1 FontAwesome;
 	content: "\f00c";
+	position: absolute;
 	display: block;
-	margin-left: 1px;
-	margin-top: 0.5px;
+	top: 50%;
+	left: 50%;
+	transform: translateY(-50%) translateX(-50%);
 	color: var(--checkbox-main);
-}
-
-.ui-dialog .ph-checkbox>span[data-info="custom-checkbox"]:after {
-	/* for whatever reason the checkbox shifts inside dialogs */
-	margin: 0;
 }
 
 .ph-checkbox.small>span[data-info="custom-checkbox"]:after {
@@ -428,7 +430,6 @@ pre {
 }
 
 .ph-checkbox>input:checked~span[data-info="custom-checkbox"]:after {
-	display: block;
 	color: var(--background-pure);
 }
 
@@ -715,7 +716,7 @@ a:hover>i.fa {
 }
 
 #carddav_result tr {
-	height: 23px;
+	height: 30px;
 	cursor: default;
 	border-bottom: 1px solid var(--tab-border);
 	border-right: 1px solid var(--tab-border);
@@ -741,7 +742,7 @@ a:hover>i.fa {
 }
 
 #carddav_result td>i.fa {
-	line-height: 23px;
+	line-height: 30px;
 	font-size: 16px;
 	vertical-align: middle;
 	cursor: grab;
