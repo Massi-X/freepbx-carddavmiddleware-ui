@@ -115,6 +115,11 @@ input[hidden] {
 	display: none !important;
 }
 
+/* fix label style */
+label {
+	display: inline;
+}
+
 /* class for non-scrollable body */
 body.fix {
 	overflow: hidden;
@@ -133,6 +138,7 @@ p {
 /* some utility classes */
 .relative {
 	position: relative;
+	display: inline;
 }
 
 .fl-right {
@@ -159,6 +165,10 @@ p {
 .btn:active.focus,
 .btn.active.focus {
 	outline: none;
+}
+
+.btn-warning {
+	color: #fff !important;
 }
 
 /* radioset tabulation selection/focus/active colors */
@@ -281,27 +291,44 @@ p {
 	box-shadow: none;
 }
 
-/* fix fpbx-tagify conflict see issue https://github.com/yairEO/tagify/issues/1110 */
+/* tagify: fix conflict see issue https://github.com/yairEO/tagify/issues/1110 */
 .tagify {
 	user-select: none;
 	height: auto;
 	--tag-inset-shadow-size: 1.3em !important;
 }
 
-/* tagify adjustments */
+/* tagify: min-height equl to other inputs (-10px of margins) */
+.tagify__input {
+	min-height: 27px;
+}
+
+/* tagify: adjust checkmark styles */
 .tagify__dropdown__item {
-    user-select: none;
+	user-select: none;
 	max-height: 100% !important;
-    padding-left: 31px !important;
+	padding-left: 31px !important;
 	text-indent: 0 !important;
 }
 
 .tagify__dropdown__item--selected::before {
-    font-size: 20px;
-    padding: 0 9px;
-    inset-inline-start: 0 !important;
-    top: 50%;
-    transform: translateY(-50%);
+	font-size: 20px;
+	padding: 0 9px;
+	inset-inline-start: 0 !important;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/* tagify: for whatever reason selects are broken, and the dropdown doesn't close when cliking outside */
+.tagify--select .tagify__tag+.tagify__input:not([contenteditable]) {
+	display: block !important;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	margin: 0;
+	z-index: 1;
 }
 
 /* adjust select (single-value mode) style of tagify per my needs */
@@ -570,16 +597,15 @@ ul.numeric-list> ::marker {
 	justify-content: space-between;
 }
 
-.btn-magic {
-	display: inline-block;
+.link-container {
 	margin: 5px 5px;
 }
 
-.btn-magic>* {
+.btn-icon>* {
 	text-decoration: none !important;
 }
 
-.btn-magic>i {
+.btn-icon>i {
 	padding-right: 9px;
 	font-size: 18px;
 	line-height: 18px;
@@ -1029,7 +1055,7 @@ input.autoselect_container:not(:last-child) {
 /* arrows and positioning for tips popups */
 .tips[data-tips="1"],
 .tips[data-tips="4"] {
-	top: -10px;
+	top: -25px;
 	transform: translateY(-100%);
 }
 
@@ -1154,6 +1180,28 @@ input.autoselect_container:not(:last-child) {
 @media screen and (max-width: 767px) {
 	.visible-desktop {
 		display: none;
+	}
+
+	.link-container {
+		margin: 5px 0;
+		width: 100%;
+	}
+
+	.link-container .btn {
+		width: 100%;
+	}
+
+	.link-container .btn:not(:first-child) {
+		margin-top: 5px;
+	}
+
+	.element-container.flexible {
+		flex-direction: column;
+		align-items: initial;
+	}
+
+	.element-container.flexible .btn-submit {
+		margin-right: 0;
 	}
 }
 
