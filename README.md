@@ -4,7 +4,7 @@
 </div>
 
 > [!CAUTION]
-> This is not intended for the end user! You can <a href="https://carddavmiddleware.massi-x.dev/latest">download the latest release here</a>
+> This is not intended for the end user! You can <a href="https://carddavmiddleware.massi-x.dev/#releases">download the latest release here</a>
 
 ## About this
 CardDAV Middleware UI (formerly known as PhoneMiddleware) is the base to build a complete moduoe for FreePBX/Incredible PBX and izpbx systems meant to fill the gap between cardDAV servers and the internal PBX contact system.
