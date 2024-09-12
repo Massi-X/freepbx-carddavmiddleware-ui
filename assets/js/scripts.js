@@ -7,6 +7,7 @@
 //no check is done on the pm_language or other necessary variables. Please make sure they are present when including this file
 document.addEventListener('DOMContentLoaded', () => {
 	/********************	GET ELEMENTS	********************/
+	$setupCarddav = $('#setupCarddav');
 	carddav_url = document.getElementById('carddav_url');
 	carddav_ssl_enable = document.getElementById('carddav_ssl_enable');
 	carddav_user = document.getElementById('carddav_user');
@@ -15,6 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	carddav_display_url = document.getElementById('carddav_display_url');
 	carddav_result_tbody = document.getElementById('carddav_result').getElementsByTagName('tbody')[0];
 	reducemovement = window.matchMedia('(prefers-reduced-motion: reduce)').matches; //it works only on reload. Well, it's fine
+
+	//save initial values for carddav popup
+	carddav_url_last = carddav_url.value;
+	carddav_ssl_enable_last = carddav_ssl_enable.value;
+	carddav_user_last = carddav_user.value;
+	carddav_psw_last = carddav_psw.value;
 
 	/********************	START TAGIFY	********************/
 	document.addEventListener('dragover', e => e.preventDefault());
@@ -82,12 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	//generate whitelist for phone_type
 	phone_type_whitelist = [];
-	let i = 1;
+	let i = 0;
 	while (true) {
 		let name = pm_language['PHONE_TYPE_' + i];
 		if (name === undefined)
 			break;
-		phone_type_whitelist.push({ 'value': i, 'name': name });
+		phone_type_whitelist.push({ 'value': i.toString(), 'name': name }); //tagify doesn't play well with zero values, so convert everything to string
 		++i;
 	}
 
@@ -109,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	//custom class for css styles
 	tagify.toggleClass('phone_type__tagify');
 
+	//tagify county_code
 	tagify = new Tagify(document.getElementById('country_code'), {
 		enforceWhitelist: true,
 		whitelist: phonemiddleware['country_codes'],
@@ -135,9 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	/********************	END TAGIFY	********************/
 
 	/********************	CARDDAV VALIDATION & SAVE	********************/
-	//load data
-	validateCarddav();
-
 	//listener for sortable to set element width on window resize
 	window.resizeWidth = window.innerWidth;
 	window.addEventListener('resize', () => {
@@ -148,11 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				sortableListResize();
 			}
 		}, 50);
-	});
-
-	//listener for sortable to set element width on dialog open
-	$('#setupCarddav').on('dialogopen', (event, ui) => {
-		sortableListResize();
 	});
 	/********************	END CARDDAV VALIDATION & SAVE	********************/
 
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		]
 	});
 
-	$('#setupCarddav').dialog({
+	$setupCarddav.dialog({
 		autoOpen: false,
 		modal: true,
 		resizable: false,
@@ -214,8 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		width: 'auto',
 		show: !reducemovement,
 		hide: !reducemovement,
-		dialogClass: 'no-close-btn',
-		closeOnEscape: false
+		closeOnEscape: false,
+		open: openSetup,
+		close: restoreCarddav
 	});
 
 	$('#errorPopup').dialog({
@@ -324,38 +325,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	//disallow spaces inside addressbook dialog inputs
 	carddav_url.oninput = carddav_user.oninput = carddav_psw.oninput = e => e.target.value = e.target.value.replace(/\s/g, '');
-
-	//follow checkbox and change text color
-	carddav_ssl_enable.onchange = e => {
-		let target = document.querySelector('*[data-toggled-by="carddav_ssl_enable"]');
-		target.classList.remove('greentext', 'redtext');
-
-		if (e.target.checked) {
-			target.classList.add('greentext')
-			target.innerHTML = pm_language['SSL_Active'];
-		} else {
-			target.classList.add('redtext');
-			target.innerHTML = pm_language['SSL_Bypass'];
-		}
-
-		validateCarddav(); //need to be done so we can save the data correctly (and not that the user change the box after validating)
-	};
 }, false);
 
 /********************	CARDDAV VALIDATION & SAVE	********************/
+let carddavController = new AbortController();
+
 function validateCarddav() {
+	carddavController = new AbortController(); //reset
 	let isSave = false;
 	let checkboxes = document.querySelectorAll('input[type=checkbox][name="carddav_addressbooks[]"]'); //this changes at every request
 	let request_type = 'ajax.php?module=' + phonemiddleware['ajax_name'] + '&command=';
 	let formData = new FormData();
 	let options = {
 		method: 'post',
-		body: formData
+		body: formData,
+		signal: carddavController.signal
 	};
 
 	checkboxes.forEach(elem => { //determine if this is save
-		if (elem.checked)
+		if (elem.checked) {
 			isSave = true;
+			return;
+		}
 	});
 
 	//construct base formdata request
@@ -395,8 +386,15 @@ function validateCarddav() {
 		})
 		.then(data => {
 			if (isSave) {
-				carddav_display_url.value = carddav_url.value;
-				$('#setupCarddav').dialog('close');
+				carddav_display_url.value = carddav_url.value; //update main interface URL
+
+				//update saved inputs values
+				carddav_url_last = carddav_url.value;
+				carddav_ssl_enable_last = carddav_ssl_enable.value;
+				carddav_user_last = carddav_user.value;
+				carddav_psw_last = carddav_psw.value;
+
+				$setupCarddav.dialog('close'); //close popup
 			} else {
 				carddav_result_tbody.innerHTML = ''; //reset content
 
@@ -419,13 +417,33 @@ function validateCarddav() {
 		}, error => {
 			if (isSave) //only if there is an error during save alert the user
 				alert(error.error.message);
-			else //else we only show a generic no address book found inside the table
-				carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + error.error.message + '</b></td></tr>';
+			else {
+				if (error.error == undefined) return; //this happens only when abort()
+				carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + error.error.message + '</b></td></tr>'; //else we only show a generic no address book found inside the table
+			}
+
 			changeCarddavButton();
 		});
 }
 
-//this changed the button according to the current situation
+//catch dialogopen to load saved values in the table and init sortable list
+function openSetup() {
+	validateCarddav();
+	sortableListResize(); //listener for sortable to set element width on dialog open
+}
+
+//restore last values before popup closes. This gets called after a save, but it doesn't matter as the values are already saved when this is invoked
+function restoreCarddav() {
+	carddav_url.value = carddav_url_last;
+	carddav_ssl_enable.value = carddav_ssl_enable_last;
+	carddav_user.value = carddav_user_last;
+	carddav_psw.value = carddav_psw_last;
+
+	carddav_result_tbody.innerHTML = '<tr><td colspan="4">' + pm_language['Loading_dots'] + '</td></tr>'; //it's mandatory to restore the body of results
+	carddavController.abort(); //and abort, too
+}
+
+//this changes the button according to the current state
 function changeCarddavButton() {
 	carddav_validate.innerHTML = pm_language['Validate'];
 	carddav_validate.removeAttribute('disabled');
@@ -437,6 +455,22 @@ function changeCarddavButton() {
 			carddav_url.disabled = carddav_user.disabled = carddav_psw.disabled = carddav_ssl_enable.disabled = 'disabled';
 		}
 	});
+}
+
+//toggle SSL button and update table
+function toggleSSL(elem) {
+	let target = document.querySelector('*[data-toggled-by="carddav_ssl_enable"]');
+	target.classList.remove('greentext', 'redtext');
+
+	if (elem.checked) {
+		target.classList.add('greentext')
+		target.innerHTML = pm_language['SSL_Active'];
+	} else {
+		target.classList.add('redtext');
+		target.innerHTML = pm_language['SSL_Bypass'];
+	}
+
+	carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + pm_language['Must_validate'] + '</b></td></tr>';
 }
 
 //init sortable UI on carddav addressbooks
@@ -525,8 +559,8 @@ function updateNotificationText(reset, decrementValue) { //update title text acc
 }
 
 function deleteNotification(elem) { //delete notification
-	//no confirm
-	let formData = new FormData();
+	elem.setAttribute('disabled', 'disabled'); //instantly disable button to prevent multiple presses
+	let formData = new FormData(); //no confirm
 
 	formData.append('id', elem.getAttribute('data-notificationid'));
 
@@ -550,6 +584,7 @@ function deleteNotification(elem) { //delete notification
 		elem.closest('.notification-bubble').remove();
 		updateNotificationText(false, -1);
 	}, error => {
+		elem.removeAttribute('disabled'); //let the user retry
 		alert(error.error.message);
 	});
 }
@@ -630,7 +665,7 @@ function initTour() {
 	//listener for click events to go to next tip
 	window.addEventListener('click', function click(e) {
 		//only handle tips elements
-		if (e.target.id != "next-tip" && e.target.id != "close-tip")
+		if (e.target.getAttribute('data-action') != "next-tip" && e.target.getAttribute('data-action') != "close-tip")
 			return;
 
 		//prevent form submission etc.
@@ -646,7 +681,7 @@ function initTour() {
 		object = document.querySelector(tipsSelector);
 
 		//this is the last tip
-		if (e.target.id == "close-tip") {
+		if (e.target.getAttribute('data-action') == "close-tip") {
 			//remove overlay
 			overlay.remove();
 

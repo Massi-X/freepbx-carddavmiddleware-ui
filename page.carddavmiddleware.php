@@ -104,7 +104,7 @@
 													<a href="javascript:;" name="carddav-setup" class="btn btn-danger btn-input-flex" onclick="$('#setupCarddav').dialog('open'); return false;"><?= _('Setup/Change'); ?></a>
 													<div class="tips arrow-container" data-tips="2">
 														<p><?= _('Then you should setup the module to read data from your server. To do that click "Setup/Change and follow the instructions.'); ?></p>
-														<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
+														<button data-action="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
 													</div>
 												</div>
 											</div>
@@ -125,7 +125,7 @@
 												<div class="relative">
 													<div class="tips arrow-container" data-tips="3">
 														<p><?= str_replace('%simble', '<i class="fa fa-question-circle"></i>', _('Done that, the module is ready to work as it should. You should now tweak the settings per your taste, you can get help for any section by hovering the %simble simble.')); ?></p>
-														<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
+														<button data-action="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
 													</div>
 												</div>
 											</div>
@@ -151,7 +151,7 @@
 									<div class="row">
 										<div class="form-group">
 											<div class="col-md-3 control-label">
-												<label for="max_cnam_length"><?= _('Max characters for CNAM output'); ?></label>
+												<label for="max_cnam_length"><?= _('Max Characters for CNAM Output'); ?></label>
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="max_cnam_length"></i>
 											</div>
 											<div class="col-md-9">
@@ -182,7 +182,7 @@
 									<div class="row">
 										<div class="form-group">
 											<div class="col-md-3 control-label">
-												<label for="phone_type"><?= _('Default phonebook type'); ?></label>
+												<label for="phone_type"><?= _('Default Phonebook Type'); ?></label>
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="phone_type"></i>
 											</div>
 											<div class="col-md-9">
@@ -207,7 +207,7 @@
 									<div class="row">
 										<div class="form-group">
 											<div class="col-md-3 control-label">
-												<label for="cache_expire"><?= _('Cache duration'); ?></label>
+												<label for="cache_expire"><?= _('Cache Duration'); ?></label>
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="cache_expire"></i>
 											</div>
 											<div class="col-md-9">
@@ -232,7 +232,7 @@
 									<div class="row">
 										<div class="form-group">
 											<div class="col-md-3 control-label">
-												<label for="country_code"><?= _('Country code'); ?></label>
+												<label for="country_code"><?= _('Country Code'); ?></label>
 												<i class="fa fa-question-circle fpbx-help-icon" data-for="country_code"></i>
 											</div>
 											<div class="col-md-9">
@@ -346,15 +346,18 @@
 						<!-- BUTTONS -->
 						<div class="element-container flexible">
 							<!-- AUTO CONFIG -->
-							<div class="link-container relative">
-								<a href="javascript:;" class="btn btn-warning btn-magic" onclick="$('#magicPopup').dialog('open'); return false;"><i class="fa fa-magic"></i><?= _('Auto Configure'); ?></a>
-								<div class="tips arrow-container" data-tips="1">
-									<p><?= str_replace('%autoconfig', _('Auto Configure'), _('The first thing needed is to setup you PBX system to work nicely with the module. To do that click "%autoconfig" and follow the instructions.')); ?></p>
-									<button id="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
+							<div class="link-container">
+								<div class="relative">
+									<a href="javascript:;" class="btn btn-warning btn-icon" onclick="$('#magicPopup').dialog('open'); return false;"><i class="fa fa-magic"></i><?= _('Auto Configure'); ?></a>
+									<div class="tips arrow-container" data-tips="1">
+										<p><?= str_replace('%autoconfig', _('Auto Configure'), _('The first thing needed is to setup you PBX system to work nicely with the module. To do that click "%autoconfig" and follow the instructions.')); ?></p>
+										<button data-action="next-tip" class="btn fl-right"><?= _('Next Tip'); ?></button>
+									</div>
 								</div>
+								<a href="javascript:;" class="btn btn-success btn-icon" onclick="initTour(); return false;"><i class="fa fa-question"></i><?= _('Open Tutorial'); ?></a>
 							</div>
 							<!-- SAVE -->
-							<input name="submit" type="submit" value="<?= _('Save &amp; Apply'); ?>" class="btn-submit">
+							<input name="submit" type="submit" value="<?= _('Save &amp; Apply'); ?>" class="btn btn-submit">
 						</div>
 					</div>
 				</div>
@@ -365,7 +368,7 @@
 		<div class="relative">
 			<div class="tips arrow-container" data-tips="4">
 				<p><?= _('You can find here the URL for the XML Phonebook to be used on your devices. On the side an help section with some common error and fixes.'); ?></p>
-				<button id="close-tip" class="btn fl-right"><?= _('Got it'); ?></button>
+				<button data-action="close-tip" class="btn fl-right"><?= _('Got it'); ?></button>
 			</div>
 			<div class="help-section">
 				<a target="_blank" href="<?= \FreePBX::PhoneMiddleware()->getXmlPhonebookURL(); ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
@@ -446,7 +449,7 @@
 							<td class="relative">
 								<input autocomplete="off" type="text" id="carddav_url" class="form-control" name="carddav_url" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_url() ?>" />
 								<label class="ph-checkbox with-border right" <?= !method_exists(Core::class, 'get_ssl_enabled') ? 'style="display:none;' : ''; ?>>
-									<input type="checkbox" id="carddav_ssl_enable" name="carddav_ssl_enable" value="on" <?= Core::get_ssl_enabled() ? 'checked' : ''; ?>>
+									<input type="checkbox" id="carddav_ssl_enable" name="carddav_ssl_enable" onchange="toggleSSL(this)" value="on" <?= Core::get_ssl_enabled() ? 'checked' : ''; ?>>
 									<span data-info="custom-checkbox"></span>
 									<span class="description <?= Core::get_ssl_enabled() ? 'greentext' : 'redtext'; ?>" data-toggled-by="carddav_ssl_enable"><?= Core::get_ssl_enabled() ? _('SSL Active') : _('Bypass SSL'); ?></span>
 								</label>
@@ -494,7 +497,7 @@
 				</div>
 				<div class="carddav_info large_padding">
 					<i class="fa fa-info-circle"></i>
-					<i><?= _('Enable the addressbook(s) you want to use to save the changes. To modify greyed out inputs disable all the addressbooks first.'); ?></i>
+					<i><?= _('Enable the addressbook(s) you want to use to save the changes. To edit greyed out values disable all the addressbooks first.'); ?></i>
 				</div>
 				<button type="submit" id="carddav_validate" name="carddav_validate" class="btn" onclick="validateCarddav();">
 					<!-- filled by js -->

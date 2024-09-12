@@ -129,6 +129,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"undefined": "' . _('undefined') . '", ' .
 			'"Donotshowagain": "' . _('Do not show again') . '", ' .
 			'"Validate": "' . _('Validate') . '", ' .
+			'"Must_validate": "' . _('You must revalidate your configuration.') . '", ' .
 			'"Saving_dots": "' . _('Saving…') . '", ' .
 			'"Validating_dots": "' . _('Validating…') . '", ' .
 			'"Loading_dots": "' . _('Loading…') . '", ' .
@@ -160,7 +161,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"JS_magic_error": "' . _('Something went wrong during previous step. Please see the log for more information.') . '", ' .
 			'"JS_magic_completed": "' . _('Process completed. You are ready to rock! Please wait for the changes to be applied... You may now close the window.') . '",';
 		//these are "special" languages entries. The key is also used as value in javascript
-		for ($i = 0; $i < count(Core::PHONE_TYPES); $i++) { //we start at 0 even if not rally needed (see @CoreInterface.php)
+		for ($i = 0; $i < count(Core::PHONE_TYPES); $i++) {
 			$type = Core::PHONE_TYPES[$i];
 
 			if ($type == null)
@@ -169,14 +170,17 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			echo '"PHONE_TYPE_' . $i . '": "[' . $type . '] - ';
 
 			switch ($i) {
+				case Core::PHONE_TYPE_PASSTHROUGH:
+					echo  _('Keep numbers and labels intact inside the XML (where possible)');
+					break;
 				case Core::PHONE_TYPE_NO_LIMITS:
-					echo  _('Phone without limitations');
+					echo  _('Guess the type (\'Telephone\', \'Mobile\', \'Other\') and generate an XML containing all the phone numbers without limits');
 					break;
 				case Core::PHONE_TYPE_FANVIL:
-					echo _('Fanvil Phone (\'Telephone\', \'Mobile\', \'Other\' tags) - Maximum 3 numbers');
+					echo _('Fanvil Phone (\'Telephone\', \'Mobile\', \'Other\' tags) - Maximum 3 phone numbers, types cannot repeat');
 					break;
 				case Core::PHONE_TYPE_SNOM:
-					echo _('Snom Phone (\'Telephone\', \'Mobile\', \'Office\' tags) - Maximum 3 numbers');
+					echo _('Snom Phone (\'Telephone\', \'Mobile\', \'Office\' tags) - Maximum 3 phone numbers, types cannot repeat');
 					break;
 				default:
 					echo _('Unknown type');

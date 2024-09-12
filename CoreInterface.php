@@ -54,13 +54,14 @@ interface CoreInterface
 	/***					Do not modify/delete constants!						***/
 	/******************************************************************************/
 
-	//if new are added remember to update getXMLforPhones + BMO class with new languages. MUST BE CONSECUTIVE and >= 1
+	//if new are added remember to update getXMLforPhones + BMO class with new languages. MUST BE CONSECUTIVE
+	public const PHONE_TYPE_PASSTHROUGH = 0;
 	public const PHONE_TYPE_NO_LIMITS = 1;
 	public const PHONE_TYPE_FANVIL = 2;
 	public const PHONE_TYPE_SNOM = 3;
 	//frendly names that HAVE TO correspond to the IDs (= array index) above. Mainly used fot GET requests (they cannot be translated)
 	public const PHONE_TYPES = [
-		null, //this is not defined but may be used in the future
+		'PASSTHROUGH', //=PHONE_TYPE_PASSTHROUGH
 		'UNLIMITED', //=PHONE_TYPE_NO_LIMITS
 		'FANVIL', //=PHONE_TYPE_FANVIL
 		'SNOM' //=PHONE_TYPE_SNOM
