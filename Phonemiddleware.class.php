@@ -171,7 +171,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 
 			switch ($i) {
 				case Core::PHONE_TYPE_PASSTHROUGH:
-					echo  _('Keep numbers and labels intact inside the XML (where possible)');
+					echo  _('Keep numbers and labels intact inside the XML (where possible) - Spaces converted to \'_\'');
 					break;
 				case Core::PHONE_TYPE_NO_LIMITS:
 					echo  _('Guess the type (\'Telephone\', \'Mobile\', \'Other\') and generate an XML containing all the phone numbers without limits');
