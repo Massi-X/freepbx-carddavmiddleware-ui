@@ -200,6 +200,38 @@
 								</div>
 							</div>
 						</div>
+						<!-- XML AUTH -->
+						<div class="element-container">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="row">
+										<div class="form-group">
+											<div class="col-md-3 control-label">
+												<label for="xml_auth"><?= _('Require Auth for XML Phonebook'); ?></label>
+												<i class="fa fa-question-circle fpbx-help-icon" data-for="xml_auth"></i>
+											</div>
+											<div class="col-md-9">
+												<div class="input-line">
+													<div class="inner-label">
+														<label for="xml_auth_user"><?= _('User'); ?></label><input type="text" pattern=".{3,}" title="<?= _('Minimum length is 3 characters'); ?>" class="form-control" id="xml_auth_user" name="xml_auth_user" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_xml_auth()['username']; ?>">
+													</div>
+													<div class="inner-label">
+														<label for="xml_auth_psw"><?= _('Password'); ?></label><input type="password" pattern=".{3,}" title="<?= _('Minimum length is 3 characters'); ?>" class="form-control" id="xml_auth_psw" name="xml_auth_psw" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_xml_auth()['password']; ?>">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<span id="xml_auth-help" class="help-block fpbx-help-block">
+										<?= _('You can choose to request user/password when accessing the XML phonebook. The request must conform to Basic HTTP Authentication. Leave empty for no authentication.'); ?>
+									</span>
+								</div>
+							</div>
+						</div>
 						<!-- CACHE DURATION -->
 						<div class="element-container">
 							<div class="row">
