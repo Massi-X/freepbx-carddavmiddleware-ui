@@ -91,7 +91,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	 */
 	public function doConfigPageInit($page)
 	{
-		$rootPath = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . ':' . $_SERVER['SERVER_PORT'];
+		$rootPath = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'];
 
 		//xml phonebook URL
 		self::$xmlPhonebookURL = $rootPath . '/carddavmiddleware/carddavtoxml.php';
@@ -220,6 +220,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 				$this->Core->set_max_cnam_length(isset($_POST['max_cnam_length']) ? (int) $_POST['max_cnam_length'] : 0);
 			else
 				$this->Core->set_max_cnam_length(0);
+			$this->Core->set_xml_auth(isset($_POST['xml_auth_user']) ? $_POST['xml_auth_user'] : '', isset($_POST['xml_auth_psw']) ? $_POST['xml_auth_psw'] : '');
 			$this->Core->set_phone_type(isset($_POST['phone_type']) ? (int) $_POST['phone_type'] : Core::PHONE_TYPE_NO_LIMITS);
 			$this->Core->set_mail_level(isset($_POST['mail_level']) ? $_POST['mail_level'] : []);
 			$this->Core->set_superfecta_compat(isset($_POST['superfecta_compat']) ? ($_POST['superfecta_compat'] == 'on' ? true : false) : false);
