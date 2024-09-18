@@ -308,6 +308,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 	/********************	END LISTEN MAX_CNAM_OUTPUT CHECKBOX	********************/
 
+	/********************	LISTEN XML_AUTH INPUTS	********************/
+	let xml_auth_user = document.getElementById('xml_auth_user');
+	let xml_auth_psw = document.getElementById('xml_auth_psw');
+
+	xml_auth_user.oninput = e => {
+		e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, ''); //disallow special chars
+		if (e.target.value.length == 0) xml_auth_psw.value = ''; //make psw input blank if user is
+	};
+
+	xml_auth_psw.oninput = e => e.target.value.length == 0 ? xml_auth_user.value = '' : null; //make user input blank if psw is
+	/********************	END LISTEN XML_AUTH INPUTS	********************/
+
+
 	/********************	MISC	********************/
 	//enable timepicker on cache_expire
 	new TimePicker(document.getElementById('cache_expire'), 15);
@@ -326,6 +339,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	//disallow spaces inside addressbook dialog inputs
 	carddav_url.oninput = carddav_user.oninput = carddav_psw.oninput = e => e.target.value = e.target.value.replace(/\s/g, '');
 }, false);
+
+//prevent form submission with enter key
+window.addEventListener('keydown', e => {
+	if (e.key == 'Enter' && e.target.nodeName == 'INPUT') {
+		e.preventDefault();
+		return false;
+	}
+}, true);
 
 /********************	CARDDAV VALIDATION & SAVE	********************/
 let carddavController = new AbortController();
