@@ -13,24 +13,43 @@ require __DIR__ . '/core/core.php';
 
 use Core;
 
+function authenticationFail()
+{
+	header('WWW-Authenticate: Basic realm="XML Phonebook '.date('W-H').'"'); //make sessions last 1 hour maximum
+	header('HTTP/1.0 401 Unauthorized');
+	printError(_('Invalid credentials.'));
+	die();
+}
+
+function printError($error)
+{
+	$xml = new SimpleXMLElement('<xml/>');
+	$xml->addChild('error', $error);
+	echo $xml->asXML();
+}
+
+//get xml
 try {
 	$instance = Core::getInstance();
 
+	//basic authentication
+	$auth = Core::get_xml_auth();
+
+	if (isset($auth['username']) && (!isset($_SERVER['PHP_AUTH_USER']) || strcasecmp($auth['username'], $_SERVER['PHP_AUTH_USER']) != 0 || strcmp($auth['password'], $_SERVER['PHP_AUTH_PW']) != 0))
+		authenticationFail();
+
 	//calculate phone type to provide to getXMLforPhones()
-	$typeName = $_GET['type'];
-	if (isset($typeName) && !$type = array_search(strtoupper($typeName), $instance::PHONE_TYPES)) //strtoupper because in CoreInterface are defined like that
+	$typeName = isset($_GET['type']) ? $_GET['type'] : null;
+	if ($typeName != null && !$type = array_search(strtoupper($typeName), $instance::PHONE_TYPES)) //strtoupper because in CoreInterface are defined like that
 		Core::sendUINotification(Core::NOTIFICATION_TYPE_VERBOSE, str_replace('%type', $typeName, _('The given type "%type" does not correspond to a valid entry for phonebook selection. Please check your phone configuration.'))); //verbose notification are never sent by email
 
 	//default type will be used if not found (the one set in UI)
-	if (!isset($type))
-		$type = -1;
+	if (!isset($type)) $type = -1;
 
 	echo $instance->getXMLforPhones(false, $type);
 } catch (Exception $e) {
 	//send real message to the UI
 	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, $e->getMessage());
 	//and print a generic one here
-	$xml = new SimpleXMLElement('<xml/>');
-	$xml->addChild('error', _('Something went wrong while retrieving the addressbook(s). Please log into the UI to see a more detailed error.'));
-	echo $xml->asXML();
+	printError(_('Something went wrong while retrieving the addressbook(s). Please log into the UI to see a more detailed error.'));
 }
