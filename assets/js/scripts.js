@@ -30,39 +30,39 @@ document.addEventListener('DOMContentLoaded', () => {
 	var output_construct = new Tagify(document.getElementById('output_construct'), {
 		whitelist: [{
 			"value": "fn",
-			"name": pm_language['JS_fn'] + " (fn)"
+			"name": `${pm_language['JS_fn']} (fn)`
 		},
 		{
-			"value": "n",
-			"name": pm_language['Name'] + " (n)"
+			"value": "n", //kept "n" for backward compatibility
+			"name": `${pm_language['Name']} (n)`
 		},
 		{
 			"value": "nickname",
-			"name": pm_language['Nickname'] + " (nickname)"
+			"name": `${pm_language['Nickname']} (nickname)`
 		},
 		{
 			"value": "bday",
-			"name": pm_language['Birthday'] + " (bday)"
+			"name": `${pm_language['Birthday']} (bday)`
 		},
 		{
 			"value": "adr",
-			"name": pm_language['Address'] + " (adr)"
+			"name": `${pm_language['Address']} (adr)`
 		},
 		{
 			"value": "email",
-			"name": pm_language['JS_email_adr'] + " (email)"
+			"name": `${pm_language['JS_email_adr']} (email)`
 		},
 		{
 			"value": "title",
-			"name": pm_language['Title'] + " (title)"
+			"name": `${pm_language['Title']} (title)`
 		},
 		{
 			"value": "role",
-			"name": pm_language['Role'] + " (role)"
+			"name": `${pm_language['Role']} (role)`
 		},
 		{
 			"value": "org",
-			"name": pm_language['JS_org'] + " (org)"
+			"name": `${pm_language['JS_org']} (org)`
 		},
 		],
 		tagTextProp: 'name',
@@ -355,7 +355,7 @@ function validateCarddav() {
 	carddavController = new AbortController(); //reset
 	let isSave = false;
 	let checkboxes = document.querySelectorAll('input[type=checkbox][name="carddav_addressbooks[]"]'); //this changes at every request
-	let request_type = 'ajax.php?module=' + phonemiddleware['ajax_name'] + '&command=';
+	let request_type = `ajax.php?module=${phonemiddleware['ajax_name']}&command=`;
 	let formData = new FormData();
 	let options = {
 		method: 'post',
@@ -377,7 +377,7 @@ function validateCarddav() {
 	formData.append('carddav_psw', carddav_psw.value);
 
 	if (isSave) {
-		carddav_validate.innerHTML = '<i class="fa fa-spinner letsspin"></i> ' + pm_language['Saving_dots'];
+		carddav_validate.innerHTML = `<i class="fa fa-spinner letsspin"></i> ${pm_language['Saving_dots']}`;
 		request_type += 'savecarddav';
 
 		for (let i = 0; i < checkboxes.length; ++i) //add checked URLs to request
@@ -386,8 +386,8 @@ function validateCarddav() {
 	} else {
 		if (carddav_result_tbody.classList.contains('ui-sortable'))
 			$(carddav_result_tbody).sortable("destroy"); //detach sortable before updating content
-		carddav_validate.innerHTML = '<i class="fa fa-spinner letsspin"></i> ' + pm_language['Validating_dots'];
-		carddav_result_tbody.innerHTML = '<tr><td colspan="4">' + pm_language['Loading_dots'] + '</td></tr>';
+		carddav_validate.innerHTML = `<i class="fa fa-spinner letsspin"></i> ${pm_language['Validating_dots']}`;
+		carddav_result_tbody.innerHTML = `<tr><td colspan="4">${pm_language['Loading_dots']}</td></tr>`;
 		request_type += 'validatecarddav';
 	}
 
@@ -420,14 +420,14 @@ function validateCarddav() {
 				carddav_result_tbody.innerHTML = ''; //reset content
 
 				if (data.length == 0) //if nothing is found
-					carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + pm_language['No_addresbook_found'] + '</b></td></tr>';
+					carddav_result_tbody.innerHTML = `<tr><td colspan="4" class="carddav_error"><b>${pm_language['No_addresbook_found']}</b></td></tr>`;
 				else {
 					data.forEach(item => {
 						carddav_result_tbody.innerHTML += '<tr>' +
-							'<td><i class="fa fa-bars ui-sortable-handle" title="' + pm_language['Move'] + '"></i></td>' + //move
-							'<td><label class="ph-checkbox small"><input type="checkbox" ' + (item['checked'] ? 'checked' : '') + ' name="carddav_addressbooks[]" onclick="changeCarddavButton()" data-uri="' + item['uri'] + '"><span data-info="custom-checkbox"></span></label></td>' + //checkbox
-							'<td>' + item['name'] + '</td>' + //name
-							'<td>' + item['uri'] + '</td>' + //url
+							`<td><i class="fa fa-bars ui-sortable-handle" title="${pm_language['Move']}"></i></td>` + //move
+							`<td><label class="ph-checkbox small"><input type="checkbox" ${item['checked'] ? 'checked' : ''} ' name="carddav_addressbooks[]" onclick="changeCarddavButton()" data-uri="${item['uri']}"><span data-info="custom-checkbox"></span></label></td>` + //checkbox
+							`<td>${item['name']}</td>` + //name
+							`<td>${item['uri']}</td>` + //url
 							'</tr>';
 					});
 					sortableListResize();
@@ -440,7 +440,7 @@ function validateCarddav() {
 				alert(error.error.message);
 			else {
 				if (error.error === undefined) return; //this happens only when abort()
-				carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + error.error.message + '</b></td></tr>'; //else we only show a generic no address book found inside the table
+				carddav_result_tbody.innerHTML = `<tr><td colspan="4" class="carddav_error"><b>${error.error.message}</b></td></tr>`; //else we only show a generic no address book found inside the table
 			}
 
 			changeCarddavButton();
@@ -460,7 +460,7 @@ function restoreCarddav() {
 	carddav_user.value = carddav_user_last;
 	carddav_psw.value = carddav_psw_last;
 
-	carddav_result_tbody.innerHTML = '<tr><td colspan="4">' + pm_language['Loading_dots'] + '</td></tr>'; //it's mandatory to restore the body of results
+	carddav_result_tbody.innerHTML = `<tr><td colspan="4">${pm_language['Loading_dots']}</td></tr>`; //it's mandatory to restore the body of results
 	carddavController.abort(); //and abort, too
 }
 
@@ -491,7 +491,7 @@ function toggleSSL(elem) {
 		target.innerHTML = pm_language['SSL_Bypass'];
 	}
 
-	carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + pm_language['Must_validate'] + '</b></td></tr>';
+	carddav_result_tbody.innerHTML = `<tr><td colspan="4" class="carddav_error"><b>${pm_language['Must_validate']}</b></td></tr>`;
 }
 
 //init sortable UI on carddav addressbooks
@@ -508,7 +508,7 @@ function initSortableList() {
 					colspan = colspanAttr;
 				cellCount += colspan;
 			});
-			ui.placeholder.html('<td colspan="' + cellCount + '">&nbsp;</td>');
+			ui.placeholder.html(`<td colspan="${cellCount}">&nbsp;</td>`);
 
 			//fix table "jump"
 			var height = ui.helper.outerHeight();
@@ -658,7 +658,7 @@ function initTour() {
 
 	//vars
 	let ID = 1; //current step
-	let tipsSelector = '.tips[data-tips="' + ID + '"]'; //tips query selector
+	let tipsSelector = `.tips[data-tips="${ID}"]`; //tips query selector
 	let object = document.querySelector(tipsSelector); //current tip
 
 	//function used to go to next tip
