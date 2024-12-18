@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	carddav_user_last = carddav_user.value;
 	carddav_psw_last = carddav_psw.value;
 
+	//sort items for tagify
+	phonemiddleware['country_codes'].sort((a, b) => a.name.localeCompare(b.name));
+
 	/********************	START TAGIFY	********************/
 	document.addEventListener('dragover', e => e.preventDefault());
 
@@ -35,6 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		{
 			"value": "n", //kept "n" for backward compatibility
 			"name": `${pm_language['Name']} (n)`
+		},
+		{
+			"value": "n_middle",
+			"name": `${pm_language['Middle_name']} (n)`
+		},
+		{
+			"value": "n_last",
+			"name": `${pm_language['Last_name']} (n)`
 		},
 		{
 			"value": "nickname",
@@ -64,20 +75,71 @@ document.addEventListener('DOMContentLoaded', () => {
 			"value": "org",
 			"name": `${pm_language['JS_org']} (org)`
 		},
+		{
+			"value": "sep_space",
+			"name": "<br>", //works fine (space char not working)
+			"name_long": pm_language['sep_space'],
+			"separate": true //trick to ccs divide the sections
+		},
+		{
+			"value": "sep_comma",
+			"name": ",",
+			"name_long": pm_language['sep_comma']
+		},
+		{
+			"value": "sep_colon",
+			"name": ":",
+			"name_long": pm_language['sep_colon']
+		},
+		{
+			"value": "sep_dash",
+			"name": "-",
+			"name_long": pm_language['sep_dash']
+		},
+		{
+			"value": "sep_asterisk",
+			"name": "*",
+			"name_long": pm_language['sep_asterisk']
+		},
 		],
 		tagTextProp: 'name',
 		dropdown: {
-			mapValueTo: 'name',
-			maxItems: Infinity
+			classname: "separate", //make sure to activate separators
+			mapValueTo: data => {
+				if (data.value == false) return ''; //do not know why but we receive an empty array at the end - skip it
+
+				return data.name_long !== undefined ? data.name_long : data.name; //return name_long if present, short if not
+			},
+			maxItems: Infinity,
+			closeOnSelect: false,
+			includeSelectedTags: true //checkmarks for 'sep_' hidden in css
 		},
 		enforceWhitelist: true,
 		backspace: false,
 		userInput: false,
-		originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
+		duplicates: true, //duplicates check with transformTag
+		originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(','),
+		transformTag: tagData => {
+			if (output_construct === undefined) return; //output_construct is unset at page load
+
+			//if this is not a separator then only allow a single entry
+			if (!tagData.value.startsWith('sep_'))
+				output_construct.value.forEach(tag => {
+					if (tag.value == tagData.value) {
+						tagData.value = '';
+						return;
+					}
+				});
+		},
+		//fixes tab insert invalid entries
+		autoComplete: {
+			enabled: true,
+			rightKey: true,
+			tabKey: true
+		}
 	});
 
-	//custom class for css styles
-	output_construct.toggleClass('output_construct__tagify');
+	output_construct.toggleClass('output_construct__tagify'); //custom class for css styles
 
 	//dragsort for output_construct
 	new DragSort(output_construct.DOM.scope, {
@@ -99,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	//tagify phone_type
-	var tagify = new Tagify(document.getElementById('phone_type'), {
+	var phone_type = new Tagify(document.getElementById('phone_type'), {
 		enforceWhitelist: true,
 		whitelist: phone_type_whitelist,
 		mode: "select",
@@ -110,32 +172,48 @@ document.addEventListener('DOMContentLoaded', () => {
 			mapValueTo: 'name',
 			maxItems: Infinity
 		},
-		originalInputValueFormat: valuesArr => valuesArr.map(item => item.value)
+		originalInputValueFormat: valuesArr => valuesArr.map(item => item.value),
+		//fixes tab insert invalid entries,
+		autoComplete: {
+			enabled: true,
+			rightKey: true,
+			tabKey: true
+		}
 	});
 
-	//custom class for css styles
-	tagify.toggleClass('phone_type__tagify');
+	phone_type.toggleClass('phone_type__tagify'); //custom class for css styles
 
-	//tagify county_code
-	tagify = new Tagify(document.getElementById('country_code'), {
+	//tagify country_code
+	var country_code = new Tagify(document.getElementById('country_code'), {
 		enforceWhitelist: true,
 		whitelist: phonemiddleware['country_codes'],
+
 		callbacks: {
-			remove: e => {
-				e.detail.tagify['valueBeforeRemove'] = e.detail.data.value;
+			focus: e => {
+				if (e.detail.tagify.value[0] !== undefined)
+					e.detail.tagify['valueBeforeRemove'] = e.detail.tagify.value[0].value;
+			},
+			"dropdown:show": e => {
+				e.detail.tagify.DOM.dropdown.classList.add('tagify--invalid'); //no need to remove it, css only matches if the dropdownItemNoMatch template exists
 			},
 			blur: e => {
-				if (e.detail.tagify.value.length === 0) {
-					e.detail.tagify.state.dropdown.visible = false; //prevent dropdown from rifocusing everything up
+				if (e.detail.tagify.value !== e.detail.tagify['valueBeforeRemove'])
 					e.detail.tagify.addTags(e.detail.tagify['valueBeforeRemove']);
-				}
-			},
+			}
 		},
 		mode: "select",
+		backspace: "edit",
 		tagTextProp: 'name',
+		templates: {
+			dropdownItemNoMatch: data => 
+				`<div class='${country_code.settings.classNames.dropdownItem} nomatch' value="noMatch" tabindex="0" role="option">${pm_language['No_suggestion']}: <strong>${data.value}</strong></div>`
+		},
 		dropdown: {
+			enabled: 0,
+			closeOnSelect: false,
 			mapValueTo: 'name',
 			searchKeys: ['name', 'value'],
+			includeSelectedTags: true,
 			maxItems: Infinity
 		},
 		originalInputValueFormat: valuesArr => valuesArr.map(item => item.value)

@@ -139,7 +139,7 @@
 							<div class="row">
 								<div class="col-md-12">
 									<span id="output_construct-help" class="help-block fpbx-help-block">
-										<?= _('This parameter control the appearance of the name printed on incoming and outcoming calls + in the XML phonebook. Defaults to "fn" or Full card name.'); ?>
+										<?= _('This parameter control the appearance of the name printed on incoming and outcoming calls + in the XML phonebook. Defaults to "fn" or Full card name if nothing is found.<br>You can add separators between parameters to have a nice formatted output (as many as you want) - drag chips to reorder.'); ?>
 									</span>
 								</div>
 							</div>
