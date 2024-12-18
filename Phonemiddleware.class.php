@@ -165,31 +165,12 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			'"JS_magic_error": "' . _('Something went wrong during previous step. Please see the log for more information.') . '", ' .
 			'"JS_magic_completed": "' . _('Process completed. You are ready to rock! Please wait for the changes to be applied... You may now close the window.') . '",';
 		//these are "special" languages entries. The key is also used as value in javascript
-		for ($i = 0; $i < count(Core::PHONE_TYPES); $i++) {
-			$type = Core::PHONE_TYPES[$i];
-
-			if ($type == null)
+		foreach (Core::PHONE_TYPES as $id => $type) {
+			if ($id < 0) //skip internals
 				continue;
 
-			echo '"PHONE_TYPE_' . $i . '": "[' . $type . '] - ';
-
-			switch ($i) {
-				case Core::PHONE_TYPE_PASSTHROUGH:
-					echo  _('Keep numbers and labels intact inside the XML (where possible) - Spaces converted to \'_\'');
-					break;
-				case Core::PHONE_TYPE_NO_LIMITS:
-					echo  _('Guess the type (\'Telephone\', \'Mobile\', \'Other\') and generate an XML containing all the phone numbers without limits');
-					break;
-				case Core::PHONE_TYPE_FANVIL:
-					echo _('Fanvil Phone (\'Telephone\', \'Mobile\', \'Other\' tags) - Maximum 3 phone numbers, types cannot repeat');
-					break;
-				case Core::PHONE_TYPE_SNOM:
-					echo _('Snom Phone (\'Telephone\', \'Mobile\', \'Office\' tags) - Maximum 3 phone numbers, types cannot repeat');
-					break;
-				default:
-					echo _('Unknown type');
-					break;
-			}
+			echo '"PHONE_TYPE_' . $id . '": "[' . $type['name'] . '] - ';
+			echo _($type['description']);
 			echo '", ';
 		}
 		echo "};\n";
