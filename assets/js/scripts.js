@@ -317,7 +317,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (e.target.value.length == 0) xml_auth_psw.value = ''; //make psw input blank if user is
 	};
 
-	xml_auth_psw.oninput = e => e.target.value.length == 0 ? xml_auth_user.value = '' : null; //make user input blank if psw is
+	xml_auth_psw.oninput = e => {
+		e.target.value = e.target.value.replace(/\s/g, ''); //disallow spaces
+		e.target.value.length == 0 ? xml_auth_user.value = '' : null //make user input blank if psw is
+	};
 	/********************	END LISTEN XML_AUTH INPUTS	********************/
 
 
