@@ -56,17 +56,22 @@ interface CoreInterface
 	/***					Do not modify/delete constants!						***/
 	/******************************************************************************/
 
-	//if new are added remember to update getXMLforPhones + BMO class with new languages. MUST BE CONSECUTIVE
+	//correspond to phone_types below
+	public const PHONE_TYPE_INTERNAL = -1000; //only internal use for core
 	public const PHONE_TYPE_PASSTHROUGH = 0;
 	public const PHONE_TYPE_NO_LIMITS = 1;
 	public const PHONE_TYPE_FANVIL = 2;
 	public const PHONE_TYPE_SNOM = 3;
-	//frendly names that HAVE TO correspond to the IDs (= array index) above. Mainly used fot GET requests (they cannot be translated)
+
+	/**
+	 * Supported phone types. Used in UI, GET requests and core - labels must be translated with _() and not used directly!
+	 */
 	public const PHONE_TYPES = [
-		'PASSTHROUGH', //=PHONE_TYPE_PASSTHROUGH
-		'UNLIMITED', //=PHONE_TYPE_NO_LIMITS
-		'FANVIL', //=PHONE_TYPE_FANVIL
-		'SNOM' //=PHONE_TYPE_SNOM
+		self::PHONE_TYPE_INTERNAL => ['name' => 'INTERNAL', 'description' => 'Internal use only'],
+		self::PHONE_TYPE_PASSTHROUGH => ['name' => 'PASSTHROUGH', 'description' => 'Keep numbers and labels intact inside the XML (where possible) - Spaces converted to \'_\''],
+		self::PHONE_TYPE_NO_LIMITS => ['name' => 'UNLIMITED', 'description' => 'Guess the type (\'Telephone\', \'Mobile\', \'Other\') and generate an XML containing all the phone numbers without limits'],
+		self::PHONE_TYPE_FANVIL => ['name' => 'FANVIL', 'description' => 'Fanvil Phone (\'Telephone\', \'Mobile\', \'Other\' tags) - Maximum 3 phone numbers, types cannot repeat'],
+		self::PHONE_TYPE_SNOM => ['name' => 'SNOM', 'description' => 'Snom Phone (\'Telephone\', \'Mobile\', \'Office\' tags) - Maximum 3 phone numbers, types cannot repeat']
 	];
 
 	//notification type and options constants. You can put below fixed notification IDs (> 0 && < 1000)
