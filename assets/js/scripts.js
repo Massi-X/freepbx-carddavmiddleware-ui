@@ -457,6 +457,7 @@ function openSetup() {
 function restoreCarddav() {
 	carddav_url.value = carddav_url_last;
 	carddav_ssl_enable.checked = carddav_ssl_enable_last;
+	carddav_ssl_enable.dispatchEvent(new Event("change")); //update button text
 	carddav_user.value = carddav_user_last;
 	carddav_psw.value = carddav_psw_last;
 
