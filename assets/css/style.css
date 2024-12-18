@@ -83,6 +83,11 @@
 	}
 }
 
+/* custom outline color */
+*:focus-visible {
+	outline-color: var(--blue) !important;
+}
+
 /* override default dragsort styles to prevent glithes. See also js or https://github.com/yairEO/dragsort/issues/5#issuecomment-1004465926 */
 .dragsort--dragStart .dragsort--hide {
 	display: none !important;
@@ -90,12 +95,6 @@
 
 .dragsort--dragStart>* {
 	transition: margin .15s ease-in-out !important;
-}
-
-/* fix Sangoma's own footer... */
-#footer {
-	height: auto !important;
-	min-height: 100px;
 }
 
 /* fix row height + paddings/margins */
@@ -187,7 +186,7 @@ p {
 
 /* better styles for popups */
 .ui-dialog {
-	max-width: 95vw;
+	max-width: 1500px;
 }
 
 .ui-dialog .ui-dialog-content {
@@ -227,17 +226,22 @@ p {
 }
 
 /* prettier close icon in dialogs */
-.ui-dialog-titlebar-close {
-	width: 20px !important;
-	padding: 0 !important;
-	height: 20px !important;
-	top: 17.5px !important;
-	right: 15px !important;
-	margin: 0 !important;
+.ui-dialog .ui-dialog-titlebar-close {
+	width: auto;
+	height: 27px;
+	top: 14.5px;
+	right: 12px;
+	margin: 0;
+	padding: 4px !important;
 	opacity: 1 !important;
+	font-size: 0;
 }
 
-.ui-dialog-titlebar-close::before {
+.ui-dialog-titlebar-close>span {
+	display: none !important;
+}
+
+.ui-dialog .ui-dialog-titlebar-close::before {
 	font-family: 'FontAwesome';
 	content: "\f057";
 	line-height: 20px;
@@ -246,12 +250,16 @@ p {
 	color: var(--close);
 }
 
-.ui-dialog-titlebar-close:hover::before {
+.ui-dialog .ui-dialog-titlebar-close:hover::before {
 	color: var(--close-hover);
 }
 
-.ui-dialog-titlebar-close:active::before {
+.ui-dialog .ui-dialog-titlebar-close:active::before {
 	color: var(--close-active);
+}
+
+.ui-dialog .ui-dialog-titlebar-close:focus-visible {
+	outline: 2px solid;
 }
 
 /* fix dialog height */
@@ -297,11 +305,17 @@ p {
 	user-select: none;
 	height: auto;
 	--tag-inset-shadow-size: 1.3em !important;
+	box-shadow: none !important;
 }
 
 /* tagify: min-height equl to other inputs (-10px of margins) */
 .tagify__input {
 	min-height: 27px;
+}
+
+/* tagify: input padding */
+.tagify {
+	padding-right: 5px !important;
 }
 
 /* tagify: adjust checkmark styles */
@@ -320,6 +334,11 @@ p {
 	transform: translateY(-50%);
 }
 
+/* tagify: for separators only, do not show checkmark cause they can be duplicated */
+.tagify__dropdown__item[value^="sep_"]:before {
+	content: '' !important;
+}
+
 /* tagify: for whatever reason selects are broken, and the dropdown doesn't close when cliking outside */
 .tagify--select .tagify__tag+.tagify__input:not([contenteditable]) {
 	display: block !important;
@@ -330,6 +349,11 @@ p {
 	left: 0;
 	margin: 0;
 	z-index: 1;
+}
+
+/* tagify: content should not have a maximum width */
+.tagify__tag>div>[contenteditable] {
+	max-width: calc(100% - 25px);
 }
 
 /* adjust select (single-value mode) style of tagify per my needs */
@@ -357,6 +381,70 @@ p {
 .phone_type__tagify,
 .output_construct__tagify {
 	cursor: pointer !important;
+}
+
+/* tagify dropdown borders + scroll */
+.tagify__dropdown[placement=top] .tagify__dropdown__wrapper {
+	border-top-width: 0 !important;
+}
+
+.tagify__dropdown__wrapper {
+	overscroll-behavior: contain;
+}
+
+/* adjust tagify dropdown for phone construct*/
+.tagify__dropdown.separate .tagify__dropdown__item[separate] {
+	margin-top: 42px;
+}
+
+.tagify__dropdown.separate .tagify__dropdown__item:nth-of-type(1) {
+	margin-top: 37px;
+}
+
+.tagify__dropdown.separate .tagify__dropdown__item[separate]:before {
+	position: absolute;
+	pointer-events: none;
+	width: 100%;
+	height: 1px;
+	top: -37px;
+	left: 0;
+	background: #ddd;
+	transform: none;
+}
+
+.tagify__dropdown.separate .tagify__dropdown__item[separate]:after,
+.tagify__dropdown.separate .tagify__dropdown__item:nth-of-type(1):after {
+	position: absolute;
+	pointer-events: none;
+	top: -30px;
+	left: 13px;
+	padding: 2px 5px;
+	border-radius: 0.3em;
+	border: 1px solid #44eeb5;
+	background: #7fffd4;
+	color: var(--tagify-dd-text-color) !important;
+	font-style: italic;
+}
+
+.tagify__dropdown.separate .tagify__dropdown__item:nth-of-type(1):after {
+	content: var(--language-available-items);
+}
+
+.tagify__dropdown.separate .tagify__dropdown__item[separate]:after {
+	content: var(--language-available-separators-reusable);
+}
+
+/* tagify nomatch styles */
+.tagify__dropdown__item.nomatch {
+    padding: 10px !important;
+    pointer-events: none;
+    color: #fff;
+    background: var(--tags-border-color);
+}
+
+.tagify__dropdown:has(.tagify__dropdown__item.nomatch),
+.tagify__dropdown .tagify__dropdown__wrapper:has(.tagify__dropdown__item.nomatch) {
+    border-color: var(--tags-border-color);
 }
 
 /* Label beside an input */
@@ -546,7 +634,7 @@ pre {
 }
 
 details {
-	padding: 5px;
+	padding: 5px 10px;
 	background: var(--details-background);
 	border: 1px solid var(--details-border);
 	border-radius: 4px;
@@ -877,6 +965,10 @@ a:hover>i.fa {
 	border-radius: 0.3em;
 }
 
+#notification-header:focus-visible {
+	outline-offset: 2px;
+}
+
 #notification-count {
 	position: absolute;
 	pointer-events: none;
@@ -1054,6 +1146,7 @@ a:hover>i.fa {
 
 /* Autoselect trick used for inputs */
 input.autoselect_container {
+	display: block;
 	width: 100%;
 	margin-top: 5px;
 	padding: 4px 10px;
@@ -1197,14 +1290,27 @@ input.autoselect_container:not(:last-child) {
 	opacity: 1;
 }
 
-@media screen and (max-width: 1023px) {
+/* set a minimum width for dialogs on small screens to prevent them from being ridiculous */
+@media screen and (max-width: 1500px) {
+	.ui-dialog {
+		min-width: 60vw;
+	}
+}
 
-	/* set a minimum width for dialogs on small screens to prevent them from being ridiculous */
+@media screen and (max-width: 1300px) {
+	.ui-dialog {
+		min-width: 70vw;
+
+	}
+}
+
+@media screen and (max-width: 1023px) {
 	.ui-dialog {
 		min-width: 80vw;
 	}
 }
 
+/* mix styles */
 @media screen and (min-width: 768px) {
 	.visible-mobile {
 		display: none;
@@ -1244,13 +1350,6 @@ input.autoselect_container:not(:last-child) {
 }
 
 @media screen and (max-width: 991px) {
-
-	/* fix Sangoma's own footer... */
-	#footer #footer_content #footer_logo {
-		float: initial !important;
-		padding-right: 0 !important;
-	}
-
 	.row>.form-group {
 		align-items: center;
 	}
