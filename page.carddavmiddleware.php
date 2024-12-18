@@ -277,7 +277,7 @@
 							<div class="row">
 								<div class="col-md-12">
 									<span id="country_code-help" class="help-block fpbx-help-block">
-										<?= str_replace('%url', '<a target="_blank" href="' . _('https://wikipedia.org/wiki/List_of_ISO_3166_country_codes') . '">' . _('ISO format') . '</a>', _('Default country code used for parsing the numbers in %url. This is only used as a fallback if the number contains no country code.')); ?>
+										<?= str_replace('%url', '<a target="_blank" href="' . _('https://wikipedia.org/wiki/List_of_ISO_3166_country_codes') . '">' . _('ISO format') . '</a>', _('Default country code in %url used for parsing numbers and addresses. If the number contains a country code this will be ignored.')); ?>
 									</span>
 								</div>
 							</div>
