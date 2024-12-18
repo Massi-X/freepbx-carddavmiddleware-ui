@@ -31,6 +31,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	private $WWW_MODULE_DIR_NEW;
 	private $ASSETS_SYMLINK;
 
+	private static $inPage = false;
 	private static $xmlPhonebookURL = null;
 	private static $numberToCnamURL = null;
 	private static $emailTo = null;
@@ -91,6 +92,9 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	 */
 	public function doConfigPageInit($page)
 	{
+		//signal to other functions that we are inside a page
+		self::$inPage = true;
+
 		$rootPath = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'];
 
 		//xml phonebook URL
@@ -243,8 +247,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	 */
 	public static function getXmlPhonebookURL()
 	{
-		if (self::$xmlPhonebookURL == null)
-			throw new Exception(_('This is only available inside a page'));
+		if (!self::$inPage) throw new Exception(_('This is only available inside a page'));
 
 		return self::$xmlPhonebookURL;
 	}
@@ -257,8 +260,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	 */
 	public static function getNumberToCnamURL()
 	{
-		if (self::$numberToCnamURL == null)
-			throw new Exception(_('This is only available inside a page'));
+		if (!self::$inPage) throw new Exception(_('This is only available inside a page'));
 
 		return self::$numberToCnamURL;
 	}
@@ -271,8 +273,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	 */
 	public static function getToAddress()
 	{
-		if (self::$emailTo == null)
-			throw new Exception(_('This is only available inside a page'));
+		if (!self::$inPage) throw new Exception(_('This is only available inside a page'));
 
 		return self::$emailTo;
 	}
