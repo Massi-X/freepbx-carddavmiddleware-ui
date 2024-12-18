@@ -15,7 +15,7 @@ use Core;
 
 function authenticationFail()
 {
-	header('WWW-Authenticate: Basic realm="XML Phonebook '.date('W-H').'"'); //make sessions last 1 hour maximum
+	header('WWW-Authenticate: Basic realm="XML Phonebook ' . date('W-H') . '"'); //make sessions last 1 hour maximum
 	header('HTTP/1.0 401 Unauthorized');
 	printError(_('Invalid credentials.'));
 	die();
@@ -38,15 +38,27 @@ try {
 	if (isset($auth['username']) && (!isset($_SERVER['PHP_AUTH_USER']) || strcasecmp($auth['username'], $_SERVER['PHP_AUTH_USER']) != 0 || strcmp($auth['password'], $_SERVER['PHP_AUTH_PW']) != 0))
 		authenticationFail();
 
-	//calculate phone type to provide to getXMLforPhones()
-	$typeName = isset($_GET['type']) ? $_GET['type'] : null;
-	if ($typeName != null && !$type = array_search(strtoupper($typeName), $instance::PHONE_TYPES)) //strtoupper because in CoreInterface are defined like that
-		Core::sendUINotification(Core::NOTIFICATION_TYPE_VERBOSE, str_replace('%type', $typeName, _('The given type "%type" does not correspond to a valid entry for phonebook selection. Please check your phone configuration.'))); //verbose notification are never sent by email
+	//standardize get input
+	$_GET = array_change_key_case($_GET, CASE_LOWER);
 
-	//default type will be used if not found (the one set in UI)
-	if (!isset($type)) $type = -1;
+	//retrieve phone type to provide to getXMLforPhones()
+	$typeName = isset($_GET['type']) ? strtoupper($_GET['type']) : null;
+	$typeID = -1; //-1 will fallback to default
 
-	echo $instance->getXMLforPhones(false, $type);
+	foreach (Core::PHONE_TYPES as $id => $type) {
+		if ($type['name'] == $typeName) {
+			$typeID = $id;
+			break;
+		}
+	}
+
+	//the given type didn't match anything
+	if ($typeName != null && $typeID == -1) {
+		$text = str_replace('%type', $typeName, _('The given type "%type" does not correspond to a valid entry for phonebook selection. Please check your phone configuration.'));
+		Core::sendUINotification(Core::NOTIFICATION_TYPE_VERBOSE, $text); //verbose notification are never sent by email
+		printError(_('Something went wrong while retrieving the addressbook(s). Please log into the UI to see a more detailed error.'));
+	} else //print the output
+		echo $instance->getXMLforPhones(false, $typeID);
 } catch (Throwable $t) {
 	//send real message to the UI
 	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, $t->getMessage());
