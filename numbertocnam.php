@@ -37,9 +37,9 @@ try {
 		echo $instance->getCNFromPhone($_POST['number'], $instance::get_cache_expire() == 0);
 	} else if (!Core::get_superfecta_compat())
 		printBasicXML('name', _('Unknown'));
-} catch (Exception $e) {
+} catch (Throwable $t) {
 	//send real message to the UI
-	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, $e->getMessage());
+	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, $t->getMessage());
 	//and print a generic [W!] with number
 	if (!Core::get_superfecta_compat())
 		printBasicXML('name', '[W!] ' . $_POST['number']);

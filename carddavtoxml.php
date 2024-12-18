@@ -47,9 +47,9 @@ try {
 	if (!isset($type)) $type = -1;
 
 	echo $instance->getXMLforPhones(false, $type);
-} catch (Exception $e) {
+} catch (Throwable $t) {
 	//send real message to the UI
-	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, $e->getMessage());
+	Core::sendUINotification(Core::NOTIFICATION_TYPE_ERROR, $t->getMessage());
 	//and print a generic one here
 	printError(_('Something went wrong while retrieving the addressbook(s). Please log into the UI to see a more detailed error.'));
 }
