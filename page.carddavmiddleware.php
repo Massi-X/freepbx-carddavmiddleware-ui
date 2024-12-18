@@ -577,27 +577,30 @@
 						<li><?= _('Set <u>Regular Expressions 2</u> in <u>Data Source Name</u> column to <u>Yes</u> and disable everything else'); ?></li>
 						<li><?= _('Enter the edit interface of <u>Regular Expressions 2</u>'); ?></li>
 						<li>
-							<span><?= _('Set <u>URL</u> to:'); ?>&nbsp;</span>
 							<!-- This is from superfecta, it does not have a translation -->
-							<input type="text" readonly="true" onfocus="this.setSelectionRange(0, this.value.length)" class="autoselect_container" value="<?= \FreePBX::PhoneMiddleware()->getNumberToCnamURL(); ?>">
-							<?php
-							if (substr(\FreePBX::PhoneMiddleware()->getNumberToCnamURL(), 0, 5) === 'https')
-								echo '<b class="redtext">' . _('Caution! SSL detected, your system must have a valid FQDN and certificate or superfecta lookup will fail!') . '</b>';
+							<span><?= _('Set <u>URL</u> to:'); ?></span>
+							<?php if (\FreePBX::PhoneMiddleware()->getForceSSL() !== null) { ?>
+								<input type="text" readonly="true" onfocus="this.setSelectionRange(0, this.value.length)" class="autoselect_container" value="<?= \FreePBX::PhoneMiddleware()->getNumberToCnamURL(); ?>">
+							<?php }
+							if (\FreePBX::PhoneMiddleware()->getForceSSL() === null)
+								echo '<b class="redtext">' . str_replace('%carddavmiddleware', 'carddavmiddleware', _('Unable to request system info! Please check your system URL and insert it manually.')) . '</b>';
+							else  if (\FreePBX::PhoneMiddleware()->getForceSSL() === true)
+								echo '<b class="bluetext">' . _('Your system is configured to redirect every request to https. Please make sure that you have a valid FQDN and certificate or superfecta lookup will fail! You could also disable force redirect for the admin interface inside the "System Admin" module (section "Port Management") to use plain http instead.') . ' ' . _('System Admin is only available on Sangoma systems.') . '</b>';
 							?>
 						</li>
 						<li>
-							<span><?= _('Set <u>POST Data</u> to:'); ?>&nbsp;</span>
+							<span><?= _('Set <u>POST Data</u> to:'); ?></span>
 							<!-- This is from superfecta, it does not have a translation -->
 							<input type="text" readonly="true" onfocus="this.setSelectionRange(0, this.value.length)" class="autoselect_container" value="<?= htmlentities(\Utilities::SUPERFECTA_SCHEME_CONFIG['POST_Data']); ?>">
 						</li>
 						<li>
-							<span><?= _('Set <u>Regular Expressions</u> to:'); ?>&nbsp;</span>
+							<span><?= _('Set <u>Regular Expressions</u> to:'); ?></span>
 							<!-- This is from superfecta, it does not have a translation -->
 							<input type="text" readonly="true" onfocus="this.setSelectionRange(0, this.value.length)" class="autoselect_container" value="<?= htmlentities(\Utilities::SUPERFECTA_SCHEME_CONFIG['Regular_Expressions']); ?>">
 						</li>
 						<li><?= _('Enable "SPAM Match"'); ?></li>
 						<li>
-							<span><?= _('Set <u>SPAM Regular Expressions</u> to:'); ?>&nbsp;</span>
+							<span><?= _('Set <u>SPAM Regular Expressions</u> to:'); ?></span>
 							<!-- This is from superfecta, it does not have a translation -->
 							<input type="text" readonly="true" onfocus="this.setSelectionRange(0, this.value.length)" class="autoselect_container" value="<?= htmlentities(\Utilities::SUPERFECTA_SCHEME_CONFIG['SPAM_Regular_Expressions']); ?>">
 						</li>

@@ -4,7 +4,7 @@
  * This file is protected under CC-BY-NC-ND-4.0, please see "LICENSE" file for more information
  */
 
-//declaration: new TimePicker(target log container, language array)
+//declaration: new MagicConfig(target log container, language array)
 class MagicConfig {
 	#popup;
 	#startButton;
@@ -106,8 +106,10 @@ class MagicConfig {
 			this.#logContainer.innerHTML += this.#language['JS_magic_step1_2'] + '\n';
 			this.#logContainer.scrollIntoView(false); //scroll to bottom
 
-			//check if cnam URL starts with https. This has big implications and will probably make the superfecta lookup fail, so at least warn the user
-			if (phonemiddleware['numberToCnamURL'].startsWith('https'))
+			//check if forceSSL lookup failed or equal true. This has big implications and will probably make the superfecta lookup fail, so warn the user
+			if (phonemiddleware['forceSSL'] === undefined)
+				this.#logContainer.innerHTML += '<b class="redtext">' + this.#language['JS_magic_SSL_error'] + '</b>\n';
+			else if (phonemiddleware['forceSSL'])
 				this.#logContainer.innerHTML += '<b class="bluetext">' + this.#language['JS_magic_SSL_warning'] + '</b>\n';
 
 			let formData = new FormData();
