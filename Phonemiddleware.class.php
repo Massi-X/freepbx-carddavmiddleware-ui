@@ -409,8 +409,8 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 					//first get global var and unset everything that is inside to prevent any problem
 					global $_REQUEST;
 					global $_POST;
-					unset($_REQUEST);
-					unset($_POST);
+					$_REQUEST = [];
+					$_POST = [];
 
 					//put it on top
 					$_REQUEST['command'] = 'sort';
