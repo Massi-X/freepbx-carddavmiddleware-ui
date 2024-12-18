@@ -31,7 +31,11 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	private $WWW_MODULE_DIR_NEW;
 	private $ASSETS_SYMLINK;
 
+	private const numberToCnamPath = '/carddavmiddleware/numbertocnam.php';
+	private const carddavToXmlPath = '/carddavmiddleware/carddavtoxml.php';
+
 	private static $inPage = false;
+	private static $forceSSL = null;
 	private static $xmlPhonebookURL = null;
 	private static $numberToCnamURL = null;
 	private static $emailTo = null;
@@ -95,22 +99,29 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 		//signal to other functions that we are inside a page
 		self::$inPage = true;
 
-		$rootPath = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'];
+		//Query SysAdmin for info about the system and reflect changes on the URL based on the results
+		//as a side note: sysadmin calls only works on genuine Sangoma systems. For other systems a warning is printed in magicconfig.js
 
-		//xml phonebook URL
-		self::$xmlPhonebookURL = $rootPath . '/carddavmiddleware/carddavtoxml.php';
+		$rootPath = null;
+		$port = ''; //if the user is visiting the page with SSL we can't possibly know the http port. Keep it empty and hope for the best
 
-		//cnam URL. By default it is the same URL and protocol as the browser.
-		//Then I try to check if plain http is available by looking at the current page or by calling sysadmin to see if force is disabled.
-		//if any of these matches I set the URL to localhost
-		//as a side note: sysadmin calls only works on genuine Sangoma systems. For other systems with SSL enabled a warning is printed in magicconfig.js
-		self::$numberToCnamURL = $rootPath  . '/carddavmiddleware/numbertocnam.php';
 		try {
-			if (substr($rootPath, 0, 5) !== 'https' || !$this->getSysAdminPorts()['forcessl'])
-				self::$numberToCnamURL = 'http://localhost/carddavmiddleware/numbertocnam.php';
+			$sysInfo = self::getSysAdminInfo();
+			if ($sysInfo['port']) $port = ':' . $sysInfo['port']; //now we know the real port. could be empty if it is the default (80/443)
+			self::$forceSSL = $sysInfo['forcessl'];
+
+			//do not update plain http URLs, I prefer to use localhost then
+			if (self::$forceSSL) $rootPath = 'https://' . $sysInfo['hostname'] . $port;
 		} catch (Throwable $t) {
-			//an error occured. ignore it and fallback to default
+			//an error occured. Ignore and continue (warnings in UI will be caused by forceSSL === null)
 		}
+
+		//set rootPath to localhost if getSysAdminInfo() fails or force is false
+		if (!$rootPath)
+			$rootPath = 'http://localhost' . $port;
+
+		self::$xmlPhonebookURL = $rootPath . self::carddavToXmlPath;
+		self::$numberToCnamURL =  $rootPath . self::numberToCnamPath;
 
 		//email "To" field
 		try {
@@ -179,6 +190,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 		echo "var phonemiddleware = {" .
 			'"isFirstRun": ' . ($this->getConfig(NOT_FIRST_RUN_KEY) ? 'false' : 'true') . ', ' .
 			'"ajax_name": "phonemiddleware", ' .
+			'"forceSSL": ' . (self::$forceSSL === null ? 'undefined' : (self::$forceSSL ? 'true' : 'false')) . ', ' .
 			'"numberToCnamURL": "' . self::$numberToCnamURL . '", ' .
 			'"SUPERFECTA_SCHEME": "' . Utilities::SUPERFECTA_SCHEME . '", ' .
 			'"country_codes": [';
@@ -252,6 +264,19 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 		if (!self::$inPage) throw new Exception(_('This is only available inside a page'));
 
 		return self::$numberToCnamURL;
+	}
+
+	/**
+	 * Return force SSL status
+	 * 
+	 * @return	bool|null				forceSSL status (could be null if the call fail)
+	 * @throws	Exception				If this doesn't run inside a page
+	 */
+	public static function getForceSSL()
+	{
+		if (!self::$inPage) throw new Exception(_('This is only available inside a page'));
+
+		return self::$forceSSL;
 	}
 
 	/**
@@ -870,30 +895,33 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	}
 
 	/**
-	 * Query sysadmin module for default acp (Admin Control Panel) ports and wheter SSL is forced or not
+	 * Query sysadmin module for hostname, acp (Admin Control Panel) port and SSL force redirection
 	 *
-	 * @return	array				['forcessl' => bool, 'port' => int]
-	 * @throws	Exception			If some error happens while querying the data or executing the regex
+	 * @return	array				['forcessl' => bool, 'hostname' => string, 'port' => int (could be null)]
+	 * @throws	Exception			If some error happens while querying the data
 	 */
-	private function getSysAdminPorts()
+	private function getSysAdminInfo()
 	{
-		exec('fwconsole sysadmin ports', $out); //retrieve ports from sysadmin
+		$fqdn = $this->FreePBX->sysadmin->getVars('HTTP_HOST'); //this could be empty thanks to sysadmin failing to validate it...
+		$acp = $this->FreePBX->sysadmin->getVars('acp');
+		$sslacp = $this->FreePBX->sysadmin->getVars('sslacp');
+		$force = strcmp($this->FreePBX->sysadmin->getVars('force_acp'), 'yes') === 0;
 
-		foreach ($out as $line) {
-			if (!isset($acp) || empty($acp))
-				preg_match('/\|\s*(\S*)\s*\|\s*acp\s*\|\s*(\S*).*/', $line, $acp); //matches the http port of web UI
-			if (!isset($sslacp) || empty($sslacp))
-				preg_match('/\|\s*(\S*)\s*\|\s*sslacp.*/', $line, $sslacp); //matches the https port of web UI
-		}
+		if (!isset($acp) || !isset($sslacp)) throw new Exception(_('Cannot get default ports for admin panel!'));
 
-		if (!isset($acp[1]) || !isset($acp[2]) || !isset($sslacp[1]))
-			throw new Exception(_('Failed to find default ports for sysadmin!'));
+		if ($force && !$fqdn) throw new Exception(_('Cannot get fqdn!'));
 
-		$forceSSL = strcasecmp($acp[2], 'Enabled') === 0;
+		$sslacp = intval($sslacp);
+		$acp = intval($acp);
+
+		//do not return ports if they are the default 80/443
+		if ($sslacp == 443) $sslacp = null;
+		if ($acp == 80) $acp = null;
 
 		return [
-			'forcessl' => $forceSSL,
-			'port' => $forceSSL ? $sslacp[1] : $acp[1]
+			'forcessl' => $force,
+			'hostname' => $fqdn,
+			'port' => $force ? $sslacp : $acp
 		];
 	}
 }
