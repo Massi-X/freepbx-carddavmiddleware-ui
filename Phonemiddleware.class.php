@@ -215,6 +215,14 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			"};\n" .
 			'</script>';
 
+		//css language support
+		echo '<style>' .
+			':root {' .
+			'--language-available-items: "' . _('Available Items:') . '";' .
+			'--language-available-separators-reusable: "' . _('Available Separators (Reusable):') . '";' .
+			'}' .
+			'</style>';
+
 		//submit settings handling
 		if (isset($_POST['submit'])) {
 			$this->Core->set_cache_expire(isset($_POST['cache_expire']) ? (int) $_POST['cache_expire'] : 0);
