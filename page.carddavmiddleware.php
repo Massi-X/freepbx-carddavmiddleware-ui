@@ -53,7 +53,7 @@
 				<?php
 				$notifications = Core::retrieveUINotifications();
 
-				echo '<i class="fa fa-bell" onclick="toggleNotification()" id="notification-header" title="' . _('Notifications') . '"></i><span id="notification-count" data-count="' . count($notifications) . '">…</span>'; //count handled by js
+				echo '<i class="fa fa-bell" id="notification-header" tabindex="0" title="' . _('Notifications') . '"></i><span id="notification-count" data-count="' . count($notifications) . '">…</span>'; //count handled by js
 				echo '<div id="notification-container" class="arrow-container">';
 				echo '<div class="delete-all"><button onclick="deleteAllNotifications()">' . _('Delete All') . '</button></div>';
 				echo '<div class="bubble-container">';

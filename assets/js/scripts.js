@@ -161,6 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	notificationUI = document.getElementById('notification-ui');
 	notificationCount = document.getElementById('notification-count');
 
+	//open/close notification UI
+	notificationHeader.onclick = notificationHeader.onkeydown = (e) => {
+		if (e.type == 'click' || e.type == 'keydown' && (e.code == 'Enter' || e.code == 'Space')) {
+			e.preventDefault();
+			toggleNotification();
+		}
+	};
+
 	//close notifications on click outside
 	window.addEventListener('click', ({ target }) => {
 		const popup = target.closest('#notification-ui');
