@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	//save initial values for carddav popup
 	carddav_url_last = carddav_url.value;
-	carddav_ssl_enable_last = carddav_ssl_enable.value;
+	carddav_ssl_enable_last = carddav_ssl_enable.checked;
 	carddav_user_last = carddav_user.value;
 	carddav_psw_last = carddav_psw.value;
 
@@ -411,7 +411,7 @@ function validateCarddav() {
 
 				//update saved inputs values
 				carddav_url_last = carddav_url.value;
-				carddav_ssl_enable_last = carddav_ssl_enable.value;
+				carddav_ssl_enable_last = carddav_ssl_enable.checked;
 				carddav_user_last = carddav_user.value;
 				carddav_psw_last = carddav_psw.value;
 
@@ -439,7 +439,7 @@ function validateCarddav() {
 			if (isSave) //only if there is an error during save alert the user
 				alert(error.error.message);
 			else {
-				if (error.error == undefined) return; //this happens only when abort()
+				if (error.error === undefined) return; //this happens only when abort()
 				carddav_result_tbody.innerHTML = '<tr><td colspan="4" class="carddav_error"><b>' + error.error.message + '</b></td></tr>'; //else we only show a generic no address book found inside the table
 			}
 
@@ -456,7 +456,7 @@ function openSetup() {
 //restore last values before popup closes. This gets called after a save, but it doesn't matter as the values are already saved when this is invoked
 function restoreCarddav() {
 	carddav_url.value = carddav_url_last;
-	carddav_ssl_enable.value = carddav_ssl_enable_last;
+	carddav_ssl_enable.checked = carddav_ssl_enable_last;
 	carddav_user.value = carddav_user_last;
 	carddav_psw.value = carddav_psw_last;
 
