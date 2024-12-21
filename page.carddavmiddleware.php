@@ -403,7 +403,7 @@
 				<button data-action="close-tip" class="btn fl-right"><?= _('Got it'); ?></button>
 			</div>
 			<div class="help-section">
-				<a target="_blank" href="<?= \FreePBX::PhoneMiddleware()->getXmlPhonebookURL(); ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
+				<a target="_blank" href="<?= \FreePBX::PhoneMiddleware()->getSystemBaseURL() . \FreePBX::PhoneMiddleware()::carddavToXmlPath; ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
 				<a href="javascript:;" class="btn-popup" onclick="$('#errorPopup').dialog('open'); return false;"><?= _('Error codes and fixes'); ?></a>
 			</div>
 		</div>

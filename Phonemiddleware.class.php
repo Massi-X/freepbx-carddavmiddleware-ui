@@ -31,8 +31,8 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	private $WWW_MODULE_DIR_NEW;
 	private $ASSETS_SYMLINK;
 
-	private const numberToCnamPath = '/carddavmiddleware/numbertocnam.php';
-	private const carddavToXmlPath = '/carddavmiddleware/carddavtoxml.php';
+	const numberToCnamPath = '/carddavmiddleware/numbertocnam.php';
+	const carddavToXmlPath = '/carddavmiddleware/carddavtoxml.php';
 
 	private static $inPage = false;
 	private static $forceSSL = null;
@@ -289,6 +289,22 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 	}
 
 	/**
+	 * Get the system base URL
+	 * 
+	 * @return	string					base URL
+	 */
+	public static function getSystemBaseURL()
+	{
+		$ssl = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+		$port = ':' . $_SERVER['SERVER_PORT'];
+
+		if ($ssl && $_SERVER['SERVER_PORT'] == 443) $port = '';
+		if (!$ssl && $_SERVER['SERVER_PORT'] == 80) $port = '';
+
+		return ($ssl ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . $port;
+	}
+
+	/**
 	 * Return the resolved email address
 	 * 
 	 * @return	string					"To" email address (if available)
@@ -300,7 +316,6 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 
 		return self::$emailTo;
 	}
-
 
 	/**
 	 * Set which ajax requests should be allowed
