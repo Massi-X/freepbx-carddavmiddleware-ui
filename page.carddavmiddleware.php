@@ -213,10 +213,10 @@
 											<div class="col-md-9">
 												<div class="input-line">
 													<div class="inner-label">
-														<label for="xml_auth_user"><?= _('User'); ?></label><input type="text" pattern=".{3,}" title="<?= _('Minimum length is 3 characters'); ?>" class="form-control" id="xml_auth_user" name="xml_auth_user" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_xml_auth()['username']; ?>">
+														<label for="xml_auth_user"><?= _('User'); ?></label><input type="text" autocomplete="off" pattern=".{3,}" title="<?= _('Minimum length is 3 characters'); ?>" class="form-control" id="xml_auth_user" name="xml_auth_user" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_xml_auth()['username']; ?>">
 													</div>
 													<div class="inner-label">
-														<label for="xml_auth_psw"><?= _('Password'); ?></label><input type="password" pattern=".{3,}" title="<?= _('Minimum length is 3 characters'); ?>" class="form-control" id="xml_auth_psw" name="xml_auth_psw" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_xml_auth()['password']; ?>">
+														<label for="xml_auth_psw"><?= _('Password'); ?></label><input autocomplete="off" type="password" pattern=".{3,}" title="<?= _('Minimum length is 3 characters'); ?>" class="form-control" id="xml_auth_psw" name="xml_auth_psw" placeholder="<?= _('Empty'); ?>" value="<?= Core::get_xml_auth()['password']; ?>">
 													</div>
 												</div>
 											</div>
