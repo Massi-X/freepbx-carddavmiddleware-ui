@@ -16,12 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	carddav_display_url = document.getElementById('carddav_display_url');
 	carddav_result_tbody = document.getElementById('carddav_result').getElementsByTagName('tbody')[0];
 	reducemovement = window.matchMedia('(prefers-reduced-motion: reduce)').matches; //it works only on reload. Well, it's fine
+	xml_auth_user = document.getElementById('xml_auth_user');
+	xml_auth_psw = document.getElementById('xml_auth_psw');
 
 	//save initial values for carddav popup
 	carddav_url_last = carddav_url.value;
 	carddav_ssl_enable_last = carddav_ssl_enable.checked;
 	carddav_user_last = carddav_user.value;
 	carddav_psw_last = carddav_psw.value;
+
+	//save initial values for xml_auth fields
+	prv_xml_auth_user_input = xml_auth_user.value;
+	prv_xml_auth_psw_input = xml_auth_psw.value;
 
 	//sort items for tagify
 	phonemiddleware['country_codes'].sort((a, b) => a.name.localeCompare(b.name));
@@ -205,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		backspace: "edit",
 		tagTextProp: 'name',
 		templates: {
-			dropdownItemNoMatch: data => 
+			dropdownItemNoMatch: data =>
 				`<div class='${country_code.settings.classNames.dropdownItem} nomatch' value="noMatch" tabindex="0" role="option">${pm_language['No_suggestion']}: <strong>${data.value}</strong></div>`
 		},
 		dropdown: {
@@ -395,20 +401,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	/********************	END LISTEN MAX_CNAM_OUTPUT CHECKBOX	********************/
 
 	/********************	LISTEN XML_AUTH INPUTS	********************/
-	let xml_auth_user = document.getElementById('xml_auth_user');
-	let xml_auth_psw = document.getElementById('xml_auth_psw');
-
 	xml_auth_user.oninput = e => {
 		e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, ''); //disallow special chars
-		if (e.target.value.length == 0) xml_auth_psw.value = ''; //make psw input blank if user is
+		if (prv_xml_auth_user_input !== e.target.value && e.target.value.length === 0) xml_auth_psw.value = ''; //make psw input blank if user is
+		prv_xml_auth_user_input = e.target.value;
 	};
 
 	xml_auth_psw.oninput = e => {
 		e.target.value = e.target.value.replace(/\s/g, ''); //disallow spaces
-		e.target.value.length == 0 ? xml_auth_user.value = '' : null //make user input blank if psw is
+		if (prv_xml_auth_psw_input !== e.target.value && e.target.value.length === 0) xml_auth_user.value = '' //make user input blank if psw is
+		prv_xml_auth_psw_input = e.target.value;
 	};
 	/********************	END LISTEN XML_AUTH INPUTS	********************/
-
 
 	/********************	MISC	********************/
 	//enable timepicker on cache_expire
