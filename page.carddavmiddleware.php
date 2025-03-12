@@ -8,6 +8,8 @@
 <div class="fpbx-container">
 	<div class="display no-border">
 		<?php
+		$xmlURL = \FreePBX::PhoneMiddleware()->getSystemBaseURL() . \FreePBX::PhoneMiddleware()::carddavToXmlPath;
+
 		//print all the errors (if any)
 		if (isset($_POST['errors']) && is_array($_POST['errors'])) {
 			echo '<div class="alert alert-danger" role="alert">' . str_replace('%d', count($_POST['errors']), ngettext('You have one error.', 'You have %d errors.', count($_POST['errors']))) . '<ul>';
@@ -195,7 +197,7 @@
 							<div class="row">
 								<div class="col-md-12">
 									<span id="phone_type-help" class="help-block fpbx-help-block">
-										<?= str_replace(['%url', '%developer'], [\FreePBX::PhoneMiddleware()->getXmlPhonebookURL(), (method_exists(Core::class, 'get_author') && !empty(Core::get_author())) ? Core::get_author() : 'the developer'], _('Choose the default type for the generated phonebook. Selecting anything different than "UNLIMITED" causes the library to limit the generated output so that your devices can happily read it. You can try with some other manufacturer if yours is not listed, but if this still isn\'t working reach out to %developer.<br>You could also request a specific phonebook via a GET request to the phonebook URL (for example <a target="_blank" href="%url?type=UNLIMITED">%url?type=UNLIMITED</a> replacing "UNLIMITED" with one of the types present in the droplist, without the brackets).')); ?>
+										<?= str_replace(['%url', '%developer'], [$xmlURL, (method_exists(Core::class, 'get_author') && !empty(Core::get_author())) ? Core::get_author() : 'the developer'], _('Choose the default type for the generated phonebook. Selecting anything different than "UNLIMITED" causes the library to limit the generated output so that your devices can happily read it. You can try with some other manufacturer if yours is not listed, but if this still isn\'t working reach out to %developer.<br>You could also request a specific phonebook via a GET request to the phonebook URL (e.g. <a target="_blank" href="%url?type=UNLIMITED">%url?type=UNLIMITED</a> replacing "UNLIMITED" with one of the types present in the droplist, without the brackets).')); ?>
 									</span>
 								</div>
 							</div>
@@ -228,6 +230,36 @@
 								<div class="col-md-12">
 									<span id="xml_auth-help" class="help-block fpbx-help-block">
 										<?= _('You can choose to request user/password when accessing the XML phonebook. The request must conform to Basic HTTP Authentication. Leave empty for no authentication.'); ?>
+									</span>
+								</div>
+							</div>
+						</div>
+						<!-- XML AUTH WEAK ENABLE -->
+						<div class="element-container">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="row">
+										<div class="form-group">
+											<div class="col-md-3 control-label">
+												<label for="xml_auth_weak"><?= _('Allow Weak Authentication'); ?></label>
+												<i class="fa fa-question-circle fpbx-help-icon" data-for="xml_auth_weak"></i>
+											</div>
+											<div class="col-md-9">
+												<span class="radioset">
+													<input type="radio" name="xml_auth_weak" id="xml_auth_weak_OFF" value="off" <?php if (!Core::get_xml_auth_weak()) echo 'checked'; ?>>
+													<label for="xml_auth_weak_OFF" tabindex="0"><?= _('OFF'); ?></label>
+													<input type="radio" name="xml_auth_weak" id="xml_auth_weak_ON" value="on" <?php if (Core::get_xml_auth_weak()) echo 'checked'; ?>>
+													<label for="xml_auth_weak_ON" tabindex="0"><?= _('ON'); ?></label>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<span id="xml_auth_weak-help" class="help-block fpbx-help-block">
+										<?= str_replace('%url', $xmlURL, _('Enable GET authentication for XML Phonebook. Useful if your phone does not support basic authentication.<br>To use it, append the parameters USER and PSW to the url e.g. <a target="_blank" href="%url?user=user1&psw=123456">%url?user=user1&psw=123456</a>')); ?>
 									</span>
 								</div>
 							</div>
@@ -403,7 +435,7 @@
 				<button data-action="close-tip" class="btn fl-right"><?= _('Got it'); ?></button>
 			</div>
 			<div class="help-section">
-				<a target="_blank" href="<?= \FreePBX::PhoneMiddleware()->getSystemBaseURL() . \FreePBX::PhoneMiddleware()::carddavToXmlPath; ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
+				<a target="_blank" href="<?= $xmlURL ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
 				<a href="javascript:;" class="btn-popup" onclick="$('#errorPopup').dialog('open'); return false;"><?= _('Error codes and fixes'); ?></a>
 			</div>
 		</div>

@@ -13,9 +13,14 @@ require __DIR__ . '/core/core.php';
 
 use Core;
 
-function authenticationFail()
+function validCredentials($auth, $rcvUser, $rcvPsw)
 {
-	header('WWW-Authenticate: Basic realm="XML Phonebook ' . date('W-H') . '"'); //make sessions last 1 hour maximum
+	return (strcasecmp($auth['username'], $rcvUser) == 0 && strcmp($auth['password'], $rcvPsw) == 0);
+}
+
+function authenticationFail($isBasic = true)
+{
+	if ($isBasic) header('WWW-Authenticate: Basic realm="XML Phonebook ' . date('W-H') . '"'); //make sessions last 1 hour maximum
 	header('HTTP/1.0 401 Unauthorized');
 	printError(_('Invalid credentials.'));
 	die();
@@ -32,14 +37,29 @@ function printError($error)
 try {
 	$instance = Core::getInstance();
 
+	//standardize get input
+	$_GET = array_change_key_case($_GET, CASE_LOWER);
+
 	//basic authentication
 	$auth = Core::get_xml_auth();
 
-	if (isset($auth['username']) && (!isset($_SERVER['PHP_AUTH_USER']) || strcasecmp($auth['username'], $_SERVER['PHP_AUTH_USER']) != 0 || strcmp($auth['password'], $_SERVER['PHP_AUTH_PW']) != 0))
-		authenticationFail();
+	//credentials are required
+	if (isset($auth['username'])) {
+		$rcvUser;
+		$rcvPsw;
 
-	//standardize get input
-	$_GET = array_change_key_case($_GET, CASE_LOWER);
+		if (Core::get_xml_auth_weak()) {
+			$rcvUser = (isset($_GET['user']) ? $_GET['user'] : null);
+			$rcvPsw = (isset($_GET['psw']) ? $_GET['psw'] : '');
+		}
+
+		//accept GET authentication if enabled...
+		if ($rcvUser != null && !validCredentials($auth, $rcvUser, $rcvPsw))
+			authenticationFail(false);
+		//...but still continue to basic authentication if no $_GET['user'] was given (= if user is trying to use basic directly)
+		else if ($rcvUser == null && !validCredentials($auth, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
+			authenticationFail();
+	}
 
 	//retrieve phone type to provide to getXMLforPhones()
 	$typeName = isset($_GET['type']) ? strtoupper($_GET['type']) : null;

@@ -31,6 +31,8 @@ interface CoreInterface
 	public static function set_max_cnam_length(int $max_cnam_length): void;
 	public static function get_xml_auth(): array; //xml (optional) auth info
 	public static function set_xml_auth(string $username, string $password): void; //this should check for $username [A-Za-z0-9] 3+ chars and $password 3+ chars
+	public static function get_xml_auth_weak(): bool; //enable GET authentication to XML phonebook
+	public static function set_xml_auth_weak(bool $enable): void;
 	public static function get_phone_type(): int; //user device type
 	public static function set_phone_type(int $phone_type): void;
 	public static function get_mail_level(): array; //importance level when notifications will be sent also via mail

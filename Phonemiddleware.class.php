@@ -235,6 +235,7 @@ class Phonemiddleware extends \DB_Helper implements \BMO
 			else
 				$this->Core->set_max_cnam_length(0);
 			$this->Core->set_xml_auth(isset($_POST['xml_auth_user']) ? $_POST['xml_auth_user'] : '', isset($_POST['xml_auth_psw']) ? $_POST['xml_auth_psw'] : '');
+			$this->Core->set_xml_auth_weak(isset($_POST['xml_auth_weak']) ? ($_POST['xml_auth_weak'] == 'on' ? true : false) : false);
 			$this->Core->set_phone_type(isset($_POST['phone_type']) ? (int) $_POST['phone_type'] : Core::PHONE_TYPE_NO_LIMITS);
 			$this->Core->set_mail_level(isset($_POST['mail_level']) ? $_POST['mail_level'] : []);
 			$this->Core->set_superfecta_compat(isset($_POST['superfecta_compat']) ? ($_POST['superfecta_compat'] == 'on' ? true : false) : false);
