@@ -64,6 +64,7 @@ interface CoreInterface
 	public const PHONE_TYPE_NO_LIMITS = 1;
 	public const PHONE_TYPE_FANVIL = 2;
 	public const PHONE_TYPE_SNOM = 3;
+	public const PHONE_TYPE_YEALINK = 4;
 
 	/**
 	 * Supported phone types. Used in UI, GET requests and core - labels must be translated with _() and not used directly!
@@ -73,7 +74,8 @@ interface CoreInterface
 		self::PHONE_TYPE_PASSTHROUGH => ['name' => 'PASSTHROUGH', 'description' => 'Keep numbers and labels intact inside the XML (where possible) - Spaces converted to \'_\''],
 		self::PHONE_TYPE_NO_LIMITS => ['name' => 'UNLIMITED', 'description' => 'Guess the type (\'Telephone\', \'Mobile\', \'Other\') and generate an XML containing all the phone numbers without limits'],
 		self::PHONE_TYPE_FANVIL => ['name' => 'FANVIL', 'description' => 'Fanvil Phone (\'Telephone\', \'Mobile\', \'Other\' tags) - Maximum 3 phone numbers, types cannot repeat'],
-		self::PHONE_TYPE_SNOM => ['name' => 'SNOM', 'description' => 'Snom Phone (\'Telephone\', \'Mobile\', \'Office\' tags) - Maximum 3 phone numbers, types cannot repeat']
+		self::PHONE_TYPE_SNOM => ['name' => 'SNOM', 'description' => 'Snom Phone (\'Telephone\', \'Mobile\', \'Office\' tags) - Maximum 3 phone numbers, types cannot repeat'],
+		self::PHONE_TYPE_YEALINK => ['name' => 'YEALINK', 'description' => 'Yealink Phone (\'Telephone\' tag only) - No phone number limits']
 	];
 
 	//notification type and options constants. You can put below fixed notification IDs (> 0 && < 1000)
