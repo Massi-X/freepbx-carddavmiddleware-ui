@@ -436,7 +436,7 @@
 			</div>
 			<div class="help-section">
 				<a target="_blank" href="<?= $xmlURL ?>" title="<?= _('Open in new page…'); ?>" class="btn-popup"><?= _('XML phonebook for your device'); ?> <i class="fa fa-external-link"></i></a>
-				<a href="javascript:;" class="btn-popup" onclick="$('#errorPopup').dialog('open'); return false;"><?= _('Error codes and fixes'); ?></a>
+				<a href="javascript:;" class="btn-popup" onclick="$('#errorPopup').dialog('open'); return false;"><?= _('FAQ & Errors'); ?></a>
 			</div>
 		</div>
 		<div class="footer">
