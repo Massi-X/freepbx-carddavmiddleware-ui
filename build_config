@@ -8,8 +8,8 @@
 //Dear Reader, DO NOT EDIT VALUES HERE USE INSTEAD THE CONFIG FILE!
 
 $minimum_fpbx = '15.0'; //minimum compatible FreePBX
-$UI_version = '1.4.2'; //version to change in case of new releases
-$readme = 'https://github.com/Massi-X/freepbx-carddavmiddleware-ui/#readme'; //readme URL
+$UI_version = '1.4.3'; //version to change in case of new releases
+$readme = 'https://github.com/Massi-X/freepbx-carddavmiddleware-ui/blob/main/README.md'; //readme URL
 
 //list of files from this library that should not end up in the finished module
 $excludedLibraryFiles = [
